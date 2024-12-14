@@ -18,7 +18,7 @@ namespace FrontendApplication
                 });
 
             // Register the UserService and HttpClient
-            builder.Services.AddSingleton<UserService>();
+            builder.Services.AddSingleton<UserServiceApi>();
             builder.Services.AddHttpClient("Server", client =>
             {
                 client.BaseAddress = new Uri(AppConfig.ApiBaseUrl);
