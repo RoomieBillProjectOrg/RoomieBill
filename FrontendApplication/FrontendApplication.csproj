@@ -68,4 +68,8 @@
 	  </MauiXaml>
 	</ItemGroup>
 
+	<ItemGroup>
+		<MauiAsset Remove="Resources\Raw\frontend.xml" />
+	</ItemGroup>
+
 </Project>

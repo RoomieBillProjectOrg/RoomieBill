@@ -10,17 +10,12 @@ namespace FrontendApplication.Pages
 {
     public partial class RegisterPage : ContentPage
     {
-        private readonly UserService _userService;
-
+        private readonly UserServiceApi _userService;
 
         public RegisterPage()
         {
             InitializeComponent();
-        }
-        public RegisterPage(UserService userService)
-        {
-            InitializeComponent();
-            _userService = userService;
+            _userService = new UserServiceApi();
         }
 
         private async void OnRegisterClicked(object sender, EventArgs e)
