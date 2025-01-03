@@ -8,6 +8,6 @@ namespace FrontendApplication
 {
     public static class AppConfig
     {
-        public static string ApiBaseUrl = "http://localhost:5048/api/Roomiebill";
+        public static string ApiBaseUrl = "http://localhost:7226/api/Roomiebill";
     }
 }
