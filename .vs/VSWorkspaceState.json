@@ -1,6 +1,8 @@
 {
   "ExpandedNodes": [
     "",
+    "\\.config",
+    "\\FrontendApplication",
     "\\Roomiebill.Server"
   ],
   "SelectedNode": "\\RoomieBill.sln",

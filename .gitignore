@@ -39,3 +39,7 @@ artifacts/
 
 # Azure Functions
 .local/
+
+
+/.vs
+RoomieBill.vs/
