@@ -1,6 +1,5 @@
-﻿using Roomiebill.Server.UserService;
-
-namespace Roomiebill.Server.BillingService
+﻿
+namespace Roomiebill.Server.Models
 {
     public class Expense
     {

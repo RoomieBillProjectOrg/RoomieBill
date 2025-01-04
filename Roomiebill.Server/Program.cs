@@ -1,11 +1,7 @@
-using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Roomiebill.Server.DataAccessLayer;
-using Roomiebill.Server.BillingService;
-using Roomiebill.Server.GroupService;
-using Roomiebill.Server.UserService;
+using Roomiebill.Server.Services;
+using Roomiebill.Server.Models;
 using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);

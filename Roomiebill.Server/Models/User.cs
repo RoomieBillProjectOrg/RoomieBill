@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Roomiebill.Server.UserService
+namespace Roomiebill.Server.Models
 {
     public class User
     {
