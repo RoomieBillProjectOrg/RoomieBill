@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Roomiebill.Server.BillingService;
-using Roomiebill.Server.UserService;
-using Roomiebill.Server.GroupService;
+using Roomiebill.Server.Models;
 
 namespace Roomiebill.Server.DataAccessLayer
 {

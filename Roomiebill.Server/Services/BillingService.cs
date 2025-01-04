@@ -1,6 +1,6 @@
 ﻿using Roomiebill.Server.DataAccessLayer;
 
-namespace Roomiebill.Server.BillingService
+namespace Roomiebill.Server.Services
 {
     public class BillingService
     {

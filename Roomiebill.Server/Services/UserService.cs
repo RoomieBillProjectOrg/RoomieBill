@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using Roomiebill.Server.Models;
 using Roomiebill.Server.DataAccessLayer;
 
-namespace Roomiebill.Server.UserService
+namespace Roomiebill.Server.Services
 {
     public class UserService
     {

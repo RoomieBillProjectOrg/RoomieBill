@@ -1,6 +1,6 @@
 ﻿using Roomiebill.Server.DataAccessLayer;
 
-namespace Roomiebill.Server.GroupService
+namespace Roomiebill.Server.Services
 {
     public class GroupService
     {
