@@ -5,6 +5,9 @@ namespace Roomiebill.Server.DataAccessLayer
 {
     public class ApplicationDbContext : DbContext
     {
+        // Empty constructor for tests
+        public ApplicationDbContext() { }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) { }
 
