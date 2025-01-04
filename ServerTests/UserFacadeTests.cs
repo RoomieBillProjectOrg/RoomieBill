@@ -7,12 +7,14 @@ using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Facades;
 using Roomiebill.Server.Models;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 using Xunit;
 
 public class UserFacadeTests
 {
     private readonly Mock<IUsersDb> _usersDbMock;
     private readonly Mock<IPasswordHasher<User>> _passwordHasherMock;
+    private readonly Mock<ILogger<UserFacade>> _loggerMock;
     private readonly UserFacade _userFacade;
 
     public UserFacadeTests()
@@ -20,8 +22,9 @@ public class UserFacadeTests
         // Mock DbSet
         _usersDbMock = new Mock<IUsersDb>();
         _passwordHasherMock = new Mock<IPasswordHasher<User>>();
+        _loggerMock = new Mock<ILogger<UserFacade>>();
 
-        _userFacade = new UserFacade(_usersDbMock.Object, _passwordHasherMock.Object);
+        _userFacade = new UserFacade(_usersDbMock.Object, _passwordHasherMock.Object, _loggerMock.Object);
     }
 
     [Fact]

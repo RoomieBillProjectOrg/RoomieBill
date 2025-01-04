@@ -12,9 +12,9 @@ namespace Roomiebill.Server.Services
     {
         private readonly UserFacade _userFacade;
 
-        public UserService(UsersDb usersDb, IPasswordHasher<User> passwordHasher)
+        public UserService(UsersDb usersDb, IPasswordHasher<User> passwordHasher, ILogger<UserFacade> userFacadeLogger)
         {
-            _userFacade = new UserFacade(usersDb, passwordHasher);
+            _userFacade = new UserFacade(usersDb, passwordHasher, userFacadeLogger);
         }
 
         public async Task<User> RegisterUserAsync(RegisterUserDto registerUserDto)
