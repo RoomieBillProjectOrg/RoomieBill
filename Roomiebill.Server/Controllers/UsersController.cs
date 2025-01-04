@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Roomiebill.Server.BillingService;
 using Roomiebill.Server.DataAccessLayer;
-using Roomiebill.Server.GroupService;
-using Roomiebill.Server.UserService;
 using System;
+using Roomiebill.Server.Models;
 
 namespace Roomiebill.Server.Controllers
 {
