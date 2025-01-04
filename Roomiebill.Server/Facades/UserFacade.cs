@@ -11,27 +11,34 @@ namespace Roomiebill.Server.Facades
     {
         private readonly IUsersDb _usersDb;
         private readonly IPasswordHasher<User> _passwordHasher;
+        private ILogger<UserFacade> _logger;
 
-        public UserFacade(IUsersDb usersDb, IPasswordHasher<User> passwordHasher)
+        public UserFacade(IUsersDb usersDb, IPasswordHasher<User> passwordHasher, ILogger<UserFacade> logger)
         {
             _usersDb = usersDb;
             _passwordHasher = passwordHasher;
+            _logger = logger;
         }
 
         public async Task<User> RegisterUserAsync(RegisterUserDto registerUserDto)
         {
+            _logger.LogInformation("Registering user");
+
             if (registerUserDto.Username == null)
             {
+                _logger.LogError("Username is null. Cannot register user.");
                 throw new ArgumentNullException(nameof(registerUserDto.Username));
             }
 
             if (registerUserDto.Email == null)
             {
+                _logger.LogError("Email is null. Cannot register user.");
                 throw new ArgumentNullException(nameof(registerUserDto.Email));
             }
 
             if (registerUserDto.Password == null)
             {
+                _logger.LogError("Password is null. Cannot register user.");
                 throw new ArgumentNullException(nameof(registerUserDto.Password));
             }
 
@@ -40,6 +47,7 @@ namespace Roomiebill.Server.Facades
             var result = passwordValidator.ValidatePassword(registerUserDto.Password);
             if (!result)
             {
+                _logger.LogError(passwordValidator.Error);
                 throw new Exception(passwordValidator.Error);
             }
 
@@ -48,6 +56,7 @@ namespace Roomiebill.Server.Facades
             result = emailValidator.ValidateEmail(registerUserDto.Email);
             if (!result)
             {
+                _logger.LogError(emailValidator.Error);
                 throw new Exception(emailValidator.Error);
             }
 
@@ -55,6 +64,7 @@ namespace Roomiebill.Server.Facades
             var existingUser = _usersDb.GetUserByUsername(registerUserDto.Username);
             if (existingUser != null)
             {
+                _logger.LogError("User with this username already exists");
                 throw new Exception("User with this username already exists");
             }
 
@@ -62,6 +72,7 @@ namespace Roomiebill.Server.Facades
             existingUser = _usersDb.GetUserByEmail(registerUserDto.Email);
             if (existingUser != null)
             {
+                _logger.LogError("User with this email already exists");
                 throw new Exception("User with this email already exists");
             }
 
@@ -79,6 +90,8 @@ namespace Roomiebill.Server.Facades
             newUser.PasswordHash = passwordHash;
 
             _usersDb.AddUser(newUser);
+
+            _logger.LogInformation("User registered successfully");
 
             return newUser;
         }
