@@ -2,7 +2,7 @@ using Roomiebill.Server.Common;
 
 namespace Roomiebill.Tests
 {
-    public class EmailValidatorTests
+    public class EmailValidatorTests1
     {
         [Fact]
         public void ValidateEmail_ValidBGUEmail_ReturnsTrue()
