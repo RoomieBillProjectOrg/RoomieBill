@@ -18,6 +18,16 @@ namespace Roomiebill.Server.Models
             this.Members = Members;
             this.Expenses = Expenses;
         }
+        //Group constructor without empty members and expens
+        public Group(int Id, string Name,string Description, User Admin){
+            this.Id = Id;
+            this.Name = Name;
+            this.Description = Description;
+            this.Admin = Admin;
+            this.Members = new List<User>();
+            this.Expenses = new List<Expense>();
+        }
+        
 
         public void AddMember(User user){
             Members.Add(user);
