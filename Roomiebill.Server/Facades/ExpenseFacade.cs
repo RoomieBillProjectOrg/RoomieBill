@@ -30,7 +30,7 @@ namespace Roomiebill.Server.Facades
         }
 
         // Get the debt between 2 users - i owns to j- so if it is negative i owns j 0
-        private int GetDebtBetween(int i, int j)
+        public int GetDebtBetween(int i, int j)
         {
             int index = GetIndex(i, j);
             int debt = _debtArray[index];
@@ -41,7 +41,8 @@ namespace Roomiebill.Server.Facades
             else
             {
                 return debt < 0 ? -debt : 0; // Negative: j owes i; Zero or positive: j owes i nothing
-            
+            }
+        }
 
         private void UpdateDebtArray(int i, int j, int amount)
         {
