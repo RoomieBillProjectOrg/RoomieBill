@@ -49,11 +49,11 @@ namespace Roomiebill.Server.Facades
             int index = GetIndex(i, j);
             if (i < j)
             {
-                _debtArray[index] -= amount; 
+                _debtArray[index] -= amount;
             }
             else
             {
-                _debtArray[index] += amount; 
+                _debtArray[index] += amount;
             }
         }
 
@@ -61,10 +61,14 @@ namespace Roomiebill.Server.Facades
         {
             int payerId = expenseDto.PayerId;
             int payerIndex = _userIndexMap[payerId];
-            foreach (var split in expenseDto.SplitBetween)
+            foreach (KeyValuePair<int, double> split in expenseDto.SplitBetween)
             {
                 int userId = split.Key;
                 int userIndex = _userIndexMap[userId];
+                if (userIndex == payerIndex)
+                {
+                    continue;
+                }
                 int amount = (int)(expenseDto.Amount * (split.Value / 100.0));
 
                 UpdateDebtArray(payerIndex, userIndex, amount);
@@ -72,7 +76,7 @@ namespace Roomiebill.Server.Facades
             return expenseDto;
         }
 
-                // Get all debts between users (both sides  -i owns j and j owns i)
+        // Get all debts between users (both sides  -i owns j and j owns i)
         public Dictionary<(int, int), int> GetAllDebts()
         {
             Dictionary<(int, int), int> debts = new Dictionary<(int, int), int>();
@@ -83,10 +87,10 @@ namespace Roomiebill.Server.Facades
                     if (i != j)
                     {
                         int debt = GetDebtBetween(i, j);
-                        if (debt > 0)
-                        {
+                        // if (debt > 0)
+                        // {
                             debts.Add((i, j), debt);
-                        }
+                        // }
                     }
                 }
             }
@@ -108,13 +112,17 @@ namespace Roomiebill.Server.Facades
             {
                 int userId = split.Key;
                 int userIndex = _userIndexMap[userId];
+                if (userIndex == payerIndex)
+                {
+                    continue;
+                }
                 int amount = (int)(expenseDto.Amount * (split.Value / 100.0));
-        
+
                 UpdateDebtArray(payerIndex, userIndex, -amount); // Reverse the debt
             }
         }
 
-            // Update an existing expense
+        // Update an existing expense
         public void UpdateExpense(ExpenseDto oldExpenseDto, ExpenseDto newExpenseDto)
         {
             // First, reverse the old expense
@@ -123,8 +131,8 @@ namespace Roomiebill.Server.Facades
             CreateExpense(newExpenseDto);
         }
 
-         // Get total debt for a specific user
-        public double GetTotalDebtForUser(int userId)
+        // Get total debt for a specific user (the sum all users have to pay to the user)
+        public double GetTotalDebtOwedToUser(int userId)
         {
             int userIndex = _userIndexMap[userId];
             double totalDebt = 0;
@@ -132,13 +140,27 @@ namespace Roomiebill.Server.Facades
             {
                 if (i != userIndex)
                 {
-                    totalDebt += GetDebtBetween(i,userIndex);
+                    totalDebt += GetDebtBetween(i, userIndex);
+                }
+            }
+            return totalDebt;
+        }
+
+        // Get total debt a specific user owes to all other users
+        public double GetTotalDebtUserOwes(int userId)
+        {
+            int userIndex = _userIndexMap[userId];
+            double totalDebt = 0;
+            for (int i = 0; i < _userCount; i++)
+            {
+                if (i != userIndex)
+                {
+                    totalDebt += GetDebtBetween(userIndex, i);
                 }
             }
             return totalDebt;
         }
 
 
-        
     }
 }
