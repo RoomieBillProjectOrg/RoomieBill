@@ -22,23 +22,23 @@ namespace Roomiebill.Server.Facades
 
         public async Task<User> RegisterUserAsync(RegisterUserDto registerUserDto)
         {
-            _logger.LogInformation("Registering user");
+            _logger.LogInformation($"Register user with details: Username: {registerUserDto.Username}, Email: {registerUserDto.Email}");
 
             if (registerUserDto.Username == null)
             {
-                _logger.LogError("Username is null. Cannot register user.");
+                _logger.LogError($"Username is null. Cannot register user with details: Username: {registerUserDto.Username}, Email: {registerUserDto.Email}");
                 throw new ArgumentNullException(nameof(registerUserDto.Username));
             }
 
             if (registerUserDto.Email == null)
             {
-                _logger.LogError("Email is null. Cannot register user.");
+                _logger.LogError($"Email is null. Cannot register user with details: Username: {registerUserDto.Username}, Email: {registerUserDto.Email}");
                 throw new ArgumentNullException(nameof(registerUserDto.Email));
             }
 
             if (registerUserDto.Password == null)
             {
-                _logger.LogError("Password is null. Cannot register user.");
+                _logger.LogError($"Password is null. Cannot register user with details: Username: {registerUserDto.Username}, Email: {registerUserDto.Email}");
                 throw new ArgumentNullException(nameof(registerUserDto.Password));
             }
 
@@ -64,7 +64,7 @@ namespace Roomiebill.Server.Facades
             var existingUser = _usersDb.GetUserByUsername(registerUserDto.Username);
             if (existingUser != null)
             {
-                _logger.LogError("User with this username already exists");
+                _logger.LogError($"User with this username = {registerUserDto.Username} already exists");
                 throw new Exception("User with this username already exists");
             }
 
@@ -72,7 +72,7 @@ namespace Roomiebill.Server.Facades
             existingUser = _usersDb.GetUserByEmail(registerUserDto.Email);
             if (existingUser != null)
             {
-                _logger.LogError("User with this email already exists");
+                _logger.LogError($"User with this email = {registerUserDto.Email} already exists");
                 throw new Exception("User with this email already exists");
             }
 
@@ -91,9 +91,63 @@ namespace Roomiebill.Server.Facades
 
             _usersDb.AddUser(newUser);
 
-            _logger.LogInformation("User registered successfully");
+            _logger.LogInformation($"User registered successfully with details: Username: {registerUserDto.Username}, Email: {registerUserDto.Email}");
 
             return newUser;
+        }
+
+        public async Task<User> UpdatePasswordAsync(UpdatePasswordDto updatePasswordDto)
+        {
+            _logger.LogInformation($"Updating user {updatePasswordDto.Username} password");
+
+            if (updatePasswordDto.Username == null)
+            {
+                _logger.LogError($"Username is null. Cannot update password for user {updatePasswordDto.Username}");
+                throw new ArgumentNullException(nameof(updatePasswordDto.Username));
+            }
+
+            if (updatePasswordDto.CurrentPassword == null)
+            {
+                _logger.LogError($"Old password is null. Cannot update password for user {updatePasswordDto.Username}");
+                throw new ArgumentNullException(nameof(updatePasswordDto.CurrentPassword));
+            }
+
+            if (updatePasswordDto.NewPassword == null)
+            {
+                _logger.LogError($"New password is null. Cannot update password for user {updatePasswordDto.Username}");
+                throw new ArgumentNullException(nameof(updatePasswordDto.NewPassword));
+            }
+
+            // Check password validate using class PasswordValidator
+            var passwordValidator = new PasswordValidator();
+            var result = passwordValidator.ValidatePassword(updatePasswordDto.NewPassword);
+            if (!result)
+            {
+                _logger.LogError(passwordValidator.Error);
+                throw new Exception(passwordValidator.Error);
+            }
+
+            // Check if the user exists by username
+            var existingUser = _usersDb.GetUserByUsername(updatePasswordDto.Username);
+            if (existingUser == null)
+            {
+                _logger.LogError($"User with this username: {updatePasswordDto.Username} does not exist");
+                throw new Exception("User with this username does not exist");
+            }
+            // Verify the old password
+            var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(existingUser, existingUser.PasswordHash, updatePasswordDto.CurrentPassword);
+            if (passwordVerificationResult != PasswordVerificationResult.Success)
+            {
+                _logger.LogError("Old password is incorrect");
+                throw new Exception("Old password is incorrect");
+            }
+            // Hash the new password
+            string passwordHash = _passwordHasher.HashPassword(existingUser, updatePasswordDto.NewPassword);
+            // Update the user object with the hashed password
+            existingUser.PasswordHash = passwordHash;
+            _usersDb.UpdateUser(existingUser);
+            _logger.LogInformation($"User {updatePasswordDto.Username} password updated successfully");
+            return existingUser;
         }
     }
 }

@@ -23,6 +23,8 @@ public class UserFacadeTests
         _userFacade = new UserFacade(_usersDbMock.Object, _passwordHasherMock.Object, _loggerMock.Object);
     }
 
+    #region RegisterUserAsync
+
     [Fact]
     public async Task TestRegisterUserAsync_WhenSuccessfulRegistration_ThenReturnsNewUser()
     {
@@ -158,4 +160,101 @@ public class UserFacadeTests
         // Act & Assert
         await Assert.ThrowsAsync<Exception>(() => _userFacade.RegisterUserAsync(registerDto));
     }
+
+    #endregion
+
+    #region UpdatePasswordAsync
+
+    [Fact]
+    public async Task TestUpdatePasswordAsync_WhenSuccessfulUpdate_ThenUpdatesUserPassword()
+    {
+        // Arrange
+        var updateDto = new UpdatePasswordDto
+        {
+            Username = "testuser",
+            CurrentPassword = "oldPassword!1",
+            NewPassword = "newPassword!1"
+        };
+        var user = new User
+        {
+            Username = updateDto.Username,
+            PasswordHash = "oldPassword!1"
+        };
+        _usersDbMock.Setup(db => db.GetUserByUsername(updateDto.Username)).Returns(user);
+        _passwordHasherMock.Setup(ph => ph.VerifyHashedPassword(user, user.PasswordHash, updateDto.CurrentPassword))
+            .Returns(PasswordVerificationResult.Success);
+        _passwordHasherMock.Setup(ph => ph.HashPassword(user, updateDto.NewPassword))
+            .Returns("newHashedPassword!1");
+        // Act
+        await _userFacade.UpdatePasswordAsync(updateDto);
+        // Assert
+        _usersDbMock.Verify(db => db.UpdateUser(It.Is<User>(u => u.PasswordHash == "newHashedPassword!1")), Times.Once);
+    }
+
+    [Fact]
+    public async Task TestUpdatePasswordAsync_WhenNewPasswordInvalid_ThenThrowsException()
+    {
+        // Arrange
+        var updateDto = new UpdatePasswordDto
+        {
+            Username = "testuser",
+            CurrentPassword = "oldPassword!1",
+            NewPassword = "short"
+        };
+        var user = new User
+        {
+            Username = updateDto.Username,
+            PasswordHash = "oldPassword!1"
+        };
+        _usersDbMock.Setup(db => db.GetUserByUsername(updateDto.Username)).Returns(user);
+        _passwordHasherMock.Setup(ph => ph.VerifyHashedPassword(user, user.PasswordHash, updateDto.CurrentPassword))
+            .Returns(PasswordVerificationResult.Success);
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<Exception>(() => _userFacade.UpdatePasswordAsync(updateDto));
+        Assert.Equal("Password must be at least 8 characters long", exception.Message);
+    }
+
+    [Fact]
+    public async Task TestUpdatePasswordAsync_WhenCurrentPasswordIncorrect_ThenThrowsException()
+    {
+        // Arrange
+        var updateDto = new UpdatePasswordDto
+        {
+            Username = "testuser",
+            CurrentPassword = "wrongPassword!1",
+            NewPassword = "newPassword!1"
+        };
+        var user = new User
+        {
+            Username = updateDto.Username,
+            PasswordHash = "oldPassword!1"
+        };
+        _usersDbMock.Setup(db => db.GetUserByUsername(updateDto.Username)).Returns(user);
+        _passwordHasherMock.Setup(ph => ph.VerifyHashedPassword(user, user.PasswordHash, updateDto.CurrentPassword))
+            .Returns(PasswordVerificationResult.Failed);
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<Exception>(() => _userFacade.UpdatePasswordAsync(updateDto));
+        Assert.Equal("Old password is incorrect", exception.Message);
+    }
+
+    [Fact]
+    public async Task TestUpdatePasswordAsync_WhenUserNotFound_ThenThrowsException()
+    {
+        // Arrange
+        var updateDto = new UpdatePasswordDto
+        {
+            Username = "nonexistentuser",
+            CurrentPassword = "oldPassword!1",
+            NewPassword = "newPassword!1"
+        };
+        _usersDbMock.Setup(db => db.GetUserByUsername(updateDto.Username)).Returns((User)null);
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<Exception>(() => _userFacade.UpdatePasswordAsync(updateDto));
+        Assert.Equal("User with this username does not exist", exception.Message);
+    }
+
+    #endregion
 }
