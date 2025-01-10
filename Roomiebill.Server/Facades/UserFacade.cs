@@ -202,7 +202,7 @@ namespace Roomiebill.Server.Facades
             var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(existingUser, existingUser.PasswordHash, loginDto.Password);
             if (passwordVerificationResult != PasswordVerificationResult.Success)
             {
-                _logger.LogError("Password is incorrect");
+                _logger.LogError($"User with username: {loginDto.Username} entered incorrect password");
                 throw new Exception("Password is incorrect");
             }
 
