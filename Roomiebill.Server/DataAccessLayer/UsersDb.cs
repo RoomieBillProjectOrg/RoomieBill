@@ -9,12 +9,6 @@ namespace Roomiebill.Server.DataAccessLayer
 
         public UsersDb(DbContextOptions<UsersDb> options) : base(options) { }
 
-        public void AddUser(User user)
-        {
-            Users.Add(user);
-            SaveChanges();
-        }
-
         public User? GetUserByEmail(string email)
         {
             return Users.FirstOrDefault(u => u.Email == email);
@@ -23,6 +17,18 @@ namespace Roomiebill.Server.DataAccessLayer
         public User? GetUserByUsername(string username)
         {
             return Users.FirstOrDefault(u => u.Username == username);
+        }
+
+        public void AddUser(User user)
+        {
+            Users.Add(user);
+            SaveChanges();
+        }
+
+        public void UpdateUser(User user)
+        {
+            Users.Update(user);
+            SaveChanges();
         }
     }
 }
