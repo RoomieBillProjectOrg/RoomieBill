@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Json;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using FrontendApplication.Models;
 using Newtonsoft.Json;
 
@@ -23,16 +18,32 @@ namespace FrontendApplication.Services
 
         public async Task<bool> RegisterUserAsync(string email, string username, string password)
         {
-            var user = new
+            RegisterUserDto user = new RegisterUserDto()
             {
-                Email = email,
+                Username = username,
+                Password = password,
+                Email = email
+            };
+
+            var json = JsonConvert.SerializeObject(user);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync("/UsersController/register", content);
+
+            return response.IsSuccessStatusCode;
+        }
+
+        //LoginUserAsync
+        public async Task<bool> LoginUserAsync(string username, string password)
+        {
+            LoginDto user = new LoginDto()
+            {
                 Username = username,
                 Password = password
             };
 
             var json = JsonConvert.SerializeObject(user);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync("/UsersController/register", content);
+            var response = await _httpClient.PostAsync("/UsersController/login", content);
 
             return response.IsSuccessStatusCode;
         }

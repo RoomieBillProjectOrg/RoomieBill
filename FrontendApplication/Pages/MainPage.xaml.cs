@@ -24,14 +24,14 @@ namespace FrontendApplication
 
             Label welcomeLabel = new Label
             {
-                Text = "Welcome to Roomiebill!",
+                Text = "Welcome to RoomieBill!",
                 FontSize = 18,
                 HorizontalTextAlignment = TextAlignment.Center,
                 TextColor = Colors.Black // Adjust color as needed
             };
             layout.Children.Add(welcomeLabel);
 
-            // Add a button to navigate to NBAPlayerSearchPage
+            // Add a button to navigate to RegisterPage
             Button registerPageButton = new Button
             {
                 Text = "Register User",
@@ -44,6 +44,20 @@ namespace FrontendApplication
                 await Navigation.PushAsync(new FrontendApplication.Pages.RegisterPage());
             };
             layout.Children.Add(registerPageButton);
+
+            // Add a button to navigate to LoginPage
+            Button loginPageButton = new Button
+            {
+                Text = "Login User",
+                BackgroundColor = Colors.Blue, // Adjust button color
+                TextColor = Colors.White // Adjust text color
+            };
+            loginPageButton.Clicked += async (sender, e) =>
+            {
+                //await Shell.Current.GoToAsync(nameof(LoginPage));
+                await Navigation.PushAsync(new FrontendApplication.Pages.LoginPage());
+            };
+            layout.Children.Add(loginPageButton);
 
             Content = layout;
         }
