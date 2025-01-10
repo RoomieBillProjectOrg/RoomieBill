@@ -34,5 +34,16 @@ namespace Roomiebill.Server.Controllers
 
             return Ok(new { Message = "Password updated successfully" });
         }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+        {
+            var user = await _userService.LoginAsync(loginDto);
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+            return Ok(new { Message = "User logged in successfully" });
+        }
     }
 }
