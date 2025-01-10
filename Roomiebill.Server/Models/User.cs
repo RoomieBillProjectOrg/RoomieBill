@@ -13,10 +13,10 @@ namespace Roomiebill.Server.Models
 
         public User() { }
 
-        public User(string email, string username, string passwordHash, bool isSystemAdmin = false, bool isLoggedIn = false)
+        public User(string username, string email, string passwordHash, bool isSystemAdmin = false, bool isLoggedIn = false)
         {
-            Email = email;
             Username = username;
+            Email = email;
             PasswordHash = passwordHash;
             IsSystemAdmin = isSystemAdmin;
             IsLoggedIn = isLoggedIn;

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Roomiebill.Server.DataAccessLayer;
+using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Facades;
+using Roomiebill.Server.Models;
 
 namespace Roomiebill.Server.Services
 {
@@ -13,6 +15,11 @@ namespace Roomiebill.Server.Services
         {
             _userFacade = userService._userFacade;
             _groupFacade = new GroupFacade(groupsDb, groupFacadeLogger, _userFacade);
+        }
+
+        public async Task<Group> CreateNewGroupAsync(CreateNewGroupDto group)
+        {
+            return await _groupFacade.CreateNewGroupAsync(group);
         }
     }
 }

@@ -9,31 +9,52 @@ namespace Roomiebill.Server.Models
         private List<User> Members { get; set; }
         private List<Expense> Expenses { get; set; }
 
-        public Group(string groupName, User groupAdmin, List<User> groupMembers){
+        public Group(string groupName, User groupAdmin, List<User> groupMembers)
+        {
             this.GroupName = groupName;
             this.Admin = groupAdmin;
             this.Members = groupMembers;
             this.Expenses = new List<Expense>();
         }
 
-        public void AddMember(User user){
+        public void AddMember(User user)
+        {
             Members.Add(user);
         }
 
-        public void RemoveMember(User user){
+        public void RemoveMember(User user)
+        {
             Members.Remove(user);
         }
 
-        public void AddExpense(Expense expense){
+        public void AddExpense(Expense expense)
+        {
             Expenses.Add(expense);
         }
 
-        public void RemoveExpense(Expense expense){
+        public void RemoveExpense(Expense expense)
+        {
             Expenses.Remove(expense);
         }
 
-        
+        public User GetAdmin()
+        {
+            return Admin;
+        }
 
+        public List<User> GetMembers()
+        {
+            return Members;
+        }
 
+        public List<Expense> GetExpenses()
+        {
+            return Expenses;
+        }
+
+        public string GetGroupName()
+        {
+            return GroupName;
+        }
     }
 }
