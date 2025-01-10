@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Facades;
 using Roomiebill.Server.Models;
-using Microsoft.Extensions.Logging;
+
+namespace ServerTests;
 
 public class UserFacadeTests
 {
@@ -15,7 +17,6 @@ public class UserFacadeTests
 
     public UserFacadeTests()
     {
-        // Mock DbSet
         _usersDbMock = new Mock<IUsersDb>();
         _passwordHasherMock = new Mock<IPasswordHasher<User>>();
         _loggerMock = new Mock<ILogger<UserFacade>>();

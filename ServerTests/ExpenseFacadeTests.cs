@@ -1,8 +1,8 @@
 using Roomiebill.Server.Facades;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 
+namespace ServerTests
 
-namespace Roomiebill.Tests
 {
     public class ExpenseFacadeTests
     {

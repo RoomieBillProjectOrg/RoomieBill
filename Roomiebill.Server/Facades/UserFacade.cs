@@ -7,7 +7,7 @@ using Roomiebill.Server.Models;
 
 namespace Roomiebill.Server.Facades
 {
-    public class UserFacade
+    public class UserFacade : IUserFacade
     {
         private readonly IUsersDb _usersDb;
         private readonly IPasswordHasher<User> _passwordHasher;

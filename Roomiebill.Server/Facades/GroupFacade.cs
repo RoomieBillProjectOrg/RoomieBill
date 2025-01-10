@@ -9,9 +9,9 @@ namespace Roomiebill.Server.Facades
     {
         private readonly IGroupDb _groupDb;
         private ILogger<GroupFacade> _logger;
-        private readonly UserFacade _userFacade;
+        private readonly IUserFacade _userFacade;
 
-        public GroupFacade(IGroupDb groupDb, ILogger<GroupFacade> logger, UserFacade userFacade)
+        public GroupFacade(IGroupDb groupDb, ILogger<GroupFacade> logger, IUserFacade userFacade)
         {
             _groupDb = groupDb;
             _logger = logger;
