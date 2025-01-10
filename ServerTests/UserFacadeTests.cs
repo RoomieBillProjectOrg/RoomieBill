@@ -185,8 +185,10 @@ public class UserFacadeTests
             .Returns(PasswordVerificationResult.Success);
         _passwordHasherMock.Setup(ph => ph.HashPassword(user, updateDto.NewPassword))
             .Returns("newHashedPassword!1");
+
         // Act
         await _userFacade.UpdatePasswordAsync(updateDto);
+
         // Assert
         _usersDbMock.Verify(db => db.UpdateUser(It.Is<User>(u => u.PasswordHash == "newHashedPassword!1")), Times.Once);
     }
@@ -254,6 +256,74 @@ public class UserFacadeTests
         // Act & Assert
         var exception = await Assert.ThrowsAsync<Exception>(() => _userFacade.UpdatePasswordAsync(updateDto));
         Assert.Equal("User with this username does not exist", exception.Message);
+    }
+
+    #endregion
+
+    #region LoginAsync
+    [Fact]
+    public async Task TestLoginAsync_WhenSuccessfulLogin_ThenReturnsUser()
+    {
+        // Arrange
+        var loginDto = new LoginDto
+        {
+            Username = "testuser",
+            Password = "ValidPassword123!"
+        };
+        var user = new User
+        {
+            Username = loginDto.Username,
+            PasswordHash = "hashedpassword"
+        };
+        _usersDbMock.Setup(db => db.GetUserByUsername(loginDto.Username)).Returns(user);
+        _passwordHasherMock.Setup(ph => ph.VerifyHashedPassword(user, user.PasswordHash, loginDto.Password))
+            .Returns(PasswordVerificationResult.Success);
+
+        // Act
+        var loggedInUser = await _userFacade.LoginAsync(loginDto);
+
+        // Assert
+        Assert.NotNull(loggedInUser);
+        Assert.Equal(loginDto.Username, loggedInUser.Username);
+        Assert.Equal(user.PasswordHash, loggedInUser.PasswordHash);
+    }
+
+    [Fact]
+    public async Task TestLoginAsync_WhenUserNotFound_ThenReturnsThrowException()
+    {
+        // Arrange
+        var loginDto = new LoginDto
+        {
+            Username = "nonexistentuser",
+            Password = "ValidPassword123!"
+        };
+        _usersDbMock.Setup(db => db.GetUserByUsername(loginDto.Username)).Returns((User)null);
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<Exception>(() => _userFacade.LoginAsync(loginDto));
+    }
+
+    [Fact]
+    public async Task TestLoginAsync_WhenPasswordIncorrect_ThenReturnsPasswordNotCorrectError()
+    {
+        // Arrange
+        var loginDto = new LoginDto
+        {
+            Username = "testuser",
+            Password = "InvalidPassword123!"
+        };
+        var user = new User
+        {
+            Username = loginDto.Username,
+            PasswordHash = "hashedpassword"
+        };
+        _usersDbMock.Setup(db => db.GetUserByUsername(loginDto.Username)).Returns(user);
+        _passwordHasherMock.Setup(ph => ph.VerifyHashedPassword(user, user.PasswordHash, loginDto.Password))
+            .Returns(PasswordVerificationResult.Failed);
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<Exception>(() => _userFacade.LoginAsync(loginDto));
+
     }
 
     #endregion
