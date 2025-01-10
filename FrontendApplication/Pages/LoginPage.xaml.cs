@@ -21,11 +21,11 @@ public partial class LoginPage : ContentPage
 
         if (success)
         {
-            await DisplayAlert("Success", "User registered successfully!", "OK");
+            await DisplayAlert("Success", "User logged in successfully!", "OK");
         }
         else
         {
-            await DisplayAlert("Error", "Failed to register user.", "OK");
+            await DisplayAlert("Error", "Failed to logged in user.", "OK");
         }
     }
 }
