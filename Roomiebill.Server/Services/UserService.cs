@@ -10,7 +10,7 @@ namespace Roomiebill.Server.Services
 {
     public class UserService
     {
-        private readonly UserFacade _userFacade;
+        public UserFacade _userFacade { get; }
 
         public UserService(UsersDb usersDb, IPasswordHasher<User> passwordHasher, ILogger<UserFacade> userFacadeLogger)
         {

@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Roomiebill.Server.DataAccessLayer.Dtos;
+using Roomiebill.Server.Services;
 
 namespace Roomiebill.Server.Controllers
 {
@@ -6,18 +8,18 @@ namespace Roomiebill.Server.Controllers
     [Route("api/[controller]")]
     public class GroupsController : ControllerBase
     {
-        //private readonly GroupService _groupService;
+        private readonly GroupService _groupService;
 
-        //public GroupsController(GroupService groupService)
-        //{
-        //    _groupService = groupService;
-        //}
+        public GroupsController(GroupService groupService)
+        {
+            _groupService = groupService;
+        }
 
-        //[HttpPost]
-        //public IActionResult CreateGroup([FromBody] GroupModel group)
-        //{
-        //    _groupService.CreateGroup(group);
-        //    return Ok();
-        //}
+        [HttpPost("createNewGroup")]
+        public IActionResult CreateGroup([FromBody] CreateNewGroupDto group)
+        {
+            _groupService.CreateNewGroupAsync(group);
+            return Ok();
+        }
     }
 }
