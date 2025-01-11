@@ -10,14 +10,14 @@ namespace ServerTests;
 
 public class UserFacadeTests
 {
-    private readonly Mock<IUsersDb> _usersDbMock;
+    private readonly Mock<IApplicationDbContext> _usersDbMock;
     private readonly Mock<IPasswordHasher<User>> _passwordHasherMock;
     private readonly Mock<ILogger<UserFacade>> _loggerMock;
     private readonly UserFacade _userFacade;
 
     public UserFacadeTests()
     {
-        _usersDbMock = new Mock<IUsersDb>();
+        _usersDbMock = new Mock<IApplicationDbContext>();
         _passwordHasherMock = new Mock<IPasswordHasher<User>>();
         _loggerMock = new Mock<ILogger<UserFacade>>();
 

@@ -12,7 +12,7 @@ namespace Roomiebill.Server.Services
     {
         public UserFacade _userFacade { get; }
 
-        public UserService(UsersDb usersDb, IPasswordHasher<User> passwordHasher, ILogger<UserFacade> userFacadeLogger)
+        public UserService(IApplicationDbContext usersDb, IPasswordHasher<User> passwordHasher, ILogger<UserFacade> userFacadeLogger)
         {
             _userFacade = new UserFacade(usersDb, passwordHasher, userFacadeLogger);
         }

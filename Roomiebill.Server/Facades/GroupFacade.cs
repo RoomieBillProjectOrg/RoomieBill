@@ -7,11 +7,11 @@ namespace Roomiebill.Server.Facades
 {
     public class GroupFacade
     {
-        private readonly IGroupDb _groupDb;
+        private readonly IApplicationDbContext _groupDb;
         private ILogger<GroupFacade> _logger;
         private readonly IUserFacade _userFacade;
 
-        public GroupFacade(IGroupDb groupDb, ILogger<GroupFacade> logger, IUserFacade userFacade)
+        public GroupFacade(IApplicationDbContext groupDb, ILogger<GroupFacade> logger, IUserFacade userFacade)
         {
             _groupDb = groupDb;
             _logger = logger;

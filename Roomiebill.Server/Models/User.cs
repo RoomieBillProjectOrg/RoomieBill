@@ -8,8 +8,10 @@ namespace Roomiebill.Server.Models
         public string Username { get; set; }
         public string Email { get; set; }
         public string PasswordHash { get; set; }  // Store the hashed password
-        public bool IsSystemAdmin { get; set; }
-        public bool IsLoggedIn { get; set; }
+        public bool IsLoggedIn { get; set; } = false;
+        public bool IsSystemAdmin { get; set; } = false;
+
+        public List<Group> GroupsUserIsMemberAt { get; set; } = new List<Group>();
 
         public User() { }
 

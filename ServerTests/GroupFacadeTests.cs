@@ -10,14 +10,14 @@ namespace ServerTests
 {
     public class GroupFacadeTests
     {
-        private readonly Mock<IGroupDb> _groupDbMock;
+        private readonly Mock<IApplicationDbContext> _groupDbMock;
         private readonly Mock<ILogger<GroupFacade>> _loggerMock;
         private readonly Mock<IUserFacade> _userFacadeMock;
         private GroupFacade _groupFacade;
 
         public GroupFacadeTests()
         {
-            _groupDbMock = new Mock<IGroupDb>();
+            _groupDbMock = new Mock<IApplicationDbContext>();
             _loggerMock = new Mock<ILogger<GroupFacade>>();
             _userFacadeMock = new Mock<IUserFacade>();
         }
@@ -121,4 +121,4 @@ namespace ServerTests
 
         #endregion
     }
-}
+}   

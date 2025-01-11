@@ -9,11 +9,11 @@ namespace Roomiebill.Server.Facades
 {
     public class UserFacade : IUserFacade
     {
-        private readonly IUsersDb _usersDb;
+        private readonly IApplicationDbContext _usersDb;
         private readonly IPasswordHasher<User> _passwordHasher;
         private ILogger<UserFacade> _logger;
 
-        public UserFacade(IUsersDb usersDb, IPasswordHasher<User> passwordHasher, ILogger<UserFacade> logger)
+        public UserFacade(IApplicationDbContext usersDb, IPasswordHasher<User> passwordHasher, ILogger<UserFacade> logger)
         {
             _usersDb = usersDb;
             _passwordHasher = passwordHasher;
@@ -85,11 +85,7 @@ namespace Roomiebill.Server.Facades
             }
 
             // Create a new user object from the DTO
-            User newUser = new User
-            {
-                Username = registerUserDto.Username,
-                Email = registerUserDto.Email
-            };
+            User newUser = new User(registerUserDto.Username, registerUserDto.Email, registerUserDto.Password);
 
             // Hash the password
             string passwordHash = _passwordHasher.HashPassword(newUser, registerUserDto.Password);

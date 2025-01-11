@@ -1,20 +1,35 @@
 ﻿
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Roomiebill.Server.Models
 {
     public class Group
     {
-        private int Id { get; set; }
-        private string GroupName { get; set; }
-        private User Admin { get; set; }
-        private List<User> Members { get; set; }
-        private List<Expense> Expenses { get; set; }
+        public int Id { get; set; }
+        public string GroupName { get; set; }
+        public User Admin { get; set; }
+        public List<User> Members { get; set; }
+
+        [NotMapped]
+        public List<Expense> Expenses { get; set; }
+
+        public Group()
+        {
+            // Default constructor required by EF Core
+            Members = new List<User>();
+
+            // REMOVE FROM COMMENT WHEN REMOVE EXPENSE CLASS FROM COMMENT
+            //Expenses = new List<Expense>();
+        }
 
         public Group(string groupName, User groupAdmin, List<User> groupMembers)
         {
             this.GroupName = groupName;
             this.Admin = groupAdmin;
             this.Members = groupMembers;
-            this.Expenses = new List<Expense>();
+
+            // REMOVE FROM COMMENT WHEN REMOVE EXPENSE CLASS FROM COMMENT
+            //this.Expenses = new List<Expense>();
         }
 
         public void AddMember(User user)
@@ -29,12 +44,15 @@ namespace Roomiebill.Server.Models
 
         public void AddExpense(Expense expense)
         {
-            Expenses.Add(expense);
+            // REMOVE FROM COMMENT WHEN REMOVE EXPENSE CLASS FROM COMMENT
+            //Expenses.Add(expense);
         }
 
         public void RemoveExpense(Expense expense)
         {
-            Expenses.Remove(expense);
+
+            // REMOVE FROM COMMENT WHEN REMOVE EXPENSE CLASS FROM COMMENT
+            //Expenses.Remove(expense);
         }
 
         public User GetAdmin()
@@ -45,11 +63,6 @@ namespace Roomiebill.Server.Models
         public List<User> GetMembers()
         {
             return Members;
-        }
-
-        public List<Expense> GetExpenses()
-        {
-            return Expenses;
         }
 
         public string GetGroupName()
