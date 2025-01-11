@@ -1,52 +1,73 @@
 ﻿
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Roomiebill.Server.Models
 {
     public class Group
     {
-        private int Id { get; set; }
-        private string Name { get; set; }
-        private string Description { get; set; } 
-        private User Admin { get; set; }
-        private List<User> Members { get; set; }
-        private List<Expense> Expenses { get; set; }
+        public int Id { get; set; }
+        public string GroupName { get; set; }
+        public User Admin { get; set; }
+        public List<User> Members { get; set; }
 
-        public Group(int Id, string Name,string Description, User Admin, List<User> Members, List<Expense> Expenses){
-            this.Id = Id;
-            this.Name = Name;
-            this.Description = Description;
-            this.Admin = Admin;
-            this.Members = Members;
-            this.Expenses = Expenses;
-        }
-        //Group constructor without empty members and expens
-        public Group(int Id, string Name,string Description, User Admin){
-            this.Id = Id;
-            this.Name = Name;
-            this.Description = Description;
-            this.Admin = Admin;
-            this.Members = new List<User>();
-            this.Expenses = new List<Expense>();
-        }
-        
+        [NotMapped]
+        public List<Expense> Expenses { get; set; }
 
-        public void AddMember(User user){
+        public Group()
+        {
+            // Default constructor required by EF Core
+            Members = new List<User>();
+
+            // REMOVE FROM COMMENT WHEN REMOVE EXPENSE CLASS FROM COMMENT
+            //Expenses = new List<Expense>();
+        }
+
+        public Group(string groupName, User groupAdmin, List<User> groupMembers)
+        {
+            this.GroupName = groupName;
+            this.Admin = groupAdmin;
+            this.Members = groupMembers;
+
+            // REMOVE FROM COMMENT WHEN REMOVE EXPENSE CLASS FROM COMMENT
+            //this.Expenses = new List<Expense>();
+        }
+
+        public void AddMember(User user)
+        {
             Members.Add(user);
         }
 
-        public void RemoveMember(User user){
+        public void RemoveMember(User user)
+        {
             Members.Remove(user);
         }
 
-        public void AddExpense(Expense expense){
-            Expenses.Add(expense);
+        public void AddExpense(Expense expense)
+        {
+            // REMOVE FROM COMMENT WHEN REMOVE EXPENSE CLASS FROM COMMENT
+            //Expenses.Add(expense);
         }
 
-        public void RemoveExpense(Expense expense){
-            Expenses.Remove(expense);
+        public void RemoveExpense(Expense expense)
+        {
+
+            // REMOVE FROM COMMENT WHEN REMOVE EXPENSE CLASS FROM COMMENT
+            //Expenses.Remove(expense);
         }
 
-        
+        public User GetAdmin()
+        {
+            return Admin;
+        }
 
+        public List<User> GetMembers()
+        {
+            return Members;
+        }
 
+        public string GetGroupName()
+        {
+            return GroupName;
+        }
     }
 }
