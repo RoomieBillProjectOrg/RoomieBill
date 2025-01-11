@@ -37,12 +37,12 @@ jobs:
 
     - name: Install Frontend dependencies
       run: npm install
-      working-directory: Roomiebill.Frontend
+      working-directory: Roomiebill.FrontendApplication
 
     - name: Build Frontend
       run: npm run build
-      working-directory: Roomiebill.Frontend
+      working-directory: Roomiebill.FrontendApplication
 
     - name: Run Frontend Tests
       run: npm test
-      working-directory: Roomiebill.Frontend
+      working-directory: Roomiebill.FrontendApplication
