@@ -1,0 +1,48 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x' # Specify your .NET version
+
+    - name: Restore Server dependencies
+      run: dotnet restore Roomiebill.Server/Roomiebill.Server.csproj
+
+    - name: Build Server
+      run: dotnet build Roomiebill.Server/Roomiebill.Server.csproj --no-restore --configuration Release
+
+    - name: Run Server Tests
+      run: dotnet test Roomiebill.Server/Roomiebill.Server.csproj --no-build --configuration Release --verbosity normal
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16.x' # Specify your Node.js version
+
+    - name: Install Frontend dependencies
+      run: npm install
+      working-directory: Roomiebill.Frontend
+
+    - name: Build Frontend
+      run: npm run build
+      working-directory: Roomiebill.Frontend
+
+    - name: Run Frontend Tests
+      run: npm test
+      working-directory: Roomiebill.Frontend
