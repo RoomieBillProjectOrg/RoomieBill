@@ -11,7 +11,7 @@ namespace Roomiebill.Server.Services
         private readonly GroupFacade _groupFacade;
         private readonly UserFacade _userFacade;
 
-        public GroupService(GroupsDb groupsDb, ILogger<GroupFacade> groupFacadeLogger, UserService userService)
+        public GroupService(IApplicationDbContext groupsDb, ILogger<GroupFacade> groupFacadeLogger, UserService userService)
         {
             _userFacade = userService._userFacade;
             _groupFacade = new GroupFacade(groupsDb, groupFacadeLogger, _userFacade);

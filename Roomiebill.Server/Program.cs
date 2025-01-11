@@ -3,6 +3,7 @@ using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.Services;
 using Roomiebill.Server.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,20 +19,26 @@ builder.Services.AddApplicationInsightsTelemetry(builder.Configuration["Applicat
 // Configure the connection string for SQL Server using the settings from appsettings.json
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddDbContext<UsersDb>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddDbContext<GroupsDb>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
+
 
 // Add other services like UserService, GroupService, and BillingService
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
-builder.Services.AddScoped<IUsersDb, UsersDb>();
-builder.Services.AddScoped<IGroupDb, GroupsDb>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<GroupService>();
 builder.Services.AddScoped<BillingService>();
 
 var app = builder.Build();
+
+// Apply migrations and ensure database creation
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    dbContext.Database.Migrate();
+
+    // Seed the database
+    DatabaseSeeder.Seed(scope.ServiceProvider);
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
