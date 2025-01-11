@@ -7,13 +7,13 @@ using Roomiebill.Server.Models;
 
 namespace Roomiebill.Server.Facades
 {
-    public class UserFacade
+    public class UserFacade : IUserFacade
     {
-        private readonly IUsersDb _usersDb;
+        private readonly IApplicationDbContext _usersDb;
         private readonly IPasswordHasher<User> _passwordHasher;
         private ILogger<UserFacade> _logger;
 
-        public UserFacade(IUsersDb usersDb, IPasswordHasher<User> passwordHasher, ILogger<UserFacade> logger)
+        public UserFacade(IApplicationDbContext usersDb, IPasswordHasher<User> passwordHasher, ILogger<UserFacade> logger)
         {
             _usersDb = usersDb;
             _passwordHasher = passwordHasher;
@@ -85,11 +85,7 @@ namespace Roomiebill.Server.Facades
             }
 
             // Create a new user object from the DTO
-            User newUser = new User
-            {
-                Username = registerUserDto.Username,
-                Email = registerUserDto.Email
-            };
+            User newUser = new User(registerUserDto.Username, registerUserDto.Email, registerUserDto.Password);
 
             // Hash the password
             string passwordHash = _passwordHasher.HashPassword(newUser, registerUserDto.Password);
@@ -150,6 +146,7 @@ namespace Roomiebill.Server.Facades
                 _logger.LogError($"User with this username: {updatePasswordDto.Username} does not exist");
                 throw new Exception("User with this username does not exist");
             }
+
             // Verify the old password
             var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(existingUser, existingUser.PasswordHash, updatePasswordDto.CurrentPassword);
             if (passwordVerificationResult != PasswordVerificationResult.Success)
@@ -157,12 +154,16 @@ namespace Roomiebill.Server.Facades
                 _logger.LogError("Old password is incorrect");
                 throw new Exception("Old password is incorrect");
             }
+
             // Hash the new password
             string passwordHash = _passwordHasher.HashPassword(existingUser, updatePasswordDto.NewPassword);
+
             // Update the user object with the hashed password
             existingUser.PasswordHash = passwordHash;
+
             _usersDb.UpdateUser(existingUser);
             _logger.LogInformation($"User {updatePasswordDto.Username} password updated successfully");
+
             return existingUser;
         }
 
@@ -264,5 +265,14 @@ namespace Roomiebill.Server.Facades
             _logger.LogInformation($"User {username} is logged in: {existingUser.IsLoggedIn}");
             return existingUser;
         }
+
+        #region Help functions
+
+        public async Task<User?> GetUserByUsernameAsync(string username)
+        {
+            return _usersDb.GetUserByUsername(username);
+        }
+
+        #endregion 
     }
 }
