@@ -6,6 +6,7 @@
     <StackLayout Margin="20">
         <Label Text="Welcome to Roomiebill!" />
         <Button Text="Register User" />
+        <Button Text="Login User" />
     </StackLayout>
 
 </ContentPage>

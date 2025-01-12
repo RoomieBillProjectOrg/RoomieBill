@@ -12,24 +12,38 @@ namespace Roomiebill.Server.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
         private UserService _userService;
 
-        public UsersController(ApplicationDbContext context, UserService userService)
+        public UsersController(UserService userService)
         {
-            _context = context;
             _userService = userService;
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDto user)
         {
-            //_context.Users.Add(user);
-            //await _context.SaveChangesAsync();
-
             await _userService.RegisterUserAsync(user);
 
             return Ok(new { Message = "User registered successfully" });
+        }
+
+        [HttpPut("updatePassword")]
+        public async Task<IActionResult> UpdatePassword([FromBody] UpdatePasswordDto updatePasswordDto)
+        {
+            await _userService.UpdatePasswordAsync(updatePasswordDto);
+
+            return Ok(new { Message = "Password updated successfully" });
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+        {
+            var user = await _userService.LoginAsync(loginDto);
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+            return Ok(new { Message = "User logged in successfully" });
         }
     }
 }

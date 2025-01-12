@@ -1,6 +1,7 @@
 ﻿using Roomiebill.Server.Common;
 
-namespace Roomiebill.Tests
+namespace ServerTests
+
 {
     public class PasswordValidatorTests
     {

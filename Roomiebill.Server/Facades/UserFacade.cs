@@ -7,38 +7,46 @@ using Roomiebill.Server.Models;
 
 namespace Roomiebill.Server.Facades
 {
-    public class UserFacade
+    public class UserFacade : IUserFacade
     {
-        private readonly IUsersDb _usersDb;
+        private readonly IApplicationDbContext _usersDb;
         private readonly IPasswordHasher<User> _passwordHasher;
         private ILogger<UserFacade> _logger;
 
-        public UserFacade(IUsersDb usersDb, IPasswordHasher<User> passwordHasher, ILogger<UserFacade> logger)
+        public UserFacade(IApplicationDbContext usersDb, IPasswordHasher<User> passwordHasher, ILogger<UserFacade> logger)
         {
             _usersDb = usersDb;
             _passwordHasher = passwordHasher;
             _logger = logger;
         }
 
+        /// <summary>
+        /// Register a new user with the given details.
+        /// The new user will be added to the database with default values as no system admin and not logged in.
+        /// </summary>
+        /// <param name="registerUserDto"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="Exception"></exception>
         public async Task<User> RegisterUserAsync(RegisterUserDto registerUserDto)
         {
-            _logger.LogInformation("Registering user");
+            _logger.LogInformation($"Register user with details: Username: {registerUserDto.Username}, Email: {registerUserDto.Email}");
 
             if (registerUserDto.Username == null)
             {
-                _logger.LogError("Username is null. Cannot register user.");
+                _logger.LogError($"Username is null. Cannot register user with details: Username: {registerUserDto.Username}, Email: {registerUserDto.Email}");
                 throw new ArgumentNullException(nameof(registerUserDto.Username));
             }
 
             if (registerUserDto.Email == null)
             {
-                _logger.LogError("Email is null. Cannot register user.");
+                _logger.LogError($"Email is null. Cannot register user with details: Username: {registerUserDto.Username}, Email: {registerUserDto.Email}");
                 throw new ArgumentNullException(nameof(registerUserDto.Email));
             }
 
             if (registerUserDto.Password == null)
             {
-                _logger.LogError("Password is null. Cannot register user.");
+                _logger.LogError($"Password is null. Cannot register user with details: Username: {registerUserDto.Username}, Email: {registerUserDto.Email}");
                 throw new ArgumentNullException(nameof(registerUserDto.Password));
             }
 
@@ -64,7 +72,7 @@ namespace Roomiebill.Server.Facades
             var existingUser = _usersDb.GetUserByUsername(registerUserDto.Username);
             if (existingUser != null)
             {
-                _logger.LogError("User with this username already exists");
+                _logger.LogError($"User with this username = {registerUserDto.Username} already exists");
                 throw new Exception("User with this username already exists");
             }
 
@@ -72,16 +80,12 @@ namespace Roomiebill.Server.Facades
             existingUser = _usersDb.GetUserByEmail(registerUserDto.Email);
             if (existingUser != null)
             {
-                _logger.LogError("User with this email already exists");
+                _logger.LogError($"User with this email = {registerUserDto.Email} already exists");
                 throw new Exception("User with this email already exists");
             }
 
             // Create a new user object from the DTO
-            User newUser = new User
-            {
-                Username = registerUserDto.Username,
-                Email = registerUserDto.Email
-            };
+            User newUser = new User(registerUserDto.Username, registerUserDto.Email, registerUserDto.Password);
 
             // Hash the password
             string passwordHash = _passwordHasher.HashPassword(newUser, registerUserDto.Password);
@@ -91,9 +95,184 @@ namespace Roomiebill.Server.Facades
 
             _usersDb.AddUser(newUser);
 
-            _logger.LogInformation("User registered successfully");
+            _logger.LogInformation($"User registered successfully with details: Username: {registerUserDto.Username}, Email: {registerUserDto.Email}");
 
             return newUser;
         }
+
+        /// <summary>
+        /// Update the password of the user with the given details.
+        /// This function checks if the user exists by username, verifies the old password, and then updates the password.
+        /// </summary>
+        /// <param name="updatePasswordDto"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="Exception"></exception>
+        public async Task<User> UpdatePasswordAsync(UpdatePasswordDto updatePasswordDto)
+        {
+            _logger.LogInformation($"Updating user {updatePasswordDto.Username} password");
+
+            if (updatePasswordDto.Username == null)
+            {
+                _logger.LogError($"Username is null. Cannot update password for user {updatePasswordDto.Username}");
+                throw new ArgumentNullException(nameof(updatePasswordDto.Username));
+            }
+
+            if (updatePasswordDto.CurrentPassword == null)
+            {
+                _logger.LogError($"Old password is null. Cannot update password for user {updatePasswordDto.Username}");
+                throw new ArgumentNullException(nameof(updatePasswordDto.CurrentPassword));
+            }
+
+            if (updatePasswordDto.NewPassword == null)
+            {
+                _logger.LogError($"New password is null. Cannot update password for user {updatePasswordDto.Username}");
+                throw new ArgumentNullException(nameof(updatePasswordDto.NewPassword));
+            }
+
+            // Check password validate using class PasswordValidator
+            var passwordValidator = new PasswordValidator();
+            var result = passwordValidator.ValidatePassword(updatePasswordDto.NewPassword);
+            if (!result)
+            {
+                _logger.LogError(passwordValidator.Error);
+                throw new Exception(passwordValidator.Error);
+            }
+
+            // Check if the user exists by username
+            var existingUser = _usersDb.GetUserByUsername(updatePasswordDto.Username);
+            if (existingUser == null)
+            {
+                _logger.LogError($"User with this username: {updatePasswordDto.Username} does not exist");
+                throw new Exception("User with this username does not exist");
+            }
+
+            // Verify the old password
+            var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(existingUser, existingUser.PasswordHash, updatePasswordDto.CurrentPassword);
+            if (passwordVerificationResult != PasswordVerificationResult.Success)
+            {
+                _logger.LogError("Old password is incorrect");
+                throw new Exception("Old password is incorrect");
+            }
+
+            // Hash the new password
+            string passwordHash = _passwordHasher.HashPassword(existingUser, updatePasswordDto.NewPassword);
+
+            // Update the user object with the hashed password
+            existingUser.PasswordHash = passwordHash;
+
+            _usersDb.UpdateUser(existingUser);
+            _logger.LogInformation($"User {updatePasswordDto.Username} password updated successfully");
+
+            return existingUser;
+        }
+
+        /// <summary>
+        /// Login the user with the given details.
+        /// This function checks if the user exists by username, verifies the password, and then logs in the user.
+        /// </summary>
+        /// <param name="loginDto"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="Exception"></exception>
+        public async Task<User> LoginAsync(LoginDto loginDto)
+        {
+            _logger.LogInformation($"Logging in user {loginDto.Username}");
+
+            if (loginDto.Username == null)
+            {
+                _logger.LogError($"Username is null. Cannot login user {loginDto.Username}");
+                throw new ArgumentNullException(nameof(loginDto.Username));
+            }
+
+            if (loginDto.Password == null)
+            {
+                _logger.LogError($"Password is null. Cannot login user {loginDto.Username}");
+                throw new ArgumentNullException(nameof(loginDto.Password));
+            }
+
+            // Check if the user exists by username
+            var existingUser = _usersDb.GetUserByUsername(loginDto.Username);
+            if (existingUser == null)
+            {
+                _logger.LogError($"User with this username: {loginDto.Username} does not exist");
+                throw new Exception("User with this username does not exist");
+            }
+
+            // Verify the password
+            var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(existingUser, existingUser.PasswordHash, loginDto.Password);
+            if (passwordVerificationResult != PasswordVerificationResult.Success)
+            {
+                _logger.LogError($"User with username: {loginDto.Username} entered incorrect password");
+                throw new Exception("Password is incorrect");
+            }
+
+            existingUser.IsLoggedIn = true;
+            _usersDb.UpdateUser(existingUser);
+            _logger.LogInformation($"User {loginDto.Username} logged in successfully");
+
+            return existingUser;
+        }
+
+        /// <summary>
+        /// This function gets the user by username and returns if the user is an admin in the system.
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="Exception"></exception>
+        public async Task<bool> IsUserAdminAsync(string username)
+        {
+            _logger.LogInformation($"Checking if user {username} is an admin");
+            if (username == null)
+            {
+                _logger.LogError($"Username is null. Cannot check if user is an admin");
+                throw new ArgumentNullException(nameof(username));
+            }
+            // Check if the user exists by username
+            var existingUser = _usersDb.GetUserByUsername(username);
+            if (existingUser == null)
+            {
+                _logger.LogError($"User with this username: {username} does not exist");
+                throw new Exception("User with this username does not exist");
+            }
+            _logger.LogInformation($"User {username} is an admin: {existingUser.IsSystemAdmin}");
+            return existingUser.IsSystemAdmin;
+        }
+
+        /// <summary>
+        /// This function gets the user by username and returns if the user is logged in.
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="Exception"></exception>
+        public async Task<User> IsUserLoggedInAsync(string username)
+        {
+            _logger.LogInformation($"Checking if user {username} is logged in");
+            if (username == null)
+            {
+                _logger.LogError($"Username is null. Cannot check if user is logged in");
+                throw new ArgumentNullException(nameof(username));
+            }
+            // Check if the user exists by username
+            var existingUser = _usersDb.GetUserByUsername(username);
+            if (existingUser == null)
+            {
+                _logger.LogError($"User with this username: {username} does not exist");
+                throw new Exception("User with this username does not exist");
+            }
+            _logger.LogInformation($"User {username} is logged in: {existingUser.IsLoggedIn}");
+            return existingUser;
+        }
+
+        #region Help functions
+
+        public async Task<User?> GetUserByUsernameAsync(string username)
+        {
+            return _usersDb.GetUserByUsername(username);
+        }
+
+        #endregion 
     }
 }
