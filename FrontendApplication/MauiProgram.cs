@@ -23,8 +23,7 @@ namespace FrontendApplication
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 })
-                .RegisterFirebaseServices()
-                .Build();
+                .RegisterFirebaseServices();
 
             // Register the UserService and HttpClient
             builder.Services.AddSingleton<UserServiceApi>();
