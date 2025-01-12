@@ -1,5 +1,6 @@
 # User-specific files
 .vs/
+.vs/RoomieBill/
 .idea/
 .vscode/
 *.user

@@ -1,18 +1,25 @@
-﻿using Roomiebill.Server.DataAccessLayer;
+﻿using Microsoft.AspNetCore.Identity;
+using Roomiebill.Server.DataAccessLayer;
+using Roomiebill.Server.DataAccessLayer.Dtos;
+using Roomiebill.Server.Facades;
+using Roomiebill.Server.Models;
 
 namespace Roomiebill.Server.Services
 {
     public class GroupService
     {
-        // Logic for managing groups and members.
+        private readonly GroupFacade _groupFacade;
+        private readonly UserFacade _userFacade;
 
-
-        private readonly ApplicationDbContext _context;
-
-        public GroupService(ApplicationDbContext context)
+        public GroupService(IApplicationDbContext groupsDb, ILogger<GroupFacade> groupFacadeLogger, UserService userService)
         {
-            _context = context;
+            _userFacade = userService._userFacade;
+            _groupFacade = new GroupFacade(groupsDb, groupFacadeLogger, _userFacade);
         }
 
+        public async Task<Group> CreateNewGroupAsync(CreateNewGroupDto group)
+        {
+            return await _groupFacade.CreateNewGroupAsync(group);
+        }
     }
 }
