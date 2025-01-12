@@ -27,7 +27,7 @@ namespace FrontendApplication.Services
 
             var json = JsonConvert.SerializeObject(user);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync("/UsersController/register", content);
+            var response = await _httpClient.PostAsync("/Users/register", content);
 
             return response.IsSuccessStatusCode;
         }
