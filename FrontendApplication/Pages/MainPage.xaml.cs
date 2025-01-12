@@ -1,4 +1,5 @@
 ﻿using FrontendApplication.Pages;
+using Plugin.Firebase.CloudMessaging;
 
 namespace FrontendApplication
 {
@@ -42,6 +43,9 @@ namespace FrontendApplication
             {
                 //await Shell.Current.GoToAsync(nameof(RegisterPage));
                 await Navigation.PushAsync(new FrontendApplication.Pages.RegisterPage());
+                await CrossFirebaseCloudMessaging.Current.CheckIfValidAsync();
+                var token = await CrossFirebaseCloudMessaging.Current.GetTokenAsync();
+                Console.WriteLine($"FCM token: {token}");
             };
             layout.Children.Add(registerPageButton);
 

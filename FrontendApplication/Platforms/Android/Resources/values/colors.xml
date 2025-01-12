@@ -3,4 +3,6 @@
     <color name="colorPrimary">#512BD4</color>
     <color name="colorPrimaryDark">#2B0B98</color>
     <color name="colorAccent">#2B0B98</color>
+    <string name="default_notification_channel_id">1.0</string>
+    <string name="com.crashlytics.android.build_id">1</string>
 </resources>
