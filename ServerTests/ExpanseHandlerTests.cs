@@ -168,6 +168,67 @@ namespace Roomiebill.Tests
             // Debugging: Print the message to the console
             Assert.Equal(size,newDebtArray.Length);
         }
+
+        //test to check for remove user but first settle his debt 
+        [Fact]
+        public void RemoveMember_ShouldThrowExceptionForUnsettledDebts()
+        {
+            // Arrange
+            List<User> users = new List<User>
+            {
+                new User { Id = 1, Username = "User 1" },
+                new User { Id = 2, Username = "User 2" },
+                new User { Id = 3, Username = "User 3" }
+            };
+            int userCount = users.Count;
+            int size = (userCount * (userCount - 1)) / 2; // size of the debtArray
+            ExpenseHandler expenseHandler = new ExpenseHandler(users);
+            int[] debtArray = new int[size];
+
+            ExpenseDto expenseDto = new ExpenseDto
+            {
+                Id = 1,
+                Amount = 100,
+                Description = "Dinner",
+                IsPaid = true,
+                PayerId = 1,
+                SplitBetween = new Dictionary<int, double>
+                {
+                    { 1, 50.0 },
+                    { 2, 30.0 },
+                    { 3, 20.0 }
+                }
+            };
+            ExpenseDto expenseDto2 = new ExpenseDto
+            {
+                Id = 2,
+                Amount = 100,
+                Description = "Dinner",
+                IsPaid = true,
+                PayerId = 3,
+                SplitBetween = new Dictionary<int, double>
+                {
+                    { 1, 50.0 },
+                    { 2, 30.0 },
+                    { 3, 20.0 }
+                }
+            };
+
+
+            expenseHandler.AddExpense(expenseDto, debtArray);
+            expenseHandler.AddExpense(expenseDto2, debtArray);
+
+            // Act & Assert
+            User removedUser = new User { Id = 2, Username = "User 2" };
+            List<int> removedUsers = new List<int> { 2 };
+            expenseHandler.SettleAllDebts(removedUser.Id, debtArray);
+            int[] newDebtArray = expenseHandler.ReduceDebtArraySize(2,3,removedUsers,debtArray);
+            userCount -= 1;
+            size = (userCount * (userCount - 1)) / 2; // size of the debtArray
+            // Debugging: Print the message to the console
+            Assert.Equal(size,newDebtArray.Length);
+        }
+
                     
     }
 }

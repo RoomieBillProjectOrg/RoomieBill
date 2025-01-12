@@ -114,6 +114,18 @@ namespace Roomiebill.Server.Facades
             }
             return debts;
         }
+        //settle all debt for a user and all other  users
+        public void SettleAllDebts(int userId, int[] debtArray)
+        {
+            int userIndex = _userIndexMap[userId];
+            for (int i = 0; i < _userCount; i++)
+            {
+                if (i != userIndex)
+                {
+                    SettleDebt(userIndex, i, debtArray);
+                }
+            }
+        }
 
         // Settle debt between two users
         public void SettleDebt(int i, int j, int[] debtArray)
@@ -121,6 +133,8 @@ namespace Roomiebill.Server.Facades
             int index = GetIndex(i, j);
             debtArray[index] = 0;
         }
+        
+
 
         public void DeleteExpense(ExpenseDto expenseDto, int[] debtArray)
         {
@@ -252,7 +266,7 @@ namespace Roomiebill.Server.Facades
                 }
             }
         }
-
+        //
         private int GetUserId(int userIndex)
         {
             int userId = -1;
