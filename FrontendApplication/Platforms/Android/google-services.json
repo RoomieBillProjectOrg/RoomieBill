@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "911758979814",
+    "project_id": "roomiebill-34199",
+    "storage_bucket": "roomiebill-34199.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:911758979814:android:bd44d64f7f95c1a6a40127",
+        "android_client_info": {
+          "package_name": "com.roomiebill.pushnotifications"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbBawZ8wQ4mXZBtfRqYGYJw9dZIpVLD2Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
