@@ -1,4 +1,6 @@
-﻿namespace FrontendApplication
+﻿using Firebase.Auth;
+
+namespace FrontendApplication
 {
     public partial class App : Application
     {
