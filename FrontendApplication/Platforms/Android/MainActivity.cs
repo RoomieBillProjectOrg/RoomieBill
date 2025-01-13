@@ -19,7 +19,6 @@ namespace FrontendApplication
             base.OnCreate(savedInstanceState);
             HandleIntent(Intent);
             CreateNotificationChannelIfNeeded();
-            RequestPushNotificationsPermission();
         }
 
         private static void HandleIntent(Intent intent)
