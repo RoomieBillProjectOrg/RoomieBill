@@ -50,7 +50,7 @@ jobs:
 
       - name: Build MAUI Frontend
         working-directory: ./FrontendApplication
-        run: dotnet build --no-restore --configuration Release -t:Run # Builds the MAUI app
+        run: dotnet build --no-restore --configuration Release      
 
       - name: Test MAUI Frontend (Optional)
         working-directory: ./FrontendApplication
