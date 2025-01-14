@@ -161,7 +161,7 @@ namespace Roomiebill.Server.Facades
             // Update the user object with the hashed password
             existingUser.PasswordHash = passwordHash;
 
-            _usersDb.UpdateUser(existingUser);
+            await _usersDb.UpdateUserAsync(existingUser);
             _logger.LogInformation($"User {updatePasswordDto.Username} password updated successfully");
 
             return existingUser;
@@ -208,7 +208,7 @@ namespace Roomiebill.Server.Facades
             }
 
             existingUser.IsLoggedIn = true;
-            _usersDb.UpdateUser(existingUser);
+            await _usersDb.UpdateUserAsync(existingUser);
             _logger.LogInformation($"User {loginDto.Username} logged in successfully");
 
             return existingUser;
@@ -264,6 +264,14 @@ namespace Roomiebill.Server.Facades
             }
             _logger.LogInformation($"User {username} is logged in: {existingUser.IsLoggedIn}");
             return existingUser;
+        }
+
+        public async Task AddInviteToInvitee(User invitee, Invite inv)
+        {
+            _logger.LogInformation($"Adding invite to user {invitee.Username}");
+            invitee.AddInvite(inv);
+            await _usersDb.UpdateUserAsync(invitee);
+            _logger.LogInformation($"Invite added to user {invitee.Username}");
         }
 
         #region Help functions

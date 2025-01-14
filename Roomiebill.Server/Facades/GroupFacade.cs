@@ -68,6 +68,45 @@ namespace Roomiebill.Server.Facades
             _logger.LogInformation($"Inviting user with username {invited_username} to group with id {groupId}.");
 
             User? inviter = await _userFacade.GetUserByUsernameAsync(inviter_username);
+
+            if (inviter == null)
+            {
+                _logger.LogError($"Error when trying to invite user to group: inviter with username {inviter_username} does not exist in the system.");
+                throw new Exception($"Error when trying to invite user to group: inviter with username {inviter_username} does not exist in the system.");
+            }
+
+            User? invited = await _userFacade.GetUserByUsernameAsync(invited_username);
+
+            if (invited == null)
+            {
+                _logger.LogError($"Error when trying to invite user to group: invited with username {invited_username} does not exist in the system.");
+                throw new Exception($"Error when trying to invite user to group: invited with username {invited_username} does not exist in the system.");
+            }
+
+            if (await _groupDb.GetGroupByIdAsync(groupId) == null)
+            {
+                _logger.LogError($"Error when trying to invite user to group: group with id {groupId} does not exist in the system.");
+                throw new Exception($"Error when trying to invite user to group: group with id {groupId} does not exist in the system.");
+            }
+
+            await _userFacade.AddInviteToInvitee(invited, new Invite(inviter_username, invited_username, groupId));
+
+            _logger.LogInformation($"User with username {invited_username} has been invited to group with id {groupId}.");
+        }
+
+        public async Task<Group> GetGroupByIdAsync(int groupId)
+        {
+            _logger.LogInformation($"Getting group with id {groupId}.");
+
+            Group? group = await _groupDb.GetGroupByIdAsync(groupId);
+
+            if (group == null)
+            {
+                _logger.LogError($"Error when trying to get group: group with id {groupId} does not exist in the system.");
+                throw new Exception($"Error when trying to get group: group with id {groupId} does not exist in the system.");
+            }
+
+            return group;
         }
     }
 }
