@@ -37,9 +37,9 @@ namespace Roomiebill.Server.DataAccessLayer
             return Users.FirstOrDefault(u => u.Email == email);
         }
 
-        public User? GetUserByUsername(string username)
+        public async Task<User?> GetUserByUsernameAsync(string username)
         {
-            return Users.FirstOrDefault(u => u.Username == username);
+            return await Users.FirstOrDefaultAsync(u => u.Username == username);
         }
 
         public void AddUser(User user)
