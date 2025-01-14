@@ -63,9 +63,11 @@ namespace Roomiebill.Server.Facades
             return newGroup;
         }
 
-        public async Task InviteToGroupByUsername(int inviter_id, string invited_username, int groupId)
+        public async Task InviteToGroupByUsername(string inviter_username, string invited_username, int groupId)
         {
-            
+            _logger.LogInformation($"Inviting user with username {invited_username} to group with id {groupId}.");
+
+            User? inviter = await _userFacade.GetUserByUsernameAsync(inviter_username);
         }
     }
 }
