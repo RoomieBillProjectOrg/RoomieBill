@@ -10,7 +10,9 @@ namespace Roomiebill.Server.DataAccessLayer
 
         public void AddUser(User user);
 
-        public void UpdateUser(User user);
+        public Task UpdateUserAsync(User user);
+
+        public Task<Group?> GetGroupByIdAsync(int groupId);
 
         public void AddGroup(Group group);
 
