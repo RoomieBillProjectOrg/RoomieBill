@@ -69,7 +69,7 @@ namespace Roomiebill.Server.Facades
             }
 
             // Check if the user already exists by username
-            var existingUser = _usersDb.GetUserByUsername(registerUserDto.Username);
+            var existingUser = await _usersDb.GetUserByUsernameAsync(registerUserDto.Username);
             if (existingUser != null)
             {
                 _logger.LogError($"User with this username = {registerUserDto.Username} already exists");
@@ -140,7 +140,7 @@ namespace Roomiebill.Server.Facades
             }
 
             // Check if the user exists by username
-            var existingUser = _usersDb.GetUserByUsername(updatePasswordDto.Username);
+            var existingUser = await _usersDb.GetUserByUsernameAsync(updatePasswordDto.Username);
             if (existingUser == null)
             {
                 _logger.LogError($"User with this username: {updatePasswordDto.Username} does not exist");
@@ -192,7 +192,7 @@ namespace Roomiebill.Server.Facades
             }
 
             // Check if the user exists by username
-            var existingUser = _usersDb.GetUserByUsername(loginDto.Username);
+            var existingUser = await _usersDb.GetUserByUsernameAsync(loginDto.Username);
             if (existingUser == null)
             {
                 _logger.LogError($"User with this username: {loginDto.Username} does not exist");
@@ -230,7 +230,7 @@ namespace Roomiebill.Server.Facades
                 throw new ArgumentNullException(nameof(username));
             }
             // Check if the user exists by username
-            var existingUser = _usersDb.GetUserByUsername(username);
+            var existingUser = await _usersDb.GetUserByUsernameAsync(username);
             if (existingUser == null)
             {
                 _logger.LogError($"User with this username: {username} does not exist");
@@ -256,7 +256,7 @@ namespace Roomiebill.Server.Facades
                 throw new ArgumentNullException(nameof(username));
             }
             // Check if the user exists by username
-            var existingUser = _usersDb.GetUserByUsername(username);
+            var existingUser = await _usersDb.GetUserByUsernameAsync(username);
             if (existingUser == null)
             {
                 _logger.LogError($"User with this username: {username} does not exist");
@@ -270,7 +270,7 @@ namespace Roomiebill.Server.Facades
 
         public async Task<User?> GetUserByUsernameAsync(string username)
         {
-            return _usersDb.GetUserByUsername(username);
+            return await _usersDb.GetUserByUsernameAsync(username);
         }
 
         #endregion 

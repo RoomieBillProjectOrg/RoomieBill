@@ -6,7 +6,7 @@ namespace Roomiebill.Server.DataAccessLayer
     {
         public User? GetUserByEmail(string email);
 
-        public User? GetUserByUsername(string username);
+        public Task<User?> GetUserByUsernameAsync(string username);
 
         public void AddUser(User user);
 
