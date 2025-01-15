@@ -42,6 +42,8 @@ namespace Roomiebill.Server.DataAccessLayer
 
                 await _groupService.InviteToGroupByUsername(inviteDetails);
 
+                _context.SaveChanges();
+
             }
         }
     }

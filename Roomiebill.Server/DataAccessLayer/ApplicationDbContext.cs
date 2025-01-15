@@ -46,6 +46,10 @@ namespace Roomiebill.Server.DataAccessLayer
                 .HasOne(i => i.Group)
                 .WithMany(g => g.Invites)
                 .OnDelete(DeleteBehavior.Restrict); // Optional: Prevent cascading delete
+            
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Username)
+                .IsUnique();
 
         }
         /* User methods */

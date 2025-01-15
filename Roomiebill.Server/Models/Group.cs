@@ -18,6 +18,7 @@ namespace Roomiebill.Server.Models
         {
             // Default constructor required by EF Core
             Members = new List<User>();
+            Invites = new List<Invite>();
 
             // REMOVE FROM COMMENT WHEN REMOVE EXPENSE CLASS FROM COMMENT
             //Expenses = new List<Expense>();
