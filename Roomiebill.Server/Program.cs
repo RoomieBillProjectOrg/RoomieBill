@@ -40,7 +40,7 @@ using (var scope = app.Services.CreateScope())
 
     // Seed the database
     var databaseSeeder = scope.ServiceProvider.GetRequiredService<DatabaseSeeder>();
-    databaseSeeder.Seed();
+    await databaseSeeder.SeedAsync();
 }
 
 // Configure the HTTP request pipeline.

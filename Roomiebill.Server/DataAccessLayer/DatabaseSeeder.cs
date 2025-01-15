@@ -15,7 +15,7 @@ namespace Roomiebill.Server.DataAccessLayer
             _groupService = groupService;
             _context = context;
         }
-        public async void Seed()
+        public async Task SeedAsync()
         {
             // Check if the database is already seeded
             if (!_context.Users.Any())
@@ -27,6 +27,20 @@ namespace Roomiebill.Server.DataAccessLayer
                 var user4 = new User("Tal", "Tal@bgu.ac.il", "TalPassword4$", true);
 
                 _context.Users.AddRange(user1, user2, user3, user4);
+
+                _context.SaveChanges();
+            }
+
+            if (!_context.Groups.Any())
+            {
+                CreateNewGroupDto newGroupDetails = new CreateNewGroupDto
+                {
+                    AdminGroupUsername = "Inbar",
+                    GroupMembersPhoneNumbersList = new List<string> { "Metar", "Vladi" },
+                    GroupName = "Roomiebill"
+                };
+
+                await _groupService.CreateNewGroupAsync(newGroupDetails);
 
                 _context.SaveChanges();
             }
