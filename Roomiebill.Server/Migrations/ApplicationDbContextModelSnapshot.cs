@@ -73,7 +73,7 @@ namespace Roomiebill.Server.Migrations
                     b.Property<int>("GroupId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Invinvited)
+                    b.Property<int>("InvitedId")
                         .HasColumnType("int");
 
                     b.Property<int>("InviterId")
@@ -83,6 +83,8 @@ namespace Roomiebill.Server.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
 
                     b.HasIndex("InvitedId");
 
@@ -115,9 +117,12 @@ namespace Roomiebill.Server.Migrations
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Username")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
@@ -150,6 +155,12 @@ namespace Roomiebill.Server.Migrations
 
             modelBuilder.Entity("Roomiebill.Server.Models.Invite", b =>
                 {
+                    b.HasOne("Roomiebill.Server.Models.Group", "Group")
+                        .WithMany("Invites")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Roomiebill.Server.Models.User", "Invited")
                         .WithMany()
                         .HasForeignKey("InvitedId")
@@ -162,9 +173,16 @@ namespace Roomiebill.Server.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.Navigation("Group");
+
                     b.Navigation("Invited");
 
                     b.Navigation("Inviter");
+                });
+
+            modelBuilder.Entity("Roomiebill.Server.Models.Group", b =>
+                {
+                    b.Navigation("Invites");
                 });
 
             modelBuilder.Entity("Roomiebill.Server.Models.User", b =>

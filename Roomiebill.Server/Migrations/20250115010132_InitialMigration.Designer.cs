@@ -12,8 +12,8 @@ using Roomiebill.Server.DataAccessLayer;
 namespace Roomiebill.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250114162610_AddOneToManyInviteUser")]
-    partial class AddOneToManyInviteUser
+    [Migration("20250115010132_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -76,23 +76,22 @@ namespace Roomiebill.Server.Migrations
                     b.Property<int>("GroupId")
                         .HasColumnType("int");
 
-                    b.Property<string>("invitedUsername")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("InvitedId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("InviterUsername")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("InviterId")
+                        .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("InvitedId");
+
+                    b.HasIndex("InviterId");
 
                     b.ToTable("Invites");
                 });
@@ -156,10 +155,34 @@ namespace Roomiebill.Server.Migrations
 
             modelBuilder.Entity("Roomiebill.Server.Models.Invite", b =>
                 {
-                    b.HasOne("Roomiebill.Server.Models.User", null)
+                    b.HasOne("Roomiebill.Server.Models.Group", "Group")
                         .WithMany("Invites")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Roomiebill.Server.Models.User", "Invited")
+                        .WithMany()
+                        .HasForeignKey("InvitedId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Roomiebill.Server.Models.User", "Inviter")
+                        .WithMany("Invites")
+                        .HasForeignKey("InviterId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+
+                    b.Navigation("Invited");
+
+                    b.Navigation("Inviter");
+                });
+
+            modelBuilder.Entity("Roomiebill.Server.Models.Group", b =>
+                {
+                    b.Navigation("Invites");
                 });
 
             modelBuilder.Entity("Roomiebill.Server.Models.User", b =>
