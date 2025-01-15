@@ -6,10 +6,10 @@ public partial class LoginPage : ContentPage
 {
     private readonly UserServiceApi _userService;
 
-    public LoginPage()
+    public LoginPage(UserServiceApi userService)
 	{
 		InitializeComponent();
-        _userService = new UserServiceApi();
+        _userService = userService;
     }
 
     private async void OnLoginClicked(object sender, EventArgs e)

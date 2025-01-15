@@ -6,10 +6,10 @@ namespace FrontendApplication.Pages
     {
         private readonly UserServiceApi _userService;
 
-        public RegisterPage()
+        public RegisterPage(UserServiceApi userService)
         {
             InitializeComponent();
-            _userService = new UserServiceApi();
+            _userService = userService;
         }
 
         private async void OnRegisterClicked(object sender, EventArgs e)
@@ -19,7 +19,6 @@ namespace FrontendApplication.Pages
             var password = PasswordEntry.Text;
 
             var success = await _userService.RegisterUserAsync(email, username, password);
-
             if (success)
             {
                 await DisplayAlert("Success", "User registered successfully!", "OK");
