@@ -24,5 +24,8 @@ namespace Roomiebill.Server.DataAccessLayer.Dtos
 
         [Required]
         public Dictionary<int, double> SplitBetween { get; set; } = new Dictionary<int, double>(); // user and percentage
+        
+        [Required]
+        public int GroupId { get; set; }
     }
 }
