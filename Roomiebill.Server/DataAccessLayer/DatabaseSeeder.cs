@@ -1,28 +1,47 @@
-﻿using Roomiebill.Server.Models;
+﻿using Roomiebill.Server.DataAccessLayer.Dtos;
+using Roomiebill.Server.Models;
+using Roomiebill.Server.Services;
 
 namespace Roomiebill.Server.DataAccessLayer
 {
     public class DatabaseSeeder
     {
-        public static void Seed(IServiceProvider serviceProvider)
+        private UserService _userService;
+        private GroupService _groupService;
+        private ApplicationDbContext _context;
+        public DatabaseSeeder(UserService userService, GroupService groupService, ApplicationDbContext context)
         {
-            using (var scope = serviceProvider.CreateScope())
+            _userService = userService;
+            _groupService = groupService;
+            _context = context;
+        }
+        public async void Seed()
+        {
+            // Check if the database is already seeded
+            if (!_context.Users.Any())
             {
-                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                // Add initial data if not already present
+                var user1 = new User("Inbar", "inbar@bgu.ac.il", "InbarPassword1!", true);
+                var user2 = new User("Metar", "Metar@bgu.ac.il", "MetarPassword2@", true);
+                var user3 = new User("Vladi", "Vladi@bgu.ac.il", "VladiPassword3#", true);
+                var user4 = new User("Tal", "Tal@bgu.ac.il", "TalPassword4$", true);
 
-                // Check if the database is already seeded
-                if (!context.Users.Any())
+                _context.Users.AddRange(user1, user2, user3, user4);
+
+                _context.SaveChanges();
+            }
+
+            if (!_context.Invites.Any())
+            {
+                InviteToGroupByUsernameDto inviteDetails = new InviteToGroupByUsernameDto
                 {
-                    // Add initial data if not already present
-                    var user1 = new User("Inbar", "inbar@bgu.ac.il", "InbarPassword1!", true);
-                    var user2 = new User("Metar", "Metar@bgu.ac.il", "MetarPassword2@", true);
-                    var user3 = new User("Vladi", "Vladi@bgu.ac.il", "VladiPassword3#", true);
-                    var user4 = new User("Tal", "Tal@bgu.ac.il", "TalPassword4$", true);
+                    InviterUsername = "Inbar",
+                    InvitedUsername = "Metar",
+                    GroupId = 1
+                };
 
-                    context.Users.AddRange(user1, user2, user3, user4);
+                await _groupService.InviteToGroupByUsername(inviteDetails);
 
-                    context.SaveChanges();
-                }
             }
         }
     }

@@ -6,17 +6,20 @@ namespace Roomiebill.Server.Models
     public class Invite
     {
         public int Id { get; set; }
-        public string InviterUsername { get; set; }
-        public string InviteeUsername { get; set; }
-        public int GroupId { get; set; }
+        public User Inviter { get; set; }
+        public User Invited { get; set; }
+        public Group Group { get; set; }
         public Status Status { get; set; }
         public DateTime Date { get; set; }
 
-        public Invite(string inviterUsername, string inviteeUsername, int groupId)
+        // Parameterless constructor for EF
+        public Invite() { }
+
+        public Invite(User inviter, User invited, Group group)
         {
-            InviterUsername = inviterUsername;
-            InviteeUsername = inviteeUsername;
-            GroupId = groupId;
+            Inviter = inviter;
+            Invited = invited;
+            Group = group;
             Status = Status.Pending;
             Date = DateTime.Now;
         }

@@ -24,7 +24,7 @@ namespace Roomiebill.Server.Services
 
         public async Task InviteToGroupByUsername(InviteToGroupByUsernameDto inviteDetails)
         {
-            await _groupFacade.InviteToGroupByUsername(inviteDetails.InviterUsername, inviteDetails.InviteeUsername, inviteDetails.GroupId);
+            await _groupFacade.InviteToGroupByUsername(inviteDetails.InviterUsername, inviteDetails.InvitedUsername, inviteDetails.GroupId);
         }
     }
 }

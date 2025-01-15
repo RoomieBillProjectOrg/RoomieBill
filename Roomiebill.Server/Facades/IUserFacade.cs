@@ -10,7 +10,7 @@ namespace Roomiebill.Server.Facades
         Task<User> LoginAsync(LoginDto loginDto);
         Task<bool> IsUserAdminAsync(string username);
         Task<User> IsUserLoggedInAsync(string username);
-        Task AddInviteToInvitee(User invitee, Invite inv);
+        Task AddInviteToinvited(User invited, Invite inv);
         Task<User?> GetUserByUsernameAsync(string username);
     }
 }

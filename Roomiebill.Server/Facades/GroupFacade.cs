@@ -83,13 +83,15 @@ namespace Roomiebill.Server.Facades
                 throw new Exception($"Error when trying to invite user to group: invited with username {invited_username} does not exist in the system.");
             }
 
-            if (await _groupDb.GetGroupByIdAsync(groupId) == null)
+            Group? group = await _groupDb.GetGroupByIdAsync(groupId);
+
+            if (group == null)
             {
                 _logger.LogError($"Error when trying to invite user to group: group with id {groupId} does not exist in the system.");
                 throw new Exception($"Error when trying to invite user to group: group with id {groupId} does not exist in the system.");
             }
 
-            await _userFacade.AddInviteToInvitee(invited, new Invite(inviter_username, invited_username, groupId));
+            await _userFacade.AddInviteToinvited(invited, new Invite(inviter, invited, group));
 
             _logger.LogInformation($"User with username {invited_username} has been invited to group with id {groupId}.");
         }

@@ -266,12 +266,12 @@ namespace Roomiebill.Server.Facades
             return existingUser;
         }
 
-        public async Task AddInviteToInvitee(User invitee, Invite inv)
+        public async Task AddInviteToinvited(User invited, Invite inv)
         {
-            _logger.LogInformation($"Adding invite to user {invitee.Username}");
-            invitee.AddInvite(inv);
-            await _usersDb.UpdateUserAsync(invitee);
-            _logger.LogInformation($"Invite added to user {invitee.Username}");
+            _logger.LogInformation($"Adding invite to user {invited.Username}");
+            invited.AddInvite(inv);
+            await _usersDb.UpdateUserAsync(invited);
+            _logger.LogInformation($"Invite added to user {invited.Username}");
         }
 
         #region Help functions
