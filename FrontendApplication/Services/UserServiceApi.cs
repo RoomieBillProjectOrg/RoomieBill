@@ -40,15 +40,19 @@ namespace FrontendApplication.Services
         {
             LoginDto user = new LoginDto()
             {
-                Username = username,
-                Password = password
+                username = username,
+                password = password
             };
 
-            var json = JsonConvert.SerializeObject(user);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync("/UsersController/login", content);
-
-            return response.IsSuccessStatusCode;
+            try{
+                var response = await _httpClient.PostAsJsonAsync($"{_httpClient.BaseAddress}/Users/login", user);
+                response.EnsureSuccessStatusCode(); // Ensures that an error is thrown if the response is not successful
+                return response.IsSuccessStatusCode;
+            }
+            // Just catch for debug pause here for now.
+            catch (Exception ex){
+                return false;
+            } 
         }
     }
 }
