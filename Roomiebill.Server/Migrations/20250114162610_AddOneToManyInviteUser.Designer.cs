@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Roomiebill.Server.DataAccessLayer;
 
@@ -11,9 +12,11 @@ using Roomiebill.Server.DataAccessLayer;
 namespace Roomiebill.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250114162610_AddOneToManyInviteUser")]
+    partial class AddOneToManyInviteUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -73,20 +76,23 @@ namespace Roomiebill.Server.Migrations
                     b.Property<int>("GroupId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Invinvited)
-                        .HasColumnType("int");
+                    b.Property<string>("invitedUsername")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("InviterId")
-                        .HasColumnType("int");
+                    b.Property<string>("InviterUsername")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("InvitedId");
-
-                    b.HasIndex("InviterId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Invites");
                 });
@@ -150,21 +156,10 @@ namespace Roomiebill.Server.Migrations
 
             modelBuilder.Entity("Roomiebill.Server.Models.Invite", b =>
                 {
-                    b.HasOne("Roomiebill.Server.Models.User", "Invited")
-                        .WithMany()
-                        .HasForeignKey("InvitedId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Roomiebill.Server.Models.User", "Inviter")
+                    b.HasOne("Roomiebill.Server.Models.User", null)
                         .WithMany("Invites")
-                        .HasForeignKey("InviterId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Invited");
-
-                    b.Navigation("Inviter");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("Roomiebill.Server.Models.User", b =>

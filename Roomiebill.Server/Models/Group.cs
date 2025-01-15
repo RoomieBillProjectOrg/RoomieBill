@@ -9,6 +9,7 @@ namespace Roomiebill.Server.Models
         public string GroupName { get; set; }
         public User Admin { get; set; }
         public List<User> Members { get; set; }
+        public List<Invite> Invites { get; set; }
 
         [NotMapped]
         public List<Expense> Expenses { get; set; }
