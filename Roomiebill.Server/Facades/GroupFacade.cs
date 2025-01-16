@@ -36,7 +36,7 @@ namespace Roomiebill.Server.Facades
             if (admin == null)
             {
                 _logger.LogError($"Error when trying to create new group: admin with username {newGroupDto.AdminGroupUsername} does not exist in the system.");
-               throw new Exception($"Error when trying to create new group: admin with username {newGroupDto.AdminGroupUsername} does not exist in the system.");
+                throw new Exception($"Error when trying to create new group: admin with username {newGroupDto.AdminGroupUsername} does not exist in the system.");
             }
 
             // Extract group members from UserFacade using usernames
@@ -45,7 +45,7 @@ namespace Roomiebill.Server.Facades
             {
                 User? member = await _userFacade.GetUserByUsernameAsync(username);
 
-                if(member == null)
+                if (member == null)
                 {
                     _logger.LogError($"Error when trying to create new group: member with username {username} does not exist in the system.");
                     throw new Exception($"Error when trying to create new group: member with username {username} does not exist in the system.");
@@ -67,5 +67,55 @@ namespace Roomiebill.Server.Facades
         {
 
         }
+
+        public async Task<Expense> AddExpenseAsync(ExpenseDto expenseDto)
+        {
+            // Extract group from database
+            Group? group = _groupDb.GetGroupById(expenseDto.GroupId);
+
+            // Alert if the group does not exist
+            if (group == null)
+            {
+                _logger.LogError($"Error when trying to add expense: group with id {expenseDto.GroupId} does not exist in the system.");
+                throw new Exception($"Error when trying to add expense: group with id {expenseDto.GroupId} does not exist in the system.");
+            }
+
+            // Extract user from database
+            User? user = await _userFacade.GetUserByIdAsync(expenseDto.PayerId);
+
+
+            // Alert if the user does not exist
+            if (user == null)
+            {
+                _logger.LogError($"Error when trying to add expense: user with id {expenseDto.PayerId} does not exist in the system.");
+                throw new Exception($"Error when trying to add expense: user with id {expenseDto.PayerId} does not exist in the system.");
+            }
+            Expense newExpense = MapToEntity(expenseDto);
+            // Add expense to group
+            group.AddExpense(newExpense);
+            
+            return newExpense;
+        }
+
+        private Expense MapToEntity(ExpenseDto dto)
+        {
+            return new Expense
+            {
+                Id = dto.Id,
+                Amount = dto.Amount,
+                Description = dto.Description,
+                IsPaid = dto.IsPaid,
+                PayerId = dto.PayerId,
+                GroupId = dto.GroupId,
+                ExpenseSplits = dto.ExpenseSplits.Select(splitDto => new ExpenseSplit
+                {
+                    UserId = splitDto.UserId,
+                    Percentage = splitDto.Percentage
+                }).ToList()
+            };
+        }
+
+
+
     }
 }

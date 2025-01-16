@@ -54,7 +54,6 @@ namespace Roomiebill.Server.DataAccessLayer
     
         }
 
-
         public User? GetUserByEmail(string email)
         {
             return Users.FirstOrDefault(u => u.Email == email);
@@ -63,6 +62,10 @@ namespace Roomiebill.Server.DataAccessLayer
         public User? GetUserByUsername(string username)
         {
             return Users.FirstOrDefault(u => u.Username == username);
+        }
+        public Group? GetGroupById(int id)
+        {
+            return Groups.FirstOrDefault(g => g.Id == id);
         }
 
         public void AddUser(User user)
@@ -87,5 +90,11 @@ namespace Roomiebill.Server.DataAccessLayer
             Expenses.Add(expense);
             SaveChanges();
         }
+      
+        public User? GetUserById(int payerId)
+        {
+            return Users.FirstOrDefault(u => u.Id == payerId);
+        }
+
     }
 }

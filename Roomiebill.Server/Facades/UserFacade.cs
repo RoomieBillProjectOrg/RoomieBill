@@ -264,13 +264,18 @@ namespace Roomiebill.Server.Facades
             _logger.LogInformation($"User {username} is logged in: {existingUser.IsLoggedIn}");
             return existingUser;
         }
-
+        public async Task<User?> GetUserByIdAsync(int payerId)
+            {
+                return _usersDb.GetUserById(payerId);
+            }
         #region Help functions
 
         public async Task<User?> GetUserByUsernameAsync(string username)
         {
             return _usersDb.GetUserByUsername(username);
         }
+
+       
 
         #endregion 
     }

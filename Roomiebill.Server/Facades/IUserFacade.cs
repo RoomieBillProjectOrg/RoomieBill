@@ -11,5 +11,6 @@ namespace Roomiebill.Server.Facades
         Task<bool> IsUserAdminAsync(string username);
         Task<User> IsUserLoggedInAsync(string username);
         Task<User> GetUserByUsernameAsync(string username);
+        Task<User> GetUserByIdAsync(int payerId);
     }
 }

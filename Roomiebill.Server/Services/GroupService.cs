@@ -21,5 +21,12 @@ namespace Roomiebill.Server.Services
         {
             return await _groupFacade.CreateNewGroupAsync(group);
         }
+
+        public async Task<Expense> AddExpenseAsync(ExpenseDto expense)
+        {
+            return await _groupFacade.AddExpenseAsync(expense);
+        }
+
+
     }
 }

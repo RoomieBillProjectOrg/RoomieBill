@@ -23,7 +23,7 @@ namespace Roomiebill.Server.DataAccessLayer.Dtos
         public int PayerId { get; set; }
 
         [Required]
-        public Dictionary<int, double> SplitBetween { get; set; } = new Dictionary<int, double>(); // user and percentage
+        public List<ExpenseSplitDto> ExpenseSplits { get; set; } = new List<ExpenseSplitDto>();
         
         [Required]
         public int GroupId { get; set; }
