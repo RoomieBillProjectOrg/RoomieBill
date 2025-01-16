@@ -29,6 +29,9 @@ namespace Roomiebill.Server.Models
             this.GroupName = groupName;
             this.Admin = groupAdmin;
             this.Members = groupMembers;
+            this.Invites = new List<Invite>();
+            this.Expenses = new List<Expense>();
+            Members.Add(groupAdmin);
 
             // REMOVE FROM COMMENT WHEN REMOVE EXPENSE CLASS FROM COMMENT
             //this.Expenses = new List<Expense>();
