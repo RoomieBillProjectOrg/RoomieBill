@@ -104,6 +104,11 @@ namespace Roomiebill.Server.Models
             expenseHandler.AddExpense(expense,_debtArray);
             Expenses.Add(expense);
         }
+        public void updateExpense(Expense oldExpense, Expense newExpense){
+            Expense updatedExpense = expenseHandler.UpdateExpense(oldExpense, newExpense, _debtArray);
+            bool flag = Expenses.Remove(oldExpense);
+            Expenses.Add(updatedExpense);
+        }   
         //TODO: check for operation completion
         public void DeleteExpense(Expense expense){
             expenseHandler.DeleteExpense(expense,_debtArray);
@@ -113,7 +118,7 @@ namespace Roomiebill.Server.Models
             return _debtArray;
         }   
         public int getDebtBetweenUsers(int user1Id, int user2Id){
-            return expenseHandler.GetDebtBetween(user1Id,user2Id,_debtArray);
+            return expenseHandler.GetDebtBetweenIndex(user1Id,user2Id,_debtArray);
         }
 
 

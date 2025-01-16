@@ -119,7 +119,7 @@ namespace ServerTests
             Assert.Empty(result.GetMembers());
         }
 
-         [Fact]
+        [Fact]
         public async Task TestAddExpense_WhenAllGood_ShouldAddExpense()
         {
             // Arrange
@@ -135,16 +135,18 @@ namespace ServerTests
                 ExpenseSplits = new List<ExpenseSplitDto>
                 {
                     new ExpenseSplitDto { UserId = 0, Percentage = 20.0 },
-                    new ExpenseSplitDto { UserId = 2, Percentage = 30.0 }
+                    new ExpenseSplitDto { UserId = 1, Percentage = 50.0 },
+                    new ExpenseSplitDto { UserId = 2, Percentage = 30.0}
+
                 }
             };
-            User payer = new User("payer","payer@bgu.ac.il","payerPassword!1");
+            User payer = new User("payer", "payer@bgu.ac.il", "payerPassword!1");
             User user1 = new User("user1", "user1@bgu.ac.il", "user1Password!1");
             User user2 = new User("user2", "user2@bgu.ac.il", "user2Password!1");
             payer.Id = 1;
             user1.Id = 0;
             user2.Id = 2;
-            var group = new Group("Test Group", payer,new List<User> { payer, user1, user2 });
+            var group = new Group("Test Group", payer, new List<User> { payer, user1, user2 });
 
             _groupDbMock.Setup(x => x.GetGroupById(groupId)).Returns(group);
             _userFacadeMock.Setup(x => x.GetUserByIdAsync(payerId)).ReturnsAsync(payer);
@@ -158,13 +160,17 @@ namespace ServerTests
             // Assert
             Assert.Single(group.Expenses);
             var addedExpense = group.Expenses.First();
-            int [] debt = group.getDebtArray();
-            int debt01 = group.getDebtBetweenUsers(0,1);//20
-            int debt02 = group.getDebtBetweenUsers(0,2);//0
-            int debt12 = group.getDebtBetweenUsers(1,2);//0
-            int debt10 = group.getDebtBetweenUsers(1,0); //0
-            int debt20 = group.getDebtBetweenUsers(2,0);//0
-            int debt21 = group.getDebtBetweenUsers(2,1);//30
+            int[] debt = group.getDebtArray();
+            int debt01 = group.getDebtBetweenUsers(0, 1);//20
+            int debt02 = group.getDebtBetweenUsers(0, 2);//0
+            int debt12 = group.getDebtBetweenUsers(1, 2);//0
+            int debt10 = group.getDebtBetweenUsers(1, 0); //0
+            int debt20 = group.getDebtBetweenUsers(2, 0);//0
+            int debt21 = group.getDebtBetweenUsers(2, 1);//30
+            Assert.Equal(50, debt01 + debt21);
+            Assert.Equal(0, debt10 + debt20 + debt02);
+            Assert.Equal(20, debt01);
+            Assert.Equal(30, debt21);
             Assert.Equal(expenseDto.Amount, addedExpense.Amount);
             Assert.Equal(expenseDto.Description, addedExpense.Description);
             Assert.Equal(expenseDto.IsPaid, addedExpense.IsPaid);
@@ -172,9 +178,127 @@ namespace ServerTests
             Assert.Equal(expenseDto.GroupId, addedExpense.GroupId);
             Assert.Equal(expenseDto.ExpenseSplits.Count, addedExpense.ExpenseSplits.Count);
         }
+        //Test for update expense
+        [Fact]
+        public async Task TestUpdateExpense_WhenValidData_ShouldUpdateExpense()
+        {
+            // Arrange
+            var groupId = 1;
+            var payerId = 1;
+            var expenseId = 101;
 
+            // Original expense DTO
+            var originalExpenseDto = new ExpenseDto
+            {
+                Id = expenseId,
+                Amount = 100.0,
+                Description = "Original Dinner",
+                IsPaid = false,
+                PayerId = payerId,
+                GroupId = groupId,
+                ExpenseSplits = new List<ExpenseSplitDto>
+        {
+            new ExpenseSplitDto { UserId = 1, Percentage = 25.0 },
+            new ExpenseSplitDto { UserId = 2, Percentage = 25.0 },
+            new ExpenseSplitDto { UserId = 3, Percentage = 25.0 },
+            new ExpenseSplitDto { UserId = 4, Percentage = 25.0 }
+        }
+            };
 
+            // Updated expense DTO
+            var updatedExpenseDto = new ExpenseDto
+            {
+                Id = expenseId,
+                Amount = 150.0,
+                Description = "Updated Dinner",
+                IsPaid = true,
+                PayerId = payerId,
+                GroupId = groupId,
+                ExpenseSplits = new List<ExpenseSplitDto>
+        {
+            new ExpenseSplitDto { UserId = 1, Percentage = 60.0 },
+            new ExpenseSplitDto { UserId = 2, Percentage = 40.0 }
+        }
+            };
+            User payer = new User("payer", "payer@bgu.ac.il", "payerPassword!1");
+            payer.Id = 1;
 
+            // Group with all members
+            var group = new Group("Test Group", payer, new List<User>
+    {
+        payer,
+        new User { Id = 2, Username = "user2" },
+        new User { Id = 3, Username = "user3" },
+        new User { Id = 4, Username = "user4" }
+    })
+            {
+                Expenses = new List<Expense> {}
+            };
+
+            // Mocking database and facade dependencies
+            _groupDbMock.Setup(x => x.GetGroupById(groupId)).Returns(group);
+            _userFacadeMock.Setup(x => x.GetUserByIdAsync(payerId)).ReturnsAsync(payer);
+            _groupFacade = new GroupFacade(_groupDbMock.Object, _loggerMock.Object, _userFacadeMock.Object);
+
+            // Act
+            await _groupFacade.AddExpenseAsync(originalExpenseDto);
+
+            await _groupFacade.UpdateExpenseAsync(originalExpenseDto, updatedExpenseDto);
+
+            // Assert
+            var updatedExpense = group.Expenses.First(e => e.Id == expenseId);
+            Assert.Equal(updatedExpenseDto.Amount, updatedExpense.Amount);
+            Assert.Equal(updatedExpenseDto.Description, updatedExpense.Description);
+            Assert.Equal(updatedExpenseDto.IsPaid, updatedExpense.IsPaid);
+            Assert.Equal(updatedExpenseDto.PayerId, updatedExpense.PayerId);
+            Assert.Equal(updatedExpenseDto.GroupId, updatedExpense.GroupId);
+
+            // Verify ExpenseSplits are updated
+            Assert.Equal(updatedExpenseDto.ExpenseSplits.Count, updatedExpense.ExpenseSplits.Count);
+            for (int i = 0; i < updatedExpenseDto.ExpenseSplits.Count; i++)
+            {
+                Assert.Equal(updatedExpenseDto.ExpenseSplits[i].UserId, updatedExpense.ExpenseSplits.ElementAt(i).UserId);
+                Assert.Equal(updatedExpenseDto.ExpenseSplits[i].Percentage, updatedExpense.ExpenseSplits.ElementAt(i).Percentage);
+            }
+
+            // Ensure the group members are unchanged
+            Assert.Equal(4, group.GetMembers().Count); // Original group members remain the same
+            Assert.Contains(group.GetMembers(), u => u.Id == 3); // User 3 still part of the group
+            Assert.Contains(group.GetMembers(), u => u.Id == 4); // User 4 still part of the group
+            int debt12 = group.getDebtBetweenUsers(1,2);//0
+            int debt13 = group.getDebtBetweenUsers(1,3);//0
+            int debt14 = group.getDebtBetweenUsers(1,4);//0
+            int debt21 = group.getDebtBetweenUsers(2,1);//40
+            int debt23 = group.getDebtBetweenUsers(2,3);//0
+            int debt24 = group.getDebtBetweenUsers(2,4);//0
+            int debt31 = group.getDebtBetweenUsers(3,1);//0
+            int debt41 = group.getDebtBetweenUsers(4,1);//0
+            Assert.Equal (0,debt12);
+            Assert.Equal (0,debt13);
+            Assert.Equal (0,debt14);
+            Assert.Equal (40,debt21);
+            Assert.Equal (0,debt23);
+            Assert.Equal (0,debt24);
+            Assert.Equal (0,debt31);
+            Assert.Equal (0,debt41);
+        }
+        private Expense MapToEntity(ExpenseDto dto)
+        {
+            return new Expense
+            {
+                Id = dto.Id,
+                Amount = dto.Amount,
+                Description = dto.Description,
+                IsPaid = dto.IsPaid,
+                PayerId = dto.PayerId,
+                GroupId = dto.GroupId,
+                ExpenseSplits = dto.ExpenseSplits.Select(splitDto => new ExpenseSplit
+                {
+                    UserId = splitDto.UserId,
+                    Percentage = splitDto.Percentage
+                }).ToList()
+            };
+        }
         #endregion
     }
-}   
+}
