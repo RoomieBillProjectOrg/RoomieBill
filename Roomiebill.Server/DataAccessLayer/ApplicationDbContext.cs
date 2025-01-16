@@ -13,7 +13,7 @@ namespace Roomiebill.Server.DataAccessLayer
 
         public DbSet<User> Users { get; set; }
         public DbSet<Group> Groups { get; set; }
-        public DbSet<Expense> Expenses { get; set; }
+        public DbSet<Expense> Expenses { get; set; }    
         public DbSet<ExpenseSplit> ExpenseSplits { get; set; }  
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
