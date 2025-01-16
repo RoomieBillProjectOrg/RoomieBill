@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using System.Net.Http.Json;
+using System.Text;
+using Android.Telephony.Euicc;
+using Bumptech.Glide.Load.Model.Stream;
 using FrontendApplication.Models;
 using Newtonsoft.Json;
 
@@ -8,28 +11,28 @@ namespace FrontendApplication.Services
     {
         private readonly HttpClient _httpClient;
 
-        public UserServiceApi()
+        public UserServiceApi(IHttpClientFactory httpClientFactory)
         {
-            _httpClient = new HttpClient
-            {
-                BaseAddress = new Uri(AppConfig.ApiBaseUrl)
-            };
+            _httpClient = httpClientFactory.CreateClient("DefaultClient");
         }
 
         public async Task<bool> RegisterUserAsync(string email, string username, string password)
         {
             RegisterUserDto user = new RegisterUserDto()
             {
-                Username = username,
-                Password = password,
-                Email = email
+                username = username,
+                password = password,
+                email = email
             };
-
-            var json = JsonConvert.SerializeObject(user);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync("/UsersController/register", content);
-
-            return response.IsSuccessStatusCode;
+            try{
+                var response = await _httpClient.PostAsJsonAsync($"{_httpClient.BaseAddress}/Users/register", user);
+                response.EnsureSuccessStatusCode(); // Ensures that an error is thrown if the response is not successful
+                return response.IsSuccessStatusCode;
+            }
+            // Just catch for debug pause here for now.
+            catch (Exception ex){
+                return false;
+            } 
         }
 
         //LoginUserAsync
@@ -37,15 +40,19 @@ namespace FrontendApplication.Services
         {
             LoginDto user = new LoginDto()
             {
-                Username = username,
-                Password = password
+                username = username,
+                password = password
             };
 
-            var json = JsonConvert.SerializeObject(user);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync("/UsersController/login", content);
-
-            return response.IsSuccessStatusCode;
+            try{
+                var response = await _httpClient.PostAsJsonAsync($"{_httpClient.BaseAddress}/Users/login", user);
+                response.EnsureSuccessStatusCode(); // Ensures that an error is thrown if the response is not successful
+                return response.IsSuccessStatusCode;
+            }
+            // Just catch for debug pause here for now.
+            catch (Exception ex){
+                return false;
+            } 
         }
     }
 }
