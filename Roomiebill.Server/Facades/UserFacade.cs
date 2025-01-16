@@ -30,8 +30,7 @@ namespace Roomiebill.Server.Facades
         /// <exception cref="Exception"></exception>
         public async Task<User> RegisterUserAsync(RegisterUserDto registerUserDto)
         {
-            _logger.LogInformation($"Register user with details: Username: {registerUserDto.Username}, Email: {registerUserDto.Email}");
-
+            
             if (registerUserDto.Username == null)
             {
                 _logger.LogError($"Username is null. Cannot register user with details: Username: {registerUserDto.Username}, Email: {registerUserDto.Email}");
