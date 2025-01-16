@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Roomiebill.Server.DataAccessLayer;
 
@@ -11,9 +12,11 @@ using Roomiebill.Server.DataAccessLayer;
 namespace Roomiebill.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250115115017_UsernameIndex")]
+    partial class UsernameIndex
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,66 +40,6 @@ namespace Roomiebill.Server.Migrations
                     b.ToTable("GroupUser");
                 });
 
-            modelBuilder.Entity("Roomiebill.Server.Models.Expense", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<double>("Amount")
-                        .HasColumnType("float");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<int>("GroupId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsPaid")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("PayerId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GroupId");
-
-                    b.HasIndex("PayerId");
-
-                    b.ToTable("Expenses");
-                });
-
-            modelBuilder.Entity("Roomiebill.Server.Models.ExpenseSplit", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ExpenseId")
-                        .HasColumnType("int");
-
-                    b.Property<double>("Percentage")
-                        .HasColumnType("float");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ExpenseId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ExpenseSplits");
-                });
-
             modelBuilder.Entity("Roomiebill.Server.Models.Group", b =>
                 {
                     b.Property<int>("Id")
@@ -110,8 +53,7 @@ namespace Roomiebill.Server.Migrations
 
                     b.Property<string>("GroupName")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -178,9 +120,12 @@ namespace Roomiebill.Server.Migrations
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Username")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
@@ -198,44 +143,6 @@ namespace Roomiebill.Server.Migrations
                         .HasForeignKey("MembersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Roomiebill.Server.Models.Expense", b =>
-                {
-                    b.HasOne("Roomiebill.Server.Models.Group", "Group")
-                        .WithMany("Expenses")
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Roomiebill.Server.Models.User", "Payer")
-                        .WithMany()
-                        .HasForeignKey("PayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Group");
-
-                    b.Navigation("Payer");
-                });
-
-            modelBuilder.Entity("Roomiebill.Server.Models.ExpenseSplit", b =>
-                {
-                    b.HasOne("Roomiebill.Server.Models.Expense", "Expense")
-                        .WithMany("ExpenseSplits")
-                        .HasForeignKey("ExpenseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Roomiebill.Server.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Expense");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Roomiebill.Server.Models.Group", b =>
@@ -258,13 +165,13 @@ namespace Roomiebill.Server.Migrations
                         .IsRequired();
 
                     b.HasOne("Roomiebill.Server.Models.User", "Invited")
-                        .WithMany("Invites")
+                        .WithMany()
                         .HasForeignKey("InvitedId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Roomiebill.Server.Models.User", "Inviter")
-                        .WithMany()
+                        .WithMany("Invites")
                         .HasForeignKey("InviterId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -284,16 +191,6 @@ namespace Roomiebill.Server.Migrations
             modelBuilder.Entity("Roomiebill.Server.Models.User", b =>
                 {
                     b.Navigation("Invites");
-                });
-
-            modelBuilder.Entity("Roomiebill.Server.Models.Expense", b =>
-                {
-                    b.Navigation("ExpenseSplits");
-                });
-
-            modelBuilder.Entity("Roomiebill.Server.Models.Group", b =>
-                {
-                    b.Navigation("Expenses");
                 });
 #pragma warning restore 612, 618
         }

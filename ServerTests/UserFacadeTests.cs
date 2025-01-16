@@ -138,7 +138,7 @@ public class UserFacadeTests
         };
 
         // Mock that the username already exists
-        _usersDbMock.Setup(db => db.GetUserByUsername(registerDto.Username)).Returns(new User());
+        _usersDbMock.Setup(db => db.GetUserByUsernameAsync(registerDto.Username)).ReturnsAsync(new User());
 
         // Act & Assert
         await Assert.ThrowsAsync<Exception>(() => _userFacade.RegisterUserAsync(registerDto));
@@ -181,7 +181,7 @@ public class UserFacadeTests
             Username = updateDto.Username,
             PasswordHash = "oldPassword!1"
         };
-        _usersDbMock.Setup(db => db.GetUserByUsername(updateDto.Username)).Returns(user);
+        _usersDbMock.Setup(db => db.GetUserByUsernameAsync(updateDto.Username)).ReturnsAsync(user);
         _passwordHasherMock.Setup(ph => ph.VerifyHashedPassword(user, user.PasswordHash, updateDto.CurrentPassword))
             .Returns(PasswordVerificationResult.Success);
         _passwordHasherMock.Setup(ph => ph.HashPassword(user, updateDto.NewPassword))
@@ -191,7 +191,7 @@ public class UserFacadeTests
         await _userFacade.UpdatePasswordAsync(updateDto);
 
         // Assert
-        _usersDbMock.Verify(db => db.UpdateUser(It.Is<User>(u => u.PasswordHash == "newHashedPassword!1")), Times.Once);
+        _usersDbMock.Verify(db => db.UpdateUserAsync(It.Is<User>(u => u.PasswordHash == "newHashedPassword!1")), Times.Once);
     }
 
     [Fact]
@@ -209,7 +209,7 @@ public class UserFacadeTests
             Username = updateDto.Username,
             PasswordHash = "oldPassword!1"
         };
-        _usersDbMock.Setup(db => db.GetUserByUsername(updateDto.Username)).Returns(user);
+        _usersDbMock.Setup(db => db.GetUserByUsernameAsync(updateDto.Username)).ReturnsAsync(user);
         _passwordHasherMock.Setup(ph => ph.VerifyHashedPassword(user, user.PasswordHash, updateDto.CurrentPassword))
             .Returns(PasswordVerificationResult.Success);
 
@@ -233,7 +233,7 @@ public class UserFacadeTests
             Username = updateDto.Username,
             PasswordHash = "oldPassword!1"
         };
-        _usersDbMock.Setup(db => db.GetUserByUsername(updateDto.Username)).Returns(user);
+        _usersDbMock.Setup(db => db.GetUserByUsernameAsync(updateDto.Username)).ReturnsAsync(user);
         _passwordHasherMock.Setup(ph => ph.VerifyHashedPassword(user, user.PasswordHash, updateDto.CurrentPassword))
             .Returns(PasswordVerificationResult.Failed);
 
@@ -252,7 +252,7 @@ public class UserFacadeTests
             CurrentPassword = "oldPassword!1",
             NewPassword = "newPassword!1"
         };
-        _usersDbMock.Setup(db => db.GetUserByUsername(updateDto.Username)).Returns((User)null);
+        _usersDbMock.Setup(db => db.GetUserByUsernameAsync(updateDto.Username)).ReturnsAsync((User)null);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<Exception>(() => _userFacade.UpdatePasswordAsync(updateDto));
@@ -276,7 +276,7 @@ public class UserFacadeTests
             Username = loginDto.Username,
             PasswordHash = "hashedpassword"
         };
-        _usersDbMock.Setup(db => db.GetUserByUsername(loginDto.Username)).Returns(user);
+        _usersDbMock.Setup(db => db.GetUserByUsernameAsync(loginDto.Username)).ReturnsAsync(user);
         _passwordHasherMock.Setup(ph => ph.VerifyHashedPassword(user, user.PasswordHash, loginDto.Password))
             .Returns(PasswordVerificationResult.Success);
 
@@ -298,7 +298,7 @@ public class UserFacadeTests
             Username = "nonexistentuser",
             Password = "ValidPassword123!"
         };
-        _usersDbMock.Setup(db => db.GetUserByUsername(loginDto.Username)).Returns((User)null);
+        _usersDbMock.Setup(db => db.GetUserByUsernameAsync(loginDto.Username)).ReturnsAsync((User)null);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<Exception>(() => _userFacade.LoginAsync(loginDto));
@@ -318,7 +318,7 @@ public class UserFacadeTests
             Username = loginDto.Username,
             PasswordHash = "hashedpassword"
         };
-        _usersDbMock.Setup(db => db.GetUserByUsername(loginDto.Username)).Returns(user);
+        _usersDbMock.Setup(db => db.GetUserByUsernameAsync(loginDto.Username)).ReturnsAsync(user);
         _passwordHasherMock.Setup(ph => ph.VerifyHashedPassword(user, user.PasswordHash, loginDto.Password))
             .Returns(PasswordVerificationResult.Failed);
 

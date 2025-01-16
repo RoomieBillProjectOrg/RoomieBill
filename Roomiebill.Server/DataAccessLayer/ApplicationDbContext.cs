@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using Roomiebill.Server.Models;
 
 namespace Roomiebill.Server.DataAccessLayer
@@ -13,6 +14,7 @@ namespace Roomiebill.Server.DataAccessLayer
 
         public DbSet<User> Users { get; set; }
         public DbSet<Group> Groups { get; set; }
+        public DbSet<Invite> Invites { get; set; }
         public DbSet<Expense> Expenses { get; set; }    
         public DbSet<ExpenseSplit> ExpenseSplits { get; set; }  
 
@@ -51,22 +53,38 @@ namespace Roomiebill.Server.DataAccessLayer
                 .HasForeignKey(es => es.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-    
-        }
+            
+            // Make so user can have many invites and each invite can have only one invited
+            modelBuilder.Entity<Invite>()
+                .HasOne(i => i.Inviter)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Restrict); // Optional: Prevent cascading delete
 
+            modelBuilder.Entity<Invite>()
+                .HasOne(i => i.Invited)
+                .WithMany(u => u.Invites)
+                .OnDelete(DeleteBehavior.Restrict); // Optional: Prevent cascading delete
+
+            modelBuilder.Entity<Invite>()
+                .HasOne(i => i.Group)
+                .WithMany(g => g.Invites)
+                .OnDelete(DeleteBehavior.Restrict); // Optional: Prevent cascading delete
+        }
+        /* User methods */
         public User? GetUserByEmail(string email)
         {
             return Users.FirstOrDefault(u => u.Email == email);
         }
 
-        public User? GetUserByUsername(string username)
+        public async Task<User?> GetUserByUsernameAsync(string username)
         {
-            return Users.FirstOrDefault(u => u.Username == username);
+            return await Users.FirstOrDefaultAsync(u => u.Username == username);
         }
         public Group? GetGroupById(int id)
         {
             return Groups.FirstOrDefault(g => g.Id == id);
         }
+      
 
         public void AddUser(User user)
         {
@@ -74,12 +92,30 @@ namespace Roomiebill.Server.DataAccessLayer
             SaveChanges();
         }
 
-        public void UpdateUser(User user)
+        public async Task UpdateUserAsync(User user)
         {
             Users.Update(user);
-            SaveChanges();
+            await SaveChangesAsync();
         }
 
+        public async Task UpdateGroupAsync(Group group)
+        {
+            Groups.Update(group);
+            await SaveChangesAsync();
+        }
+
+        /* Group methods */
+        public async Task<Group?> GetGroupByIdAsync(int groupId, Func<IQueryable<Group>, IQueryable<Group>> includeFunc)
+        {
+            IQueryable<Group> query = Groups;
+
+            if (includeFunc != null)
+            {
+                query = includeFunc(query);
+            }
+
+            return await query.FirstOrDefaultAsync(g => g.Id == groupId);
+        }
         public void AddGroup(Group group)
         {
             Groups.Add(group);

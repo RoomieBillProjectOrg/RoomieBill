@@ -68,7 +68,7 @@ namespace Roomiebill.Server.Facades
             }
 
             // Check if the user already exists by username
-            var existingUser = _usersDb.GetUserByUsername(registerUserDto.Username);
+            var existingUser = await _usersDb.GetUserByUsernameAsync(registerUserDto.Username);
             if (existingUser != null)
             {
                 _logger.LogError($"User with this username = {registerUserDto.Username} already exists");
@@ -139,7 +139,7 @@ namespace Roomiebill.Server.Facades
             }
 
             // Check if the user exists by username
-            var existingUser = _usersDb.GetUserByUsername(updatePasswordDto.Username);
+            var existingUser = await _usersDb.GetUserByUsernameAsync(updatePasswordDto.Username);
             if (existingUser == null)
             {
                 _logger.LogError($"User with this username: {updatePasswordDto.Username} does not exist");
@@ -160,7 +160,7 @@ namespace Roomiebill.Server.Facades
             // Update the user object with the hashed password
             existingUser.PasswordHash = passwordHash;
 
-            _usersDb.UpdateUser(existingUser);
+            await _usersDb.UpdateUserAsync(existingUser);
             _logger.LogInformation($"User {updatePasswordDto.Username} password updated successfully");
 
             return existingUser;
@@ -191,7 +191,7 @@ namespace Roomiebill.Server.Facades
             }
 
             // Check if the user exists by username
-            var existingUser = _usersDb.GetUserByUsername(loginDto.Username);
+            var existingUser = await _usersDb.GetUserByUsernameAsync(loginDto.Username);
             if (existingUser == null)
             {
                 _logger.LogError($"User with this username: {loginDto.Username} does not exist");
@@ -207,7 +207,7 @@ namespace Roomiebill.Server.Facades
             }
 
             existingUser.IsLoggedIn = true;
-            _usersDb.UpdateUser(existingUser);
+            await _usersDb.UpdateUserAsync(existingUser);
             _logger.LogInformation($"User {loginDto.Username} logged in successfully");
 
             return existingUser;
@@ -229,7 +229,7 @@ namespace Roomiebill.Server.Facades
                 throw new ArgumentNullException(nameof(username));
             }
             // Check if the user exists by username
-            var existingUser = _usersDb.GetUserByUsername(username);
+            var existingUser = await _usersDb.GetUserByUsernameAsync(username);
             if (existingUser == null)
             {
                 _logger.LogError($"User with this username: {username} does not exist");
@@ -246,7 +246,7 @@ namespace Roomiebill.Server.Facades
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="Exception"></exception>
-        public async Task<User> IsUserLoggedInAsync(string username)
+        public async Task<bool> IsUserLoggedInAsync(string username)
         {
             _logger.LogInformation($"Checking if user {username} is logged in");
             if (username == null)
@@ -255,14 +255,21 @@ namespace Roomiebill.Server.Facades
                 throw new ArgumentNullException(nameof(username));
             }
             // Check if the user exists by username
-            var existingUser = _usersDb.GetUserByUsername(username);
+            var existingUser = await _usersDb.GetUserByUsernameAsync(username);
             if (existingUser == null)
             {
                 _logger.LogError($"User with this username: {username} does not exist");
                 throw new Exception("User with this username does not exist");
             }
-            _logger.LogInformation($"User {username} is logged in: {existingUser.IsLoggedIn}");
-            return existingUser;
+            return existingUser.IsLoggedIn;
+        }
+
+        public async Task AddInviteToinvited(User invited, Invite inv)
+        {
+            _logger.LogInformation($"Adding invite to user {invited.Username}");
+            invited.AddInvite(inv);
+            await _usersDb.UpdateUserAsync(invited);
+            _logger.LogInformation($"Invite added to user {invited.Username}");
         }
         public async Task<User?> GetUserByIdAsync(int payerId)
             {
@@ -272,7 +279,7 @@ namespace Roomiebill.Server.Facades
 
         public async Task<User?> GetUserByUsernameAsync(string username)
         {
-            return _usersDb.GetUserByUsername(username);
+            return await _usersDb.GetUserByUsernameAsync(username);
         }
 
        
