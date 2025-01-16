@@ -62,6 +62,22 @@ namespace Roomiebill.Server.Facades
             }
         }
        
+       // Get the debt between 2 users - i owns to j- so if it is negative i owns j 0
+        public int GetDebtBetweenIndex(int i, int j, int[] debtArray)
+        {
+            int indexi = _userIndexMap[i];
+            int indexj = _userIndexMap[j];
+            int index = GetIndex(indexi, indexj);
+            int debt = debtArray[index];
+        if (indexi < indexj)
+            {
+                return debt > 0 ? debt : 0; // Positive: i owes j; Zero or negative: i owes j nothing
+            }
+            else
+            {
+                return debt < 0 ? -debt : 0; // Negative: j owes i; Zero or positive: j owes i nothing
+            }
+        }
         private void UpdateDebtArray(int i, int j, int amount, int[] debtArray)
         {
             int index = GetIndex(i, j);
@@ -148,9 +164,10 @@ namespace Roomiebill.Server.Facades
             }
         }
 
-        public void UpdateExpense(Expense oldExpense, Expense newExpense, int[] debtArray){
+        public Expense UpdateExpense(Expense oldExpense, Expense newExpense, int[] debtArray){
             DeleteExpense(oldExpense, debtArray); // Reverse the debt
-            AddExpense(newExpense, debtArray);
+            Expense newAddedExpense = AddExpense(newExpense, debtArray);
+            return newAddedExpense;
         }
 
         // Get total debt for a specific user (the sum all users have to pay to the user)

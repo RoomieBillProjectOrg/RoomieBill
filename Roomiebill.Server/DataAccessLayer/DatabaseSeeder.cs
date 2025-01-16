@@ -1,4 +1,8 @@
 ﻿using Roomiebill.Server.Models;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Roomiebill.Server.DataAccessLayer
 {
@@ -20,13 +24,42 @@ namespace Roomiebill.Server.DataAccessLayer
                     var user4 = new User("Tal", "Tal@bgu.ac.il", "TalPassword4$", true);
 
                     context.Users.AddRange(user1, user2, user3, user4);
-
                     context.SaveChanges();
                 }
-                // add new expense
-                
 
-               
+                // Ensure the group exists
+                var group = context.Groups.FirstOrDefault(g => g.GroupName == "Test Group");
+                if (group == null)
+                {
+                    var user1 = context.Users.FirstOrDefault(u => u.Username == "Inbar");
+                    var user2 = context.Users.FirstOrDefault(u => u.Username == "Metar");
+                    var user3 = context.Users.FirstOrDefault(u => u.Username == "Vladi");
+                    var user4 = context.Users.FirstOrDefault(u => u.Username == "Tal");
+
+                    group = new Group("Test Group", user1, new List<User> { user1, user2, user3, user4 });
+                    context.Groups.Add(group);
+                    context.SaveChanges();
+                }
+
+                // Create an expense
+                var expense = new Expense
+                {
+                    Amount = 100.0,
+                    Description = "Dinner",
+                    IsPaid = false,
+                    PayerId = group.Members.First().Id,
+                    GroupId = group.Id,
+                    ExpenseSplits = new List<ExpenseSplit>
+                    {
+                        new ExpenseSplit { UserId = group.Members.ElementAt(0).Id, Percentage = 25.0 },
+                        new ExpenseSplit { UserId = group.Members.ElementAt(1).Id, Percentage = 25.0 },
+                        new ExpenseSplit { UserId = group.Members.ElementAt(2).Id, Percentage = 25.0 },
+                        new ExpenseSplit { UserId = group.Members.ElementAt(3).Id, Percentage = 25.0 }
+                    }
+                };
+
+                context.Expenses.Add(expense);
+                context.SaveChanges();
             }
         }
     }

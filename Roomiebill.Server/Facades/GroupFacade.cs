@@ -93,8 +93,40 @@ namespace Roomiebill.Server.Facades
             Expense newExpense = MapToEntity(expenseDto);
             // Add expense to group
             group.AddExpense(newExpense);
-            
+
             return newExpense;
+        }
+        public async Task<Expense> UpdateExpenseAsync(ExpenseDto oldExpenseDto, ExpenseDto updatedExpenseDto)
+        {
+            // Extract the group from the database
+            Group? group = _groupDb.GetGroupById(updatedExpenseDto.GroupId);
+
+            // Alert if the group does not exist
+            if (group == null)
+            {
+                _logger.LogError($"Error when trying to update expense: group with id {updatedExpenseDto.GroupId} does not exist.");
+                throw new Exception($"Group with id {updatedExpenseDto.GroupId} does not exist.");
+            }
+
+            // Extract the old expense from the group
+            Expense? oldExpense = group.Expenses.FirstOrDefault(e => e.Id == oldExpenseDto.Id);
+
+            // Alert if the old expense does not exist
+            if (oldExpense == null)
+            {
+                _logger.LogError($"Error when trying to update expense: expense with id {oldExpenseDto.Id} does not exist in the group.");
+                throw new Exception($"Expense with id {oldExpenseDto.Id} does not exist in the group.");
+            }
+
+            // Map the updated DTO to an entity
+            Expense updatedExpense = MapToEntity(updatedExpenseDto);
+
+            // Use the Group's updateExpense method
+            group.updateExpense(oldExpense, updatedExpense);
+
+            _logger.LogInformation($"Expense with id {updatedExpenseDto.Id} updated successfully.");
+
+            return updatedExpense;
         }
 
         private Expense MapToEntity(ExpenseDto dto)
@@ -114,7 +146,6 @@ namespace Roomiebill.Server.Facades
                 }).ToList()
             };
         }
-
 
 
     }
