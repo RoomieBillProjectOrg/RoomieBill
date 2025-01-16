@@ -34,23 +34,18 @@ namespace Roomiebill.Server.DataAccessLayer
             // Make so user can have many invites and each invite can have only one invited
             modelBuilder.Entity<Invite>()
                 .HasOne(i => i.Inviter)
-                .WithMany(u => u.Invites)
+                .WithMany()
                 .OnDelete(DeleteBehavior.Restrict); // Optional: Prevent cascading delete
 
             modelBuilder.Entity<Invite>()
                 .HasOne(i => i.Invited)
-                .WithMany()
+                .WithMany(u => u.Invites)
                 .OnDelete(DeleteBehavior.Restrict); // Optional: Prevent cascading delete
 
             modelBuilder.Entity<Invite>()
                 .HasOne(i => i.Group)
                 .WithMany(g => g.Invites)
                 .OnDelete(DeleteBehavior.Restrict); // Optional: Prevent cascading delete
-            
-            modelBuilder.Entity<User>()
-                .HasIndex(u => u.Username)
-                .IsUnique();
-
         }
         /* User methods */
         public User? GetUserByEmail(string email)
