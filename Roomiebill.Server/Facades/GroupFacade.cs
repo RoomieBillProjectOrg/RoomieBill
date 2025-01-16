@@ -37,7 +37,7 @@ namespace Roomiebill.Server.Facades
             if (admin == null)
             {
                 _logger.LogError($"Error when trying to create new group: admin with username {newGroupDto.AdminGroupUsername} does not exist in the system.");
-               throw new Exception($"Error when trying to create new group: admin with username {newGroupDto.AdminGroupUsername} does not exist in the system.");
+                throw new Exception($"Error when trying to create new group: admin with username {newGroupDto.AdminGroupUsername} does not exist in the system.");
             }
 
             // Extract group members from UserFacade using usernames
@@ -46,7 +46,7 @@ namespace Roomiebill.Server.Facades
             {
                 User? member = await _userFacade.GetUserByUsernameAsync(username);
 
-                if(member == null)
+                if (member == null)
                 {
                     _logger.LogError($"Error when trying to create new group: member with username {username} does not exist in the system.");
                     throw new Exception($"Error when trying to create new group: member with username {username} does not exist in the system.");
@@ -155,5 +155,139 @@ namespace Roomiebill.Server.Facades
         }
         
         #endregion 
+
+        public async Task<Expense> AddExpenseAsync(ExpenseDto expenseDto)
+        {
+            // Extract group from database
+            Group? group = _groupDb.GetGroupById(expenseDto.GroupId);
+
+            // Alert if the group does not exist
+            if (group == null)
+            {
+                _logger.LogError($"Error when trying to add expense: group with id {expenseDto.GroupId} does not exist in the system.");
+                throw new Exception($"Error when trying to add expense: group with id {expenseDto.GroupId} does not exist in the system.");
+            }
+
+            // Extract user from database
+            User? user = await _userFacade.GetUserByIdAsync(expenseDto.PayerId);
+
+
+            // Alert if the user does not exist
+            if (user == null)
+            {
+                _logger.LogError($"Error when trying to add expense: user with id {expenseDto.PayerId} does not exist in the system.");
+                throw new Exception($"Error when trying to add expense: user with id {expenseDto.PayerId} does not exist in the system.");
+            }
+            Expense newExpense = MapToEntity(expenseDto);
+            // Add expense to group
+            group.AddExpense(newExpense);
+
+            return newExpense;
+        }
+        public async Task<Expense> UpdateExpenseAsync(ExpenseDto oldExpenseDto, ExpenseDto updatedExpenseDto)
+        {
+            // Extract the group from the database
+            Group? group = await Task.Run(() => _groupDb.GetGroupById(updatedExpenseDto.GroupId));
+
+            // Alert if the group does not exist
+            if (group == null)
+            {
+                _logger.LogError($"Error when trying to update expense: group with id {updatedExpenseDto.GroupId} does not exist.");
+                throw new Exception($"Group with id {updatedExpenseDto.GroupId} does not exist.");
+            }
+
+            // Extract the old expense from the group
+            Expense? oldExpense = group.Expenses.FirstOrDefault(e => e.Id == oldExpenseDto.Id);
+
+            // Alert if the old expense does not exist
+            if (oldExpense == null)
+            {
+                _logger.LogError($"Error when trying to update expense: expense with id {oldExpenseDto.Id} does not exist in the group.");
+                throw new Exception($"Expense with id {oldExpenseDto.Id} does not exist in the group.");
+            }
+
+            // Map the updated DTO to an entity
+            Expense updatedExpense = MapToEntity(updatedExpenseDto);
+
+            // Use the Group's updateExpense method
+            group.updateExpense(oldExpense, updatedExpense);
+
+            _logger.LogInformation($"Expense with id {updatedExpenseDto.Id} updated successfully.");
+
+            return updatedExpense;
+        }
+        public async Task AddMemberAsync(User user, int groupId)
+        {
+            // Extract the group from the database
+            Group? group = await Task.Run(() => _groupDb.GetGroupById(groupId));
+
+            // Alert if the group does not exist
+            if (group == null)
+            {
+                _logger.LogError($"Error when trying to add member: group with id {groupId} does not exist.");
+                throw new Exception($"Group with id {groupId} does not exist.");
+            }
+            // User newUser = MapToEntity(user);
+
+            // Add the user to the group
+            group.AddMember(user);
+
+            _logger.LogInformation($"User with id {user.Id} added to group with id {groupId} successfully.");
+
+        }
+
+        public async Task RemoveMemberAsync(User user, int groupId){
+            // Extract the group from the database
+            Group? group = await Task.Run(() => _groupDb.GetGroupById(groupId));
+
+            // Alert if the group does not exist
+            if (group == null)
+            {
+                _logger.LogError($"Error when trying to remove member: group with id {groupId} does not exist.");
+                throw new Exception($"Group with id {groupId} does not exist.");
+            }
+
+            // Remove the user from the group
+            group.RemoveMember(user);
+
+            _logger.LogInformation($"User with id {user.Id} removed from group with id {groupId} successfully.");
+        }
+        private User MapToEntity(RegisterUserDto dto)
+        {
+            if(dto == null)
+            {
+                return null;
+            }
+            else
+            return new User
+            {
+                Id = dto.Id,
+                Username = dto.Username,
+                Email = dto.Email,
+                PasswordHash = dto.Password
+            };
+        }
+
+
+        
+
+        private Expense MapToEntity(ExpenseDto dto)
+        {
+            return new Expense
+            {
+                Id = dto.Id,
+                Amount = dto.Amount,
+                Description = dto.Description,
+                IsPaid = dto.IsPaid,
+                PayerId = dto.PayerId,
+                GroupId = dto.GroupId,
+                ExpenseSplits = dto.ExpenseSplits.Select(splitDto => new ExpenseSplit
+                {
+                    UserId = splitDto.UserId,
+                    Percentage = splitDto.Percentage
+                }).ToList()
+            };
+        }
+
     }
 }

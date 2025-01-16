@@ -30,5 +30,12 @@ namespace Roomiebill.Server.Services
             } 
             await _groupFacade.InviteToGroupByUsername(inviteDetails.InviterUsername, inviteDetails.InvitedUsername, inviteDetails.GroupId);
         }
+
+        public async Task<Expense> AddExpenseAsync(ExpenseDto expense)
+        {
+            return await _groupFacade.AddExpenseAsync(expense);
+        }
+
+
     }
 }
