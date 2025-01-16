@@ -99,7 +99,7 @@ namespace Roomiebill.Server.Facades
         public async Task<Expense> UpdateExpenseAsync(ExpenseDto oldExpenseDto, ExpenseDto updatedExpenseDto)
         {
             // Extract the group from the database
-            Group? group = _groupDb.GetGroupById(updatedExpenseDto.GroupId);
+            Group? group = await Task.Run(() => _groupDb.GetGroupById(updatedExpenseDto.GroupId));
 
             // Alert if the group does not exist
             if (group == null)
@@ -128,6 +128,60 @@ namespace Roomiebill.Server.Facades
 
             return updatedExpense;
         }
+        public async Task AddMemberAsync(User user, int groupId)
+        {
+            // Extract the group from the database
+            Group? group = await Task.Run(() => _groupDb.GetGroupById(groupId));
+
+            // Alert if the group does not exist
+            if (group == null)
+            {
+                _logger.LogError($"Error when trying to add member: group with id {groupId} does not exist.");
+                throw new Exception($"Group with id {groupId} does not exist.");
+            }
+            // User newUser = MapToEntity(user);
+
+            // Add the user to the group
+            group.AddMember(user);
+
+            _logger.LogInformation($"User with id {user.Id} added to group with id {groupId} successfully.");
+
+        }
+
+        public async Task RemoveMemberAsync(User user, int groupId){
+            // Extract the group from the database
+            Group? group = await Task.Run(() => _groupDb.GetGroupById(groupId));
+
+            // Alert if the group does not exist
+            if (group == null)
+            {
+                _logger.LogError($"Error when trying to remove member: group with id {groupId} does not exist.");
+                throw new Exception($"Group with id {groupId} does not exist.");
+            }
+
+            // Remove the user from the group
+            group.RemoveMember(user);
+
+            _logger.LogInformation($"User with id {user.Id} removed from group with id {groupId} successfully.");
+        }
+        private User MapToEntity(RegisterUserDto dto)
+        {
+            if(dto == null)
+            {
+                return null;
+            }
+            else
+            return new User
+            {
+                Id = dto.Id,
+                Username = dto.Username,
+                Email = dto.Email,
+                PasswordHash = dto.Password
+            };
+        }
+
+
+        
 
         private Expense MapToEntity(ExpenseDto dto)
         {
@@ -146,7 +200,6 @@ namespace Roomiebill.Server.Facades
                 }).ToList()
             };
         }
-
 
     }
 }

@@ -28,7 +28,7 @@ namespace Roomiebill.Server.DataAccessLayer
                 }
 
                 // Ensure the group exists
-                var group = context.Groups.FirstOrDefault(g => g.GroupName == "Test Group");
+                var group = context.Groups.FirstOrDefault(g => g.GroupName == "Test Group2");
                 if (group == null)
                 {
                     var user1 = context.Users.FirstOrDefault(u => u.Username == "Inbar");
@@ -44,8 +44,8 @@ namespace Roomiebill.Server.DataAccessLayer
                 // Create an expense
                 var expense = new Expense
                 {
-                    Amount = 100.0,
-                    Description = "Dinner",
+                    Amount = 500.0,
+                    Description = "Tal's Mesibat Ravakim",
                     IsPaid = false,
                     PayerId = group.Members.First().Id,
                     GroupId = group.Id,
@@ -57,9 +57,19 @@ namespace Roomiebill.Server.DataAccessLayer
                         new ExpenseSplit { UserId = group.Members.ElementAt(3).Id, Percentage = 25.0 }
                     }
                 };
-
                 context.Expenses.Add(expense);
                 context.SaveChanges();
+                //update an expense
+                var expenseToUpdate = context.Expenses.FirstOrDefault(e => e.Description == "Tal's Mesibat Ravakim");
+                if (expenseToUpdate != null)
+                {
+                    expenseToUpdate.Amount = 200.0;
+                    context.Expenses.Update(expenseToUpdate);
+                    context.SaveChanges();
+                }
+
+
+                
             }
         }
     }
