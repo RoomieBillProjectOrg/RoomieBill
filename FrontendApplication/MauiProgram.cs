@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Plugin.Firebase.Auth;
 using Microsoft.Maui.LifecycleEvents;
+using System;
 #if IOS
 using Plugin.Firebase.Core.Platforms.iOS;
 #elif ANDROID
@@ -25,12 +26,25 @@ namespace FrontendApplication
                 })
                 .RegisterFirebaseServices();
 
-            // Register the UserService and HttpClient
-            builder.Services.AddSingleton<UserServiceApi>();
-            builder.Services.AddHttpClient("Server", client =>
+            // Configure Https
+            var baseUrl = new Uri(AppConfig.ApiBaseUrl);
+#if ANDROID
+            baseUrl = new Uri("https://10.0.2.2:7226/api");
+#endif
+            // Register the HttpClient with a platform-specific base address
+            builder.Services.AddSingleton<HttpClientService>();
+
+            builder.Services.AddHttpClient("DefaultClient", client =>
             {
-                client.BaseAddress = new Uri(AppConfig.ApiBaseUrl);
+                client.BaseAddress = baseUrl;
+            }).ConfigurePrimaryHttpMessageHandler(() =>
+            {
+                var httpClientService = builder.Services.BuildServiceProvider().GetRequiredService<HttpClientService>();
+                return httpClientService.GetPlatformSpecificHttpMessageHandler();
             });
+
+            // Register the services that use the shared HttpClient
+            builder.Services.AddSingleton<UserServiceApi>();
 
 #if DEBUG
             builder.Logging.AddDebug();
@@ -41,9 +55,11 @@ namespace FrontendApplication
 
         private static MauiAppBuilder RegisterFirebaseServices(this MauiAppBuilder builder)
         {
-            builder.ConfigureLifecycleEvents(events => {
+            builder.ConfigureLifecycleEvents(events =>
+            {
 #if IOS
-                events.AddiOS(iOS => iOS.WillFinishLaunching((_,__) => {
+                events.AddiOS(iOS => iOS.WillFinishLaunching((_,__) =>
+                {
                     CrossFirebase.Initialize();
                     return false;
                 }));
@@ -52,7 +68,7 @@ namespace FrontendApplication
                     CrossFirebase.Initialize(activity)));
 #endif
             });
-        
+
             builder.Services.AddSingleton(_ => CrossFirebaseAuth.Current);
             return builder;
         }
