@@ -9,6 +9,7 @@ namespace Roomiebill.Server.Models
         public string GroupName { get; set; }
         public User Admin { get; set; }
         public List<User> Members { get; set; }
+        public List<Invite> Invites { get; set; }
 
         [NotMapped]
         public List<Expense> Expenses { get; set; }
@@ -17,6 +18,7 @@ namespace Roomiebill.Server.Models
         {
             // Default constructor required by EF Core
             Members = new List<User>();
+            Invites = new List<Invite>();
 
             // REMOVE FROM COMMENT WHEN REMOVE EXPENSE CLASS FROM COMMENT
             //Expenses = new List<Expense>();
@@ -27,6 +29,9 @@ namespace Roomiebill.Server.Models
             this.GroupName = groupName;
             this.Admin = groupAdmin;
             this.Members = groupMembers;
+            this.Invites = new List<Invite>();
+            this.Expenses = new List<Expense>();
+            Members.Add(groupAdmin);
 
             // REMOVE FROM COMMENT WHEN REMOVE EXPENSE CLASS FROM COMMENT
             //this.Expenses = new List<Expense>();
@@ -40,6 +45,11 @@ namespace Roomiebill.Server.Models
         public void RemoveMember(User user)
         {
             Members.Remove(user);
+        }
+
+        public void AddInvite(Invite invite)
+        {
+            Invites.Add(invite);
         }
 
         public void AddExpense(Expense expense)
