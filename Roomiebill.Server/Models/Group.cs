@@ -44,6 +44,11 @@ namespace Roomiebill.Server.Models
             Members.Remove(user);
         }
 
+        public void AddInvite(Invite invite)
+        {
+            Invites.Add(invite);
+        }
+
         public void AddExpense(Expense expense)
         {
             // REMOVE FROM COMMENT WHEN REMOVE EXPENSE CLASS FROM COMMENT

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using Roomiebill.Server.Models;
 
 namespace Roomiebill.Server.DataAccessLayer
@@ -70,10 +71,23 @@ namespace Roomiebill.Server.DataAccessLayer
             await SaveChangesAsync();
         }
 
-        /* Group methods */
-        public async Task<Group?> GetGroupByIdAsync(int groupId)
+        public async Task UpdateGroupAsync(Group group)
         {
-            return await Groups.FirstOrDefaultAsync(g => g.Id == groupId);
+            Groups.Update(group);
+            await SaveChangesAsync();
+        }
+
+        /* Group methods */
+        public async Task<Group?> GetGroupByIdAsync(int groupId, Func<IQueryable<Group>, IQueryable<Group>> includeFunc)
+        {
+            IQueryable<Group> query = Groups;
+
+            if (includeFunc != null)
+            {
+                query = includeFunc(query);
+            }
+
+            return await query.FirstOrDefaultAsync(g => g.Id == groupId);
         }
         public void AddGroup(Group group)
         {
