@@ -13,6 +13,7 @@ namespace Roomiebill.Server.DataAccessLayer
         public void UpdateUser(User user);
 
         public void AddGroup(Group group);
+        
 
     }
 }
