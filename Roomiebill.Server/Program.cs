@@ -4,6 +4,7 @@ using Roomiebill.Server.Services;
 using Roomiebill.Server.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,7 @@ builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<GroupService>();
 builder.Services.AddScoped<BillingService>();
+builder.Services.AddScoped<DatabaseSeeder>();
 
 var app = builder.Build();
 
@@ -37,7 +39,8 @@ using (var scope = app.Services.CreateScope())
     dbContext.Database.Migrate();
 
     // Seed the database
-    DatabaseSeeder.Seed(scope.ServiceProvider);
+    var databaseSeeder = scope.ServiceProvider.GetRequiredService<DatabaseSeeder>();
+    await databaseSeeder.SeedAsync();
 }
 
 // Configure the HTTP request pipeline.
@@ -54,3 +57,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+

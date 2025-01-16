@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Models;
@@ -63,9 +64,96 @@ namespace Roomiebill.Server.Facades
             return newGroup;
         }
 
-        public void InviteToGroupByUsername(int inviter_id, string invited_username, int groupId)
+        public async Task InviteToGroupByUsername(string inviter_username, string invited_username, int groupId)
         {
+            _logger.LogInformation($"Inviting user with username {invited_username} to group with id {groupId}.");
 
+            User? inviter = await _userFacade.GetUserByUsernameAsync(inviter_username);
+
+            if (inviter == null)
+            {
+                _logger.LogError($"Error when trying to invite user to group: inviter with username {inviter_username} does not exist in the system.");
+                throw new Exception($"Error when trying to invite user to group: inviter with username {inviter_username} does not exist in the system.");
+            }
+
+            User? invited = await _userFacade.GetUserByUsernameAsync(invited_username);
+
+            if (invited == null)
+            {
+                _logger.LogError($"Error when trying to invite user to group: invited with username {invited_username} does not exist in the system.");
+                throw new Exception($"Error when trying to invite user to group: invited with username {invited_username} does not exist in the system.");
+            }
+
+            Group? group = await _groupDb.GetGroupByIdAsync(groupId, query => query.Include(g => g.Invites).ThenInclude(i => i.Invited)
+                .Include(g => g.Members));
+
+            if (group == null)
+            {
+                _logger.LogError($"Error when trying to invite user to group: group with id {groupId} does not exist in the system.");
+                throw new Exception($"Error when trying to invite user to group: group with id {groupId} does not exist in the system.");
+            }
+
+            if (IsInviteForUserExistInGroup(invited, group))
+            {
+                _logger.LogError($"Error when trying to invite user to group: user with username {invited_username} is already invited to group with id {groupId}.");
+                throw new Exception($"Error when trying to invite user to group: user with username {invited_username} is already invited to group with id {groupId}.");
+            }
+
+            if (!IsUserInGroup(inviter, group))
+            {
+                _logger.LogError($"Error when trying to invite user to group: user with username {inviter_username} is not a member of group with id {groupId}.");
+                throw new Exception($"Error when trying to invite user to group: user with username {inviter_username} is not a member of group with id {groupId}.");
+            }
+
+            if (IsUserInGroup(invited, group))
+            {
+                _logger.LogError($"Error when trying to invite user to group: user with username {invited_username} is already a member of group with id {groupId}.");
+                throw new Exception($"Error when trying to invite user to group: user with username {invited_username} is already a member of group with id {groupId}.");
+            }
+
+            Invite invite = new Invite(inviter, invited, group);
+
+            await _userFacade.AddInviteToinvited(invited, invite);
+            await AddInviteToGroup(group, invite);
+
+            _logger.LogInformation($"User with username {invited_username} has been invited to group with id {groupId}.");
         }
+
+        public async Task<Group> GetGroupByIdAsync(int groupId)
+        {
+            _logger.LogInformation($"Getting group with id {groupId}.");
+
+            Group? group = await _groupDb.GetGroupByIdAsync(groupId, null);
+
+            if (group == null)
+            {
+                _logger.LogError($"Error when trying to get group: group with id {groupId} does not exist in the system.");
+                throw new Exception($"Error when trying to get group: group with id {groupId} does not exist in the system.");
+            }
+
+            return group;
+        }
+
+        #region Help functions
+
+        private bool IsInviteForUserExistInGroup(User invited, Group group)
+        {
+            return group.Invites.Any(i => i.Invited == invited);
+        }
+
+        private async Task AddInviteToGroup(Group group, Invite invite)
+        {
+            _logger.LogInformation($"Adding invite to group with id {group.Id}.");
+            group.AddInvite(invite);
+            await _groupDb.UpdateGroupAsync(group);
+            _logger.LogInformation($"Invite has been added to group with id {group.Id}.");
+        }
+
+        private bool IsUserInGroup(User user, Group group)
+        {
+            return group.Members.Contains(user);
+        }
+        
+        #endregion 
     }
 }

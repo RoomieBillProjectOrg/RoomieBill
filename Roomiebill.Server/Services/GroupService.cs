@@ -21,5 +21,14 @@ namespace Roomiebill.Server.Services
         {
             return await _groupFacade.CreateNewGroupAsync(group);
         }
+
+        public async Task InviteToGroupByUsername(InviteToGroupByUsernameDto inviteDetails)
+        {
+            if (!await _userFacade.IsUserLoggedInAsync(inviteDetails.InviterUsername))
+            {
+                throw new Exception($"User with username {inviteDetails.InviterUsername} is not logged in.");
+            } 
+            await _groupFacade.InviteToGroupByUsername(inviteDetails.InviterUsername, inviteDetails.InvitedUsername, inviteDetails.GroupId);
+        }
     }
 }

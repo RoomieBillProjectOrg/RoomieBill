@@ -10,8 +10,8 @@ namespace Roomiebill.Server.Models
         public string PasswordHash { get; set; }  // Store the hashed password
         public bool IsLoggedIn { get; set; } = false;
         public bool IsSystemAdmin { get; set; } = false;
-
-        public List<Group> GroupsUserIsMemberAt { get; set; } = new List<Group>();
+        public List<Invite> Invites { get; set; } = [];
+        public List<Group> GroupsUserIsMemberAt { get; set; } = [];
 
         public User() { }
 
@@ -22,6 +22,11 @@ namespace Roomiebill.Server.Models
             PasswordHash = passwordHash;
             IsSystemAdmin = isSystemAdmin;
             IsLoggedIn = isLoggedIn;
+        }
+
+        public void AddInvite(Invite invite)
+        {
+            Invites.Add(invite);
         }
     }
 }

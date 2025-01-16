@@ -1,28 +1,62 @@
-﻿using Roomiebill.Server.Models;
+﻿using Roomiebill.Server.DataAccessLayer.Dtos;
+using Roomiebill.Server.Models;
+using Roomiebill.Server.Services;
 
 namespace Roomiebill.Server.DataAccessLayer
 {
     public class DatabaseSeeder
     {
-        public static void Seed(IServiceProvider serviceProvider)
+        private UserService _userService;
+        private GroupService _groupService;
+        private ApplicationDbContext _context;
+        public DatabaseSeeder(UserService userService, GroupService groupService, ApplicationDbContext context)
         {
-            using (var scope = serviceProvider.CreateScope())
+            _userService = userService;
+            _groupService = groupService;
+            _context = context;
+        }
+        public async Task SeedAsync()
+        {
+            // Check if the database is already seeded
+            if (!_context.Users.Any())
             {
-                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Inbar", Email = "inbar@bgu.ac.il", Password = "InbarPassword1!" });
+                await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Metar", Email = "Metar@bgu.ac.il", Password = "MetarPassword2@" });
+                await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Vladi", Email = "Vladi@bgu.ac.il", Password = "VladiPassword3#" });
+                await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Tal", Email = "Tal@bgu.ac.il", Password = "TalPassword4$" });
 
-                // Check if the database is already seeded
-                if (!context.Users.Any())
+                _context.SaveChanges();
+            }
+
+            if (!_context.Groups.Any())
+            {
+                CreateNewGroupDto newGroupDetails = new CreateNewGroupDto
                 {
-                    // Add initial data if not already present
-                    var user1 = new User("Inbar", "inbar@bgu.ac.il", "InbarPassword1!", true);
-                    var user2 = new User("Metar", "Metar@bgu.ac.il", "MetarPassword2@", true);
-                    var user3 = new User("Vladi", "Vladi@bgu.ac.il", "VladiPassword3#", true);
-                    var user4 = new User("Tal", "Tal@bgu.ac.il", "TalPassword4$", true);
+                    AdminGroupUsername = "Inbar",
+                    GroupMembersPhoneNumbersList = new List<string> { "Metar" },
+                    GroupName = "Roomiebill"
+                };
 
-                    context.Users.AddRange(user1, user2, user3, user4);
+                await _groupService.CreateNewGroupAsync(newGroupDetails);
 
-                    context.SaveChanges();
-                }
+                _context.SaveChanges();
+            }
+
+            if (!_context.Invites.Any())
+            {
+                await _userService.LoginAsync(new LoginDto { Username = "Tal", Password = "TalPassword4$" });
+
+                InviteToGroupByUsernameDto inviteDetails = new InviteToGroupByUsernameDto
+                {
+                    InviterUsername = "Inbar",
+                    InvitedUsername = "Tal",
+                    GroupId = 3
+                };
+
+                await _groupService.InviteToGroupByUsername(inviteDetails);
+
+                _context.SaveChanges();
+
             }
         }
     }
