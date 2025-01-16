@@ -13,7 +13,8 @@ namespace Roomiebill.Server.DataAccessLayer
 
         public DbSet<User> Users { get; set; }
         public DbSet<Group> Groups { get; set; }
-        //public DbSet<Expense> Expenses { get; set; }
+        public DbSet<Expense> Expenses { get; set; }
+        public DbSet<ExpenseSplit> ExpenseSplits { get; set; }  
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,6 +30,28 @@ namespace Roomiebill.Server.DataAccessLayer
             modelBuilder.Entity<Group>()
                 .HasMany(g => g.Members)
                 .WithMany(u => u.GroupsUserIsMemberAt);
+                        // Define the one-to-many relationship between Group and Expenses
+            modelBuilder.Entity<Group>()
+                .HasMany(g => g.Expenses)
+                .WithOne(e => e.Group)
+                .HasForeignKey(e => e.GroupId)
+                .OnDelete(DeleteBehavior.Cascade); // Cascading delete for related expenses
+
+            // Define the one-to-many relationship between Expense and ExpenseSplits
+            modelBuilder.Entity<Expense>()
+                .HasMany(e => e.ExpenseSplits)
+                .WithOne(es => es.Expense)
+                .HasForeignKey(es => es.ExpenseId)
+                .OnDelete(DeleteBehavior.Cascade); // Cascading delete for splits
+
+            // ExpenseSplit ↔ User
+            modelBuilder.Entity<ExpenseSplit>()
+                .HasOne(es => es.User)
+                .WithMany()
+                .HasForeignKey(es => es.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+    
         }
 
 
@@ -57,6 +80,11 @@ namespace Roomiebill.Server.DataAccessLayer
         public void AddGroup(Group group)
         {
             Groups.Add(group);
+            SaveChanges();
+        }
+        public void AddExpense(Expense expense)
+        {
+            Expenses.Add(expense);
             SaveChanges();
         }
     }
