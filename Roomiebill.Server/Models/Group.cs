@@ -17,6 +17,7 @@ namespace Roomiebill.Server.Models
         public ICollection<Expense> Expenses { get; set; } = new List<Expense>(); // Expenses of the group
         [NotMapped]
         private int[] _debtArray; // 1D array to store debts
+        public List<Invite> Invites { get; set; }
         
         [NotMapped]
         ExpenseHandler expenseHandler { get; set; }
@@ -26,33 +27,35 @@ namespace Roomiebill.Server.Models
             // Default constructor required by EF Core
 
             Members = new List<User>();
+            Invites = new List<Invite>();
             this.GroupName = "Default Name";
             this._debtArray = new int[1];
             this.Expenses = new List<Expense>();
             expenseHandler = new ExpenseHandler(Members);
         }
 
-        public Group(string groupName, User admin, List<User> members)
+        public Group(string groupName, User groupAdmin, List<User> members)
         {
              if (string.IsNullOrWhiteSpace(groupName))
                 throw new ArgumentException("Group name cannot be empty or null.", nameof(groupName));
 
-            if (admin == null)
+            if (groupAdmin == null)
                 throw new ArgumentNullException(nameof(admin), "Admin cannot be null.");
 
             if (members == null || !members.Any())
                 throw new ArgumentException("Members list cannot be null or empty.", nameof(members));
 
             GroupName = groupName;
-            Admin = admin;
+            Admin = groupAdmin;
             Members = new List<User>(members); // Defensive copy
+            Members.Add(groupAdmin);
             this._debtArray = new int[(members.Count * (members.Count - 1)) / 2]; // Calculate size for 1D representation
             this.Expenses = new List<Expense>();
             this.expenseHandler = new ExpenseHandler(Members);
         }
 
 
-        private void EnlargeDebtArraySize(int newUserCount,int oldUserCount)
+       private void EnlargeDebtArraySize(int newUserCount,int oldUserCount)
         {
             // Copy existing data to the new array
             _debtArray = expenseHandler.EnlargeDebtArraySize(newUserCount,oldUserCount,_debtArray);
@@ -83,14 +86,18 @@ namespace Roomiebill.Server.Models
         public void RemoveMember(User user)
         {
             Members.Remove(user);
-            List <int> removedUsers = new List<int>();
+             List <int> removedUsers = new List<int>();
             removedUsers.Add(user.Id);
             // Update the debt array size
             ReduceDebtArraySize(Members.Count,Members.Count+1,removedUsers);
-
         }
 
-        public void RemoveMembers(List<User> removedMembers){
+        public void AddInvite(Invite invite)
+        {
+            Invites.Add(invite);
+        }
+
+         public void RemoveMembers(List<User> removedMembers){
             List <int> removedUsers = new List<int>();
             foreach(User user in removedMembers){
                 Members.Remove(user);
@@ -121,37 +128,7 @@ namespace Roomiebill.Server.Models
             return expenseHandler.GetDebtBetweenIndex(user1Id,user2Id,_debtArray);
         }
 
-
-
-        //For Now i change it to ExpenseDTO 
-        // public void AddExpense(Expense expense)
-        // {
-        //     User user = expense.payer;
-        //     if (Expenses.ContainsKey(user.Id))
-        //     {
-        //         Expenses[user.Id].Add(expense);
-        //     }
-        //     else
-        //     {
-        //         Expenses[user.Id] = new List<Expense>();
-        //         Expenses[user.Id].Add(expense);
-        //     }
-        //     ExpenseDto expenseDto = new ExpenseDto(expense);
-            
-        //     expenseHandler.AddExpense(expenseDto,_debtArray);
-
-        // }
-
-        // public void DeleteExpense(Expense expense)
-        // {
-        //     User user = expense.Payer;
-        //     if (Expenses.ContainsKey(user.Id))
-        //     {
-        //         Expenses[user.Id].Remove(expense);
-        //     }
-        //     ExpenseDto expenseDto = new ExpenseDto(expense);
-        //     expenseHandler.DeleteExpense(expenseDto,_debtArray);
-        // }
+       
 
         public User GetAdmin()
         {

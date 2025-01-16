@@ -37,7 +37,7 @@ namespace Roomiebill.Server.Services
             return await _userFacade.IsUserAdminAsync(username);
         }
 
-        public async Task<User> IsUserLoggedInAsync(string username)
+        public async Task<bool> IsUserLoggedInAsync(string username)
         {
             return await _userFacade.IsUserLoggedInAsync(username);
         }
