@@ -1,4 +1,5 @@
-﻿using Roomiebill.Server.Models;
+﻿using System.Linq.Expressions;
+using Roomiebill.Server.Models;
 
 namespace Roomiebill.Server.DataAccessLayer
 {
@@ -12,7 +13,9 @@ namespace Roomiebill.Server.DataAccessLayer
 
         public Task UpdateUserAsync(User user);
 
-        public Task<Group?> GetGroupByIdAsync(int groupId);
+        public Task UpdateGroupAsync(Group group);
+
+        public Task<Group?> GetGroupByIdAsync(int groupId, Func<IQueryable<Group>, IQueryable<Group>> includeFunc);
 
         public void AddGroup(Group group);
 

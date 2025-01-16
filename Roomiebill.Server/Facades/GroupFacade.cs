@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Models;
@@ -83,7 +84,7 @@ namespace Roomiebill.Server.Facades
                 throw new Exception($"Error when trying to invite user to group: invited with username {invited_username} does not exist in the system.");
             }
 
-            Group? group = await _groupDb.GetGroupByIdAsync(groupId);
+            Group? group = await _groupDb.GetGroupByIdAsync(groupId, query => query.Include(g => g.Invites).ThenInclude(i => i.Invited));
 
             if (group == null)
             {
@@ -91,7 +92,16 @@ namespace Roomiebill.Server.Facades
                 throw new Exception($"Error when trying to invite user to group: group with id {groupId} does not exist in the system.");
             }
 
-            await _userFacade.AddInviteToinvited(invited, new Invite(inviter, invited, group));
+            if (IsInviteForUserExistInGroup(invited, group))
+            {
+                _logger.LogError($"Error when trying to invite user to group: user with username {invited_username} is already invited to group with id {groupId}.");
+                throw new Exception($"Error when trying to invite user to group: user with username {invited_username} is already invited to group with id {groupId}.");
+            }
+
+            Invite invite = new Invite(inviter, invited, group);
+
+            await _userFacade.AddInviteToinvited(invited, invite);
+            await AddInviteToGroup(group, invite);
 
             _logger.LogInformation($"User with username {invited_username} has been invited to group with id {groupId}.");
         }
@@ -100,7 +110,7 @@ namespace Roomiebill.Server.Facades
         {
             _logger.LogInformation($"Getting group with id {groupId}.");
 
-            Group? group = await _groupDb.GetGroupByIdAsync(groupId);
+            Group? group = await _groupDb.GetGroupByIdAsync(groupId, null);
 
             if (group == null)
             {
@@ -110,5 +120,22 @@ namespace Roomiebill.Server.Facades
 
             return group;
         }
+
+        #region Help functions
+
+        private bool IsInviteForUserExistInGroup(User invited, Group group)
+        {
+            return group.Invites.Any(i => i.Invited == invited);
+        }
+
+        private async Task AddInviteToGroup(Group group, Invite invite)
+        {
+            _logger.LogInformation($"Adding invite to group with id {group.Id}.");
+            group.AddInvite(invite);
+            await _groupDb.UpdateGroupAsync(group);
+            _logger.LogInformation($"Invite has been added to group with id {group.Id}.");
+        }
+        
+        #endregion 
     }
 }
