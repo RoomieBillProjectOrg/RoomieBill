@@ -40,7 +40,7 @@ namespace Roomiebill.Server.Models
                 throw new ArgumentException("Group name cannot be empty or null.", nameof(groupName));
 
             if (groupAdmin == null)
-                throw new ArgumentNullException(nameof(admin), "Admin cannot be null.");
+                throw new ArgumentNullException(nameof(groupAdmin), "Admin cannot be null.");
 
             if (members == null || !members.Any())
                 throw new ArgumentException("Members list cannot be null or empty.", nameof(members));
