@@ -1,16 +1,17 @@
 ﻿using FrontendApplication.Pages;
+using FrontendApplication.Services;
 using Plugin.Firebase.CloudMessaging;
 
 namespace FrontendApplication
 {
     public partial class MainPage : ContentPage
     {
-
-        public MainPage()
+        private readonly UserServiceApi _userService;
+        public MainPage(UserServiceApi userService)
         {
             InitializeComponent();
+            _userService = userService;
         }
-
 
         protected override void OnAppearing()
         {
@@ -42,7 +43,7 @@ namespace FrontendApplication
             registerPageButton.Clicked += async (sender, e) =>
             {
                 //await Shell.Current.GoToAsync(nameof(RegisterPage));
-                await Navigation.PushAsync(new FrontendApplication.Pages.RegisterPage());
+                await Navigation.PushAsync(new RegisterPage(_userService));
                 await CrossFirebaseCloudMessaging.Current.CheckIfValidAsync();
                 var token = await CrossFirebaseCloudMessaging.Current.GetTokenAsync();
                 Console.WriteLine($"FCM token: {token}");
@@ -59,7 +60,7 @@ namespace FrontendApplication
             loginPageButton.Clicked += async (sender, e) =>
             {
                 //await Shell.Current.GoToAsync(nameof(LoginPage));
-                await Navigation.PushAsync(new FrontendApplication.Pages.LoginPage());
+                await Navigation.PushAsync(new LoginPage(_userService));
             };
             layout.Children.Add(loginPageButton);
 
