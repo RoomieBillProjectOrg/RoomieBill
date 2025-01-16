@@ -1,4 +1,5 @@
 ﻿
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Facades;
@@ -8,15 +9,17 @@ namespace Roomiebill.Server.Models
     public class Group
     {
         public int Id { get; set; }
+        [Required]
+        [StringLength(20, ErrorMessage = "Group name cannot exceed 20 characters.")]
         public string GroupName { get; set; }
         public User Admin { get; set; }
-        public List<User> Members { get; set; }
-
+        public List<User> Members { get; set; } = new List<User>(); // Members of the group
+        public ICollection<Expense> Expenses { get; set; } = new List<Expense>(); // Expenses of the group
         [NotMapped]
-        public Dictionary<int, List<Expense>> Expenses { get; set; } // <User id , list of expenses>
         private int[] _debtArray; // 1D array to store debts
+        
+        [NotMapped]
         ExpenseHandler expenseHandler { get; set; }
-
 
         public Group()
         {
@@ -24,21 +27,29 @@ namespace Roomiebill.Server.Models
             Members = new List<User>();
             this.GroupName = "Default Name";
             this._debtArray = new int[1];
-            Expenses = new Dictionary<int, List<Expense>>();
+            this.Expenses = new List<Expense>();
             expenseHandler = new ExpenseHandler(Members);
         }
 
-        public Group(string groupName, User groupAdmin, List<User> groupMembers)
+        public Group(string groupName, User admin, List<User> members)
         {
-            this.GroupName = groupName;
-            this.Admin = groupAdmin;
-            this.Members = groupMembers;
-            int userCount = groupMembers.Count;
-            int size = (userCount * (userCount - 1)) / 2; // size of the debtArray
-            this._debtArray = new int[size];
-            Expenses = new Dictionary<int, List<Expense>>();
-            expenseHandler = new ExpenseHandler(Members);
+             if (string.IsNullOrWhiteSpace(groupName))
+                throw new ArgumentException("Group name cannot be empty or null.", nameof(groupName));
+
+            if (admin == null)
+                throw new ArgumentNullException(nameof(admin), "Admin cannot be null.");
+
+            if (members == null || !members.Any())
+                throw new ArgumentException("Members list cannot be null or empty.", nameof(members));
+
+            GroupName = groupName;
+            Admin = admin;
+            Members = new List<User>(members); // Defensive copy
+            this._debtArray = new int[(members.Count * (members.Count - 1)) / 2]; // Calculate size for 1D representation
+            this.Expenses = new List<Expense>();
+            this.expenseHandler = new ExpenseHandler(Members);
         }
+
 
          private void EnlargeDebtArraySize(int newUserCount,int oldUserCount)
         {
