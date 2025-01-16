@@ -246,7 +246,7 @@ namespace Roomiebill.Server.Facades
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="Exception"></exception>
-        public async Task<User> IsUserLoggedInAsync(string username)
+        public async Task<bool> IsUserLoggedInAsync(string username)
         {
             _logger.LogInformation($"Checking if user {username} is logged in");
             if (username == null)
@@ -261,8 +261,7 @@ namespace Roomiebill.Server.Facades
                 _logger.LogError($"User with this username: {username} does not exist");
                 throw new Exception("User with this username does not exist");
             }
-            _logger.LogInformation($"User {username} is logged in: {existingUser.IsLoggedIn}");
-            return existingUser;
+            return existingUser.IsLoggedIn;
         }
 
         public async Task AddInviteToinvited(User invited, Invite inv)

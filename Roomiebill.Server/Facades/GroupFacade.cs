@@ -84,7 +84,8 @@ namespace Roomiebill.Server.Facades
                 throw new Exception($"Error when trying to invite user to group: invited with username {invited_username} does not exist in the system.");
             }
 
-            Group? group = await _groupDb.GetGroupByIdAsync(groupId, query => query.Include(g => g.Invites).ThenInclude(i => i.Invited));
+            Group? group = await _groupDb.GetGroupByIdAsync(groupId, query => query.Include(g => g.Invites).ThenInclude(i => i.Invited)
+                .Include(g => g.Members));
 
             if (group == null)
             {
@@ -96,6 +97,18 @@ namespace Roomiebill.Server.Facades
             {
                 _logger.LogError($"Error when trying to invite user to group: user with username {invited_username} is already invited to group with id {groupId}.");
                 throw new Exception($"Error when trying to invite user to group: user with username {invited_username} is already invited to group with id {groupId}.");
+            }
+
+            if (!IsUserInGroup(inviter, group))
+            {
+                _logger.LogError($"Error when trying to invite user to group: user with username {inviter_username} is not a member of group with id {groupId}.");
+                throw new Exception($"Error when trying to invite user to group: user with username {inviter_username} is not a member of group with id {groupId}.");
+            }
+
+            if (IsUserInGroup(invited, group))
+            {
+                _logger.LogError($"Error when trying to invite user to group: user with username {invited_username} is already a member of group with id {groupId}.");
+                throw new Exception($"Error when trying to invite user to group: user with username {invited_username} is already a member of group with id {groupId}.");
             }
 
             Invite invite = new Invite(inviter, invited, group);
@@ -134,6 +147,11 @@ namespace Roomiebill.Server.Facades
             group.AddInvite(invite);
             await _groupDb.UpdateGroupAsync(group);
             _logger.LogInformation($"Invite has been added to group with id {group.Id}.");
+        }
+
+        private bool IsUserInGroup(User user, Group group)
+        {
+            return group.Members.Contains(user);
         }
         
         #endregion 
