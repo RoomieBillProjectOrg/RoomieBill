@@ -23,6 +23,10 @@ namespace Roomiebill.Server.DataAccessLayer
 
                     context.SaveChanges();
                 }
+                // add new expense
+                
+
+               
             }
         }
     }

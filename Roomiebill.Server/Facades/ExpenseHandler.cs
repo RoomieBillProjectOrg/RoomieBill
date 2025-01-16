@@ -75,24 +75,22 @@ namespace Roomiebill.Server.Facades
             }
         }
 
-        public ExpenseDto AddExpense(ExpenseDto expenseDto, int[] debtArray)
-        {
-            int payerId = expenseDto.PayerId;
+         public Expense AddExpense(Expense expense, int[] debtArray){
+            int payerId = expense.PayerId;
             int payerIndex = _userIndexMap[payerId];
-            foreach (KeyValuePair<int, double> split in expenseDto.SplitBetween)
+            foreach (ExpenseSplit split in expense.ExpenseSplits)
             {
-                int userId = split.Key;
+                int userId = split.UserId;
                 int userIndex = _userIndexMap[userId];
                 if (userIndex == payerIndex)
                 {
                     continue;
                 }
-                int amount = (int)(expenseDto.Amount * (split.Value / 100.0));
-
+                int amount = (int)(expense.Amount * (split.Percentage / 100.0));
                 UpdateDebtArray(payerIndex, userIndex, amount, debtArray);
             }
-            return expenseDto;
-        }
+            return expense;
+         }
 
         // Get all debts between users (both sides  -i owns j and j owns i)
         public Dictionary<(int, int), int> GetAllDebts(int[] debtArray)
@@ -133,34 +131,26 @@ namespace Roomiebill.Server.Facades
             int index = GetIndex(i, j);
             debtArray[index] = 0;
         }
-        
 
-
-        public void DeleteExpense(ExpenseDto expenseDto, int[] debtArray)
-        {
-            int payerId = expenseDto.PayerId;
+        public void DeleteExpense(Expense expense, int[] debtArray){
+            int payerId = expense.PayerId;
             int payerIndex = _userIndexMap[payerId];
-            foreach (KeyValuePair<int, double> split in expenseDto.SplitBetween)
+            foreach (ExpenseSplit split in expense.ExpenseSplits)
             {
-                int userId = split.Key;
+                int userId = split.UserId;
                 int userIndex = _userIndexMap[userId];
                 if (userIndex == payerIndex)
                 {
                     continue;
                 }
-                int amount = (int)(expenseDto.Amount * (split.Value / 100.0));
-
+                int amount = (int)(expense.Amount * (split.Percentage / 100.0));
                 UpdateDebtArray(payerIndex, userIndex, -amount, debtArray); // Reverse the debt
             }
         }
 
-        // Update an existing expense
-        public void UpdateExpense(ExpenseDto oldExpenseDto, ExpenseDto newExpenseDto, int[] debtArray)
-        {
-            // First, reverse the old expense
-            DeleteExpense(oldExpenseDto, debtArray); // Reverse the debt
-            // Then, add the new expense
-            AddExpense(newExpenseDto, debtArray);
+        public void UpdateExpense(Expense oldExpense, Expense newExpense, int[] debtArray){
+            DeleteExpense(oldExpense, debtArray); // Reverse the debt
+            AddExpense(newExpense, debtArray);
         }
 
         // Get total debt for a specific user (the sum all users have to pay to the user)

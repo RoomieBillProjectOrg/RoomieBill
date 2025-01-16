@@ -119,6 +119,62 @@ namespace ServerTests
             Assert.Empty(result.GetMembers());
         }
 
+         [Fact]
+        public async Task TestAddExpense_WhenAllGood_ShouldAddExpense()
+        {
+            // Arrange
+            var groupId = 1;
+            var payerId = 1;
+            var expenseDto = new ExpenseDto
+            {
+                Amount = 100.0,
+                Description = "Dinner",
+                IsPaid = false,
+                PayerId = payerId,
+                GroupId = groupId,
+                ExpenseSplits = new List<ExpenseSplitDto>
+                {
+                    new ExpenseSplitDto { UserId = 0, Percentage = 20.0 },
+                    new ExpenseSplitDto { UserId = 2, Percentage = 30.0 }
+                }
+            };
+            User payer = new User("payer","payer@bgu.ac.il","payerPassword!1");
+            User user1 = new User("user1", "user1@bgu.ac.il", "user1Password!1");
+            User user2 = new User("user2", "user2@bgu.ac.il", "user2Password!1");
+            payer.Id = 1;
+            user1.Id = 0;
+            user2.Id = 2;
+            var group = new Group("Test Group", payer,new List<User> { payer, user1, user2 });
+
+            _groupDbMock.Setup(x => x.GetGroupById(groupId)).Returns(group);
+            _userFacadeMock.Setup(x => x.GetUserByIdAsync(payerId)).ReturnsAsync(payer);
+            // _groupDbMock.Setup(x => x.SaveChangesAsync()).Returns(Task.CompletedTask);
+
+            _groupFacade = new GroupFacade(_groupDbMock.Object, _loggerMock.Object, _userFacadeMock.Object);
+
+            // Act
+            await _groupFacade.AddExpenseAsync(expenseDto);
+
+            // Assert
+            Assert.Single(group.Expenses);
+            var addedExpense = group.Expenses.First();
+            int [] debt = group.getDebtArray();
+            int debt01 = group.getDebtBetweenUsers(0,1);//20
+            int debt02 = group.getDebtBetweenUsers(0,2);//0
+            int debt12 = group.getDebtBetweenUsers(1,2);//0
+            int debt10 = group.getDebtBetweenUsers(1,0); //0
+            int debt20 = group.getDebtBetweenUsers(2,0);//0
+            int debt21 = group.getDebtBetweenUsers(2,1);//30
+            Assert.Equal(expenseDto.Amount, addedExpense.Amount);
+            Assert.Equal(expenseDto.Description, addedExpense.Description);
+            Assert.Equal(expenseDto.IsPaid, addedExpense.IsPaid);
+            Assert.Equal(expenseDto.PayerId, addedExpense.PayerId);
+            Assert.Equal(expenseDto.GroupId, addedExpense.GroupId);
+            Assert.Equal(expenseDto.ExpenseSplits.Count, addedExpense.ExpenseSplits.Count);
+        }
+
+
+
         #endregion
     }
 }   

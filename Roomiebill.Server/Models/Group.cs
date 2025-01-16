@@ -24,6 +24,7 @@ namespace Roomiebill.Server.Models
         public Group()
         {
             // Default constructor required by EF Core
+
             Members = new List<User>();
             this.GroupName = "Default Name";
             this._debtArray = new int[1];
@@ -51,7 +52,7 @@ namespace Roomiebill.Server.Models
         }
 
 
-         private void EnlargeDebtArraySize(int newUserCount,int oldUserCount)
+        private void EnlargeDebtArraySize(int newUserCount,int oldUserCount)
         {
             // Copy existing data to the new array
             _debtArray = expenseHandler.EnlargeDebtArraySize(newUserCount,oldUserCount,_debtArray);
@@ -98,7 +99,25 @@ namespace Roomiebill.Server.Models
             // Update the debt array size
             ReduceDebtArraySize(Members.Count,Members.Count+removedMembers.Count,removedUsers);
         }
-          
+        //TODO: check for operation completion
+        public void AddExpense(Expense expense){
+            expenseHandler.AddExpense(expense,_debtArray);
+            Expenses.Add(expense);
+        }
+        //TODO: check for operation completion
+        public void DeleteExpense(Expense expense){
+            expenseHandler.DeleteExpense(expense,_debtArray);
+            Expenses.Remove(expense);
+        }
+        public int [] getDebtArray(){
+            return _debtArray;
+        }   
+        public int getDebtBetweenUsers(int user1Id, int user2Id){
+            return expenseHandler.GetDebtBetween(user1Id,user2Id,_debtArray);
+        }
+
+
+
         //For Now i change it to ExpenseDTO 
         // public void AddExpense(Expense expense)
         // {
