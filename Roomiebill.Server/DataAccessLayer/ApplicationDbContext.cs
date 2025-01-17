@@ -127,9 +127,9 @@ namespace Roomiebill.Server.DataAccessLayer
             SaveChanges();
         }
       
-        public User? GetUserById(int payerId)
+        public async Task<User?> GetUserByIdAsync(int payerId)
         {
-            return Users.FirstOrDefault(u => u.Id == payerId);
+            return await Users.FirstOrDefaultAsync(u => u.Id == payerId);
         }
 
     }

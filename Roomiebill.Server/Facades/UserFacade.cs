@@ -271,9 +271,9 @@ namespace Roomiebill.Server.Facades
             _logger.LogInformation($"Invite added to user {invited.Username}");
         }
         public async Task<User?> GetUserByIdAsync(int payerId)
-            {
-                return _usersDb.GetUserById(payerId);
-            }
+        {
+            return await _usersDb.GetUserByIdAsync(payerId);
+        }
         #region Help functions
 
         public async Task<User?> GetUserByUsernameAsync(string username)
