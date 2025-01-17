@@ -1,4 +1,4 @@
-using Roomiebill.Server.Common;
+using Roomiebill.Server.Common.Validators;
 
 namespace ServerTests
 {

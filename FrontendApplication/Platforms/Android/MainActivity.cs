@@ -17,7 +17,7 @@ namespace FrontendApplication
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            HandleIntent(Intent);
+            //HandleIntent(Intent);
             CreateNotificationChannelIfNeeded();
             RequestPushNotificationsPermission();
         }
