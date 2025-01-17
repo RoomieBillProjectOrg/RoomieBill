@@ -35,8 +35,7 @@ namespace FrontendApplication.Services
             } 
         }
 
-        //LoginUserAsync
-        public async Task<bool> LoginUserAsync(string username, string password)
+        public async Task<UserModel> LoginUserAsync(string username, string password)
         {
             LoginDto user = new LoginDto()
             {
@@ -44,15 +43,22 @@ namespace FrontendApplication.Services
                 password = password
             };
 
-            try{
-                var response = await _httpClient.PostAsJsonAsync($"{_httpClient.BaseAddress}/Users/login", user);
-                response.EnsureSuccessStatusCode(); // Ensures that an error is thrown if the response is not successful
-                return response.IsSuccessStatusCode;
+            // Connect to the server and attempt to login the user
+            var response = await _httpClient.PostAsJsonAsync($"{_httpClient.BaseAddress}/Users/login", user);
+
+            // If IsSuccessStatusCode is true, then the user was successfully logged in
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var userResponse = JsonConvert.DeserializeObject<UserModel>(content);
+                return userResponse;
             }
-            // Just catch for debug pause here for now.
-            catch (Exception ex){
-                return false;
-            } 
+
+            // Else - there was an exception in the server and we want to fail the login attempt
+            // and return the exception message to the user.
+            var errorContent = await response.Content.ReadAsStringAsync();
+            var errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(errorContent);
+            throw new Exception(errorResponse.Message);
         }
     }
 }

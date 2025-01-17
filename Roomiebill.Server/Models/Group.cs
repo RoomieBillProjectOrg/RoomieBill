@@ -9,14 +9,21 @@ namespace Roomiebill.Server.Models
     public class Group
     {
         public int Id { get; set; }
+
         [Required]
         [StringLength(20, ErrorMessage = "Group name cannot exceed 20 characters.")]
+
         public string GroupName { get; set; }
+
         public User Admin { get; set; }
+
         public List<User> Members { get; set; } = new List<User>(); // Members of the group
+
         public ICollection<Expense> Expenses { get; set; } = new List<Expense>(); // Expenses of the group
+
         [NotMapped]
         private int[] _debtArray; // 1D array to store debts
+
         public List<Invite> Invites { get; set; }
         
         [NotMapped]

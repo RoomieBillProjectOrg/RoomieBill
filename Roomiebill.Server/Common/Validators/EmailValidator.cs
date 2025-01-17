@@ -1,4 +1,4 @@
-﻿namespace Roomiebill.Server.Common
+﻿namespace Roomiebill.Server.Common.Validators
 {
     /// <summary>
     ///  This class should confirm that an email meets the requirements for a valid email.

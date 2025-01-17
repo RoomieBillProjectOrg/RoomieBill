@@ -1,4 +1,4 @@
-﻿namespace Roomiebill.Server.Common
+﻿namespace Roomiebill.Server.Common.Validators
 {
     /// <summary>
     /// This class should confirm that a password meets the requirements for a valid password.
