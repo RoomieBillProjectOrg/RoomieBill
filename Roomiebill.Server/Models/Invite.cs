@@ -1,5 +1,5 @@
 
-using Roomiebill.Server.Enums;
+using Roomiebill.Server.Common.Enums;
 
 namespace Roomiebill.Server.Models
 {

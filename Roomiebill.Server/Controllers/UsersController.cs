@@ -38,12 +38,15 @@ namespace Roomiebill.Server.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
-            var user = await _userService.LoginAsync(loginDto);
-            if (user == null)
+            try
             {
-                return Unauthorized();
+                var user = await _userService.LoginAsync(loginDto);
+                return Ok(user);
             }
-            return Ok(new { Message = "User logged in successfully" });
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
         }
     }
 }
