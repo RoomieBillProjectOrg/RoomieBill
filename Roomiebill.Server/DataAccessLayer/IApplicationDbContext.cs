@@ -22,7 +22,7 @@ namespace Roomiebill.Server.DataAccessLayer
         public Group? GetGroupById(int id);
 
         public void AddExpense(Expense expense);
-        public User? GetUserById(int payerId);
+        public Task<User?> GetUserByIdAsync(int payerId);
 
     }
 }
