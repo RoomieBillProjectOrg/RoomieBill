@@ -1,4 +1,4 @@
-namespace Roomiebill.Server.Enums
+namespace Roomiebill.Server.Common.Enums
 {
     public enum Status
     {

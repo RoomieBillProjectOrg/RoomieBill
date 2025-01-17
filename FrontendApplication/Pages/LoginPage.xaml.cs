@@ -1,3 +1,4 @@
+using FrontendApplication.Models;
 using FrontendApplication.Services;
 
 namespace FrontendApplication.Pages;
@@ -17,17 +18,20 @@ public partial class LoginPage : ContentPage
         var username = UsernameEntry.Text;
         var password = PasswordEntry.Text;
 
-        var success = await _userService.LoginUserAsync(username, password);
+        UserModel user = null;
 
-        if (success)
+        try
         {
+            // Try to login the user using api call to the server.
+            user = await _userService.LoginUserAsync(username, password);
             await DisplayAlert("Success", "User logged in successfully!", "OK");
-             // Navigate to UserHomePage
+            // Navigate to UserHomePage
             await Navigation.PushAsync(new UserHomePage());
         }
-        else
+        catch(Exception ex)
         {
-            await DisplayAlert("Error", "Failed to logged in user.", "OK");
+            // If the server returns error, display the error message to the user.
+            await DisplayAlert("Error", ex.Message, "OK");
         }
     }
 }
