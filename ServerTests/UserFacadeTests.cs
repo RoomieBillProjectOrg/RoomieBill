@@ -328,4 +328,38 @@ public class UserFacadeTests
     }
 
     #endregion
+
+    #region LogoutAsync
+    [Fact]
+    public async Task TestLogoutAsync_WhenSuccessfulLogout_ThenLogsOutUser()
+    {
+        // Arrange
+        var username = "testuser";
+        var user = new User
+        {
+            Username = username
+        };
+
+        _usersDbMock.Setup(db => db.GetUserByUsernameAsync(username)).ReturnsAsync(user);
+
+        // Act
+        await _userFacade.LogoutAsync(username);
+
+        // Assert
+        _usersDbMock.Verify(db => db.UpdateUserAsync(user), Times.Once);
+    }
+
+    [Fact]
+    public async Task TestLogoutAsync_WhenUserNotFound_ThenThrowsException()
+    {
+        // Arrange
+        var username = "nonexistentuser";
+
+        _usersDbMock.Setup(db => db.GetUserByUsernameAsync(username)).ReturnsAsync((User)null);
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<Exception>(() => _userFacade.LogoutAsync(username));
+    }
+
+    #endregion
 }

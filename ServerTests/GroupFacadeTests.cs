@@ -31,6 +31,7 @@ namespace ServerTests
             // Arrange
             CreateNewGroupDto newGroupDto = new CreateNewGroupDto
             {
+                GroupName = "Test Group",
                 AdminGroupUsername = "admin",
                 GroupMembersUsernamesList = new List<string> { "member1", "member2" }
             };
@@ -61,6 +62,7 @@ namespace ServerTests
             // Arrange
             CreateNewGroupDto newGroupDto = new CreateNewGroupDto
             {
+                GroupName = "Test Group",
                 AdminGroupUsername = "admin",
                 GroupMembersUsernamesList = new List<string> { "member1", "member2" }
             };
@@ -76,6 +78,7 @@ namespace ServerTests
             // Arrange
             CreateNewGroupDto newGroupDto = new CreateNewGroupDto
             {
+                GroupName = "Test Group",
                 AdminGroupUsername = "admin",
                 GroupMembersUsernamesList = new List<string> { "member1", "member2" }
             };
@@ -95,6 +98,7 @@ namespace ServerTests
             // Arrange
             CreateNewGroupDto newGroupDto = new CreateNewGroupDto
             {
+                GroupName = "Test Group",
                 AdminGroupUsername = "admin",
                 GroupMembersUsernamesList = new List<string>()
             };
@@ -173,7 +177,11 @@ namespace ServerTests
             User invited = new User(invitedUsername, "Metar2@bgu.ac.il",  "MetarPassword2@");
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(inviterUsername))!.ReturnsAsync(inviter);
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(invitedUsername))!.ReturnsAsync(invited);
-            Group group = await _groupFacade.CreateNewGroupAsync(new CreateNewGroupDto { AdminGroupUsername = inviterUsername, GroupMembersUsernamesList = new List<string> {} });
+            Group group = await _groupFacade.CreateNewGroupAsync(new CreateNewGroupDto {
+                GroupName = "Test Group",
+                AdminGroupUsername = inviterUsername, 
+                GroupMembersUsernamesList = new List<string> {} 
+            });
             int groupId = group.Id;
 
             // Act & Assert
@@ -193,7 +201,12 @@ namespace ServerTests
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(inviterUsername))!.ReturnsAsync(inviter);
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(invitedUsername))!.ReturnsAsync(invited);
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync("Tal"))!.ReturnsAsync(tal);
-            Group group = await _groupFacade.CreateNewGroupAsync(new CreateNewGroupDto { AdminGroupUsername = "Tal", GroupMembersUsernamesList = new List<string> {} });
+            Group group = await _groupFacade.CreateNewGroupAsync(new CreateNewGroupDto
+            {
+                GroupName = "Test Group",
+                AdminGroupUsername = "Tal", 
+                GroupMembersUsernamesList = new List<string> {} 
+            });
             int groupId = group.Id;
 
             // Act & Assert
@@ -211,7 +224,12 @@ namespace ServerTests
             User invited = new User(invitedUsername, "Metar2@bgu.ac.il",  "MetarPassword2@");
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(inviterUsername))!.ReturnsAsync(inviter);
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(invitedUsername))!.ReturnsAsync(invited);
-            Group group = await _groupFacade.CreateNewGroupAsync(new CreateNewGroupDto { AdminGroupUsername = inviterUsername, GroupMembersUsernamesList = new List<string> { invitedUsername } });
+            Group group = await _groupFacade.CreateNewGroupAsync(new CreateNewGroupDto
+            {
+                GroupName = "Test Group",
+                AdminGroupUsername = inviterUsername, 
+                GroupMembersUsernamesList = new List<string> { invitedUsername } 
+            });
             int groupId = group.Id;
 
             // Act & Assert
@@ -229,7 +247,12 @@ namespace ServerTests
             User invited = new User(invitedUsername, "Metar2@bgu.ac.il",  "MetarPassword2@");
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(inviterUsername))!.ReturnsAsync(inviter);
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(invitedUsername))!.ReturnsAsync(invited);
-            Group group = await _groupFacade.CreateNewGroupAsync(new CreateNewGroupDto { AdminGroupUsername = inviterUsername, GroupMembersUsernamesList = new List<string> {} });
+            Group group = await _groupFacade.CreateNewGroupAsync(new CreateNewGroupDto
+            {
+                GroupName = "Test Group",
+                AdminGroupUsername = inviterUsername, 
+                GroupMembersUsernamesList = new List<string> {} 
+            });
             _groupDbMock.Setup(x => x.GetGroupByIdAsync(group.Id, It.IsAny<Func<IQueryable<Group>, IQueryable<Group>>>()))!.ReturnsAsync(group);
             int groupId = group.Id;
 
