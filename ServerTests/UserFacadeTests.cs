@@ -174,7 +174,8 @@ public class UserFacadeTests
         {
             Username = "testuser",
             CurrentPassword = "oldPassword!1",
-            NewPassword = "newPassword!1"
+            NewPassword = "newPassword!1",
+            VerifyNewPassword = "newPassword!1"
         };
         var user = new User
         {
@@ -202,7 +203,8 @@ public class UserFacadeTests
         {
             Username = "testuser",
             CurrentPassword = "oldPassword!1",
-            NewPassword = "short"
+            NewPassword = "short",
+            VerifyNewPassword = "short"
         };
         var user = new User
         {
@@ -226,7 +228,8 @@ public class UserFacadeTests
         {
             Username = "testuser",
             CurrentPassword = "wrongPassword!1",
-            NewPassword = "newPassword!1"
+            NewPassword = "newPassword!1",
+            VerifyNewPassword = "newPassword!1"
         };
         var user = new User
         {
@@ -250,13 +253,56 @@ public class UserFacadeTests
         {
             Username = "nonexistentuser",
             CurrentPassword = "oldPassword!1",
-            NewPassword = "newPassword!1"
+            NewPassword = "newPassword!1",
+            VerifyNewPassword = "newPassword!1"
         };
         _usersDbMock.Setup(db => db.GetUserByUsernameAsync(updateDto.Username)).ReturnsAsync((User)null);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<Exception>(() => _userFacade.UpdatePasswordAsync(updateDto));
         Assert.Equal("User with this username does not exist", exception.Message);
+    }
+
+    [Fact]
+    public async Task TestUpdatePasswordAsync_WhenPasswordsDoNotMatch_ThenThrowsException()
+    {
+        // Arrange
+        var updateDto = new UpdatePasswordDto
+        {
+            Username = "testuser",
+            CurrentPassword = "oldPassword!1",
+            NewPassword = "newPassword!1",
+            VerifyNewPassword = "newPassword!2"
+        };
+
+        var user = new User
+        {
+            Username = updateDto.Username,
+            PasswordHash = "oldPassword!1"
+        };
+
+        _usersDbMock.Setup(db => db.GetUserByUsernameAsync(updateDto.Username)).ReturnsAsync(user);
+        _passwordHasherMock.Setup(ph => ph.VerifyHashedPassword(user, user.PasswordHash, updateDto.CurrentPassword))
+            .Returns(PasswordVerificationResult.Success);
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<Exception>(() => _userFacade.UpdatePasswordAsync(updateDto));
+    }
+
+    [Fact]
+    public async Task TestUpdatePasswordAsync_WhenNewPasswordIsNull_ThenThrowsArgumentNullException()
+    {
+        // Arrange
+        var updateDto = new UpdatePasswordDto
+        {
+            Username = "testuser",
+            CurrentPassword = "oldPassword!1",
+            NewPassword = null,
+            VerifyNewPassword = "newPassword!1"
+        };
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => _userFacade.UpdatePasswordAsync(updateDto));
     }
 
     #endregion
