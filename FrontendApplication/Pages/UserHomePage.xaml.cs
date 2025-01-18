@@ -101,10 +101,10 @@ public partial class UserHomePage : ContentPage
         }
     }
 
-    private void OnUpdateUserDetails()
+    private async void OnUpdateUserDetails()
     {
-        // TODO: Navigate to a new page
-        // await Navigation.PushAsync(new UpdateUserDetailsPage(_userService));
+        // Navigate to a password updater page
+        await Navigation.PushAsync(new UpdateUserDetailsPage(_userService, User));
     }
 
     private void OnAddGroup()
