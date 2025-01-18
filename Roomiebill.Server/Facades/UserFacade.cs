@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Roomiebill.Server.Common.Enums;
 using Roomiebill.Server.Common.Validators;
 using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.DataAccessLayer.Dtos;
@@ -270,18 +271,40 @@ namespace Roomiebill.Server.Facades
             await _usersDb.UpdateUserAsync(invited);
             _logger.LogInformation($"Invite added to user {invited.Username}");
         }
-        public async Task<User?> GetUserByIdAsync(int payerId)
+
+        public async Task<Invite> AnswerInviteByUser(int inviteId, bool isAccepted)
+        {
+            _logger.LogInformation($"Answering invite with id {inviteId}");
+            var invite = await _usersDb.GetInviteByIdAsync(inviteId);
+            // here is the place to delete the invite from the user if wanted.
+            if (invite == null)
             {
-                return _usersDb.GetUserById(payerId);
+                _logger.LogError($"Invite with id {inviteId} does not exist");
+                throw new Exception("Invite does not exist");
             }
+            if (isAccepted)
+            {
+                invite.AcceptInvite();
+            }
+            else
+            {
+                invite.RejectInvite();
+            }
+            await _usersDb.UpdateInviteAsync(invite);
+            _logger.LogInformation($"Invite with id {inviteId} answered");
+            return invite;
+        }
+        public async Task<User?> GetUserByIdAsync(int payerId)
+        {
+            return await _usersDb.GetUserByIdAsync(payerId);
+        }
+
         #region Help functions
 
         public async Task<User?> GetUserByUsernameAsync(string username)
         {
             return await _usersDb.GetUserByUsernameAsync(username);
         }
-
-       
 
         #endregion 
     }
