@@ -1,7 +1,5 @@
 ﻿using System.Net.Http.Json;
 using System.Text;
-using Android.Telephony.Euicc;
-using Bumptech.Glide.Load.Model.Stream;
 using FrontendApplication.Models;
 using Newtonsoft.Json;
 
@@ -32,7 +30,7 @@ namespace FrontendApplication.Services
             // Just catch for debug pause here for now.
             catch (Exception ex){
                 return false;
-            } 
+            }
         }
 
         public async Task<UserModel> LoginUserAsync(string username, string password)
@@ -59,6 +57,23 @@ namespace FrontendApplication.Services
             var errorContent = await response.Content.ReadAsStringAsync();
             var errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(errorContent);
             throw new Exception(errorResponse.Message);
+        }
+
+        public async Task LogoutUserAsync(string username)
+        {
+            var usernameAsJson = new StringContent(username, Encoding.UTF8, "application/json");
+
+            // Connect to the server and attempt to logout the user
+            var response = await _httpClient.PostAsync($"{_httpClient.BaseAddress}/Users/logout", usernameAsJson);
+
+            // If there was an exception in the server and we want to fail the logout attempt
+            // and return the exception message to the user.
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                var errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(errorContent);
+                throw new Exception(errorResponse.Message);
+            }
         }
     }
 }
