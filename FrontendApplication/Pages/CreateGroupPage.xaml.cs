@@ -46,7 +46,7 @@ public partial class CreateGroupPage : ContentPage
             var newGroup = await _userService.CreateNewGroupAsync(newGroupDto);
 
             // If successful, navigate to another page or show a success message
-            await DisplayAlert("Success", $"Group '{newGroup.Name}' created successfully!", "OK");
+            await DisplayAlert("Success", $"Group '{newGroup.GroupName}' created successfully!", "OK");
 
             // DOTO: navigate to the new group page or to the back of the pages list page ??
             // await Navigation.PushAsync(new GroupPage(newGroup));
