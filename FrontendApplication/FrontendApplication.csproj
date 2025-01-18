@@ -65,12 +65,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Pages\CreateGroupPage.xaml.cs">
+	    <DependentUpon>CreateGroupPage.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Pages\RegisterPage.xaml.cs">
 	    <DependentUpon>RegisterPage.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Pages\CreateGroupPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\LoginPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Roomiebill.Server.DataAccessLayer.Dtos;
+using Roomiebill.Server.Models;
 using Roomiebill.Server.Services;
 
 namespace Roomiebill.Server.Controllers
@@ -16,10 +17,17 @@ namespace Roomiebill.Server.Controllers
         }
 
         [HttpPost("createNewGroup")]
-        public IActionResult CreateGroup([FromBody] CreateNewGroupDto group)
+        public async Task<IActionResult> CreateGroup([FromBody] CreateNewGroupDto group)
         {
-            _groupService.CreateNewGroupAsync(group);
-            return Ok();
+            try
+            {
+                var newGroup = await _groupService.CreateNewGroupAsync(group);
+                return Ok(newGroup);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
         }
     }
 }
