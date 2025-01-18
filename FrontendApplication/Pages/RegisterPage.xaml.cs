@@ -22,6 +22,9 @@ namespace FrontendApplication.Pages
             if (success)
             {
                 await DisplayAlert("Success", "User registered successfully!", "OK");
+
+                // Navigate to LoginPage
+                await Navigation.PushAsync(new LoginPage(_userService));
             }
             else
             {
