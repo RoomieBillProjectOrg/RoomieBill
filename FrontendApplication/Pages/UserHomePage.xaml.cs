@@ -68,13 +68,22 @@ public partial class UserHomePage : ContentPage
     // Show the menu when the 3-dot button is clicked
     private async void ShowMenu()
     {
-        // Create a new MenuFlyout to hold the options
-        var menu = new MenuFlyout();
-
-        // Add items to the menu
-        menu.Add(new MenuFlyoutItem { Text = "Log Out", Command = new Command(OnLogOut) });
-        menu.Add(new MenuFlyoutItem { Text = "Update User Details", Command = new Command(OnUpdateUserDetails) });
-        menu.Add(new MenuFlyoutItem { Text = "Add Group", Command = new Command(OnAddGroup) });
+        // Set up the toolbar items
+        ToolbarItems.Add(new ToolbarItem
+        {
+            Text = "Log Out",
+            Command = new Command(OnLogOut)
+        });
+        ToolbarItems.Add(new ToolbarItem
+        {
+            Text = "Update User Details",
+            Command = new Command(OnUpdateUserDetails)
+        });
+        ToolbarItems.Add(new ToolbarItem
+        {
+            Text = "Add Group",
+            Command = new Command(OnAddGroup)
+        });
 
         // Show the menu at the current toolbar item
         await DisplayActionSheet("Menu", "Cancel", null, "Log Out", "Update User Details", "Add Group");
@@ -107,10 +116,10 @@ public partial class UserHomePage : ContentPage
         await Navigation.PushAsync(new UpdateUserDetailsPage(_userService, User));
     }
 
-    private void OnAddGroup()
+    private async void OnAddGroup()
     {
-        // TODO: Navigate to a new page
-        // await Navigation.PushAsync(new AddNewGroupPage(_userService));
+        // Navigate to a group creation page
+        await Navigation.PushAsync(new CreateGroupPage(_userService, User));
     }
 
     // Handle group button click

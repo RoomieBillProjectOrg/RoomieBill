@@ -26,10 +26,10 @@ namespace Roomiebill.Server.DataAccessLayer
                 await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Tal", Email = "Tal@bgu.ac.il", Password = "TalPassword4$" });
 
                 _context.SaveChanges();
-            }
+            //}
 
-            if (!_context.Groups.Any())
-            {
+            //if (!_context.Groups.Any())
+            //{
                 CreateNewGroupDto newGroupDetails = new CreateNewGroupDto
                 {
                     AdminGroupUsername = "Inbar",
@@ -40,10 +40,10 @@ namespace Roomiebill.Server.DataAccessLayer
                 await _groupService.CreateNewGroupAsync(newGroupDetails);
 
                 _context.SaveChanges();
-            }
+            //}
 
-            if (!_context.Invites.Any())
-            {
+            //if (!_context.Invites.Any())
+            //{
                 await _userService.LoginAsync(new LoginDto { Username = "Tal", Password = "TalPassword4$" });
 
                 InviteToGroupByUsernameDto inviteDetails = new InviteToGroupByUsernameDto
@@ -57,12 +57,12 @@ namespace Roomiebill.Server.DataAccessLayer
 
                 _context.SaveChanges();
 
-            }
+            //}
 
             // Ensure the group exists
-            var group = _context.Groups.FirstOrDefault(g => g.GroupName == "Test Group2");
-            if (group == null)
-            {
+            var group = _context.Groups.FirstOrDefault(g => g.GroupName == "Test Group");
+            //if (group == null)
+            //{
                 var user1 = _context.Users.FirstOrDefault(u => u.Username == "Inbar");
                 var user2 = _context.Users.FirstOrDefault(u => u.Username == "Metar");
                 var user3 = _context.Users.FirstOrDefault(u => u.Username == "Vladi");
@@ -71,7 +71,7 @@ namespace Roomiebill.Server.DataAccessLayer
                 group = new Group("Test Group", user1, new List<User> { user1, user2, user3, user4 });
                 _context.Groups.Add(group);
                 _context.SaveChanges();
-            }
+            //}
 
             // Create an expense
             var expense = new Expense
@@ -89,12 +89,15 @@ namespace Roomiebill.Server.DataAccessLayer
                         new ExpenseSplit { UserId = group.Members.ElementAt(3).Id, Percentage = 25.0 }
                     }
             };
+
             _context.Expenses.Add(expense);
             _context.SaveChanges();
+
             //update an expense
             var expenseToUpdate = _context.Expenses.FirstOrDefault(e => e.Description == "Tal's Mesibat Ravakim");
-            if (expenseToUpdate != null)
-            {
+
+            //if (expenseToUpdate != null)
+            //{
                 expenseToUpdate.Amount = 200.0;
                 _context.Expenses.Update(expenseToUpdate);
                 _context.SaveChanges();
