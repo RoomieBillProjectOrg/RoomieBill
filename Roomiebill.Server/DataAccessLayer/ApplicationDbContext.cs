@@ -116,20 +116,31 @@ namespace Roomiebill.Server.DataAccessLayer
 
             return await query.FirstOrDefaultAsync(g => g.Id == groupId);
         }
-        public void AddGroup(Group group)
+        public async Task AddGroupAsync(Group group)
         {
-            Groups.Add(group);
-            SaveChanges();
+            await Groups.AddAsync(group);
+            await SaveChangesAsync();
         }
-        public void AddExpense(Expense expense)
+        public async Task AddExpenseAsync(Expense expense)
         {
-            Expenses.Add(expense);
-            SaveChanges();
+            await Expenses.AddAsync(expense);
+            await SaveChangesAsync();
         }
       
         public async Task<User?> GetUserByIdAsync(int payerId)
         {
             return await Users.FirstOrDefaultAsync(u => u.Id == payerId);
+        }
+
+        public async Task<Invite?> GetInviteByIdAsync(int inviteId)
+        {
+            return await Invites.FirstOrDefaultAsync(i => i.Id == inviteId);
+        }
+
+        public async Task UpdateInviteAsync(Invite invite)
+        {
+            Invites.Update(invite);
+            await SaveChangesAsync();
         }
 
     }
