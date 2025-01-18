@@ -1,14 +1,18 @@
 using FrontendApplication.Models;
+using FrontendApplication.Services;
 
 namespace FrontendApplication.Pages;
 
 public partial class UserHomePage : ContentPage
 {
-	public UserModel User { get; set; }
+    private readonly UserServiceApi _userService;
+
+    public UserModel User { get; set; }
     public List<GroupModel> Groups { get; set; }
 
-    public UserHomePage(UserModel user)
+    public UserHomePage(UserServiceApi userServiceApi, UserModel user)
 	{
+        _userService = userServiceApi;
         User = user;
         Groups = user.GroupsUserIsMemberAt ?? new List<GroupModel>();
 
@@ -78,10 +82,23 @@ public partial class UserHomePage : ContentPage
 
     // Methods for menu actions
 
-    private void OnLogOut()
+    private async void OnLogOut()
     {
-        // TODO: Navigate to a new page
-        // await Navigation.PushAsync(new LogOutPage(_userService));
+        try
+        {
+            // Call the server to logout the user
+            await _userService.LogoutUserAsync(User.Username);
+
+            await DisplayAlert("Success", "User logged out successfully!", "OK");
+
+            // Navigate to the main page
+            await Navigation.PushAsync(new MainPage(_userService));
+        }
+        catch (Exception ex)
+        {
+            // If the server returns error, display the error message to the user.
+            await DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 
     private void OnUpdateUserDetails()
