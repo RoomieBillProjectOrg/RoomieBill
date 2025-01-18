@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="FrontendApplication.Pages.UserHomePage"
-             Title="UserHomePage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to RoomieBill!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             x:Class="FrontendApplication.Pages.UserHomePage">
+
+    <!-- Content of the page will be set dynamically in the code-behind -->
 </ContentPage>

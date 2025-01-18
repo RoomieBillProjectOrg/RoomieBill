@@ -1,9 +1,5 @@
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Models;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Linq;
-using System.Collections.Generic;
 using Roomiebill.Server.Services;
 
 namespace Roomiebill.Server.DataAccessLayer
@@ -37,7 +33,7 @@ namespace Roomiebill.Server.DataAccessLayer
                 CreateNewGroupDto newGroupDetails = new CreateNewGroupDto
                 {
                     AdminGroupUsername = "Inbar",
-                    GroupMembersPhoneNumbersList = new List<string> { "Metar" },
+                    GroupMembersUsernamesList = new List<string> { "Metar" },
                     GroupName = "Roomiebill"
                 };
 
