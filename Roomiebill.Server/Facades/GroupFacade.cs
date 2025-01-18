@@ -43,17 +43,20 @@ namespace Roomiebill.Server.Facades
 
             // Extract group members from UserFacade using usernames
             List<User> members = new List<User>();
-            foreach (string username in newGroupDto.GroupMembersUsernamesList)
+            if (newGroupDto.GroupMembersUsernamesList != null)
             {
-                User? member = await _userFacade.GetUserByUsernameAsync(username);
-
-                if (member == null)
+                foreach (string username in newGroupDto.GroupMembersUsernamesList)
                 {
-                    _logger.LogError($"Error when trying to create new group: member with username {username} does not exist in the system.");
-                    throw new Exception($"Error when trying to create new group: member with username {username} does not exist in the system.");
-                }
+                    User? member = await _userFacade.GetUserByUsernameAsync(username);
 
-                members.Add(member);
+                    if (member == null)
+                    {
+                        _logger.LogError($"Error when trying to create new group: member with username {username} does not exist in the system.");
+                        throw new Exception($"Error when trying to create new group: member with username {username} does not exist in the system.");
+                    }
+
+                    members.Add(member);
+                }
             }
 
             // Create new group
