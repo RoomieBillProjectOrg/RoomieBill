@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Roomiebill.Server.Common.Enums;
 using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Models;
@@ -59,7 +60,7 @@ namespace Roomiebill.Server.Facades
             Group newGroup = new Group(newGroupDto.GroupName, admin, members);
 
             // Add group to database
-            _groupDb.AddGroup(newGroup);
+            await _groupDb.AddGroupAsync(newGroup);
 
             return newGroup;
         }
@@ -117,6 +118,26 @@ namespace Roomiebill.Server.Facades
             await AddInviteToGroup(group, invite);
 
             _logger.LogInformation($"User with username {invited_username} has been invited to group with id {groupId}.");
+        }
+
+        public async Task AnswerInviteByUser(int inviteId)
+        {
+            _logger.LogInformation($"Answering invite with id {inviteId}.");
+
+            Invite? invite = await _groupDb.GetInviteByIdAsync(inviteId);
+
+            if (invite == null)
+            {
+                _logger.LogError($"Error when trying to answer invite: invite with id {inviteId} does not exist in the system.");
+                throw new Exception($"Error when trying to answer invite: invite with id {inviteId} does not exist in the system.");
+            }
+
+            if (invite.Status == Status.Accepted)
+            {
+                await AddMemberAsync(invite.Invited, invite.Group);
+            }
+
+            _logger.LogInformation($"Invite with id {inviteId} has been answered.");
         }
 
         public async Task<Group> GetGroupByIdAsync(int groupId)
@@ -182,6 +203,8 @@ namespace Roomiebill.Server.Facades
             // Add expense to group
             group.AddExpense(newExpense);
 
+            await _groupDb.UpdateGroupAsync(group);
+
             return newExpense;
         }
         public async Task<Expense> UpdateExpenseAsync(ExpenseDto oldExpenseDto, ExpenseDto updatedExpenseDto)
@@ -212,6 +235,8 @@ namespace Roomiebill.Server.Facades
             // Use the Group's updateExpense method
             group.updateExpense(oldExpense, updatedExpense);
 
+            await _groupDb.UpdateGroupAsync(group);
+
             _logger.LogInformation($"Expense with id {updatedExpenseDto.Id} updated successfully.");
 
             return updatedExpense;
@@ -232,8 +257,19 @@ namespace Roomiebill.Server.Facades
             // Add the user to the group
             group.AddMember(user);
 
-            _logger.LogInformation($"User with id {user.Id} added to group with id {groupId} successfully.");
+            await _groupDb.UpdateGroupAsync(group);
 
+            _logger.LogInformation($"User with id {user.Id} added to group with id {groupId} successfully.");
+        }
+
+        public async Task AddMemberAsync(User user, Group group)
+        {
+            // Add the user to the group
+            group.AddMember(user);
+
+            await _groupDb.UpdateGroupAsync(group);
+
+            _logger.LogInformation($"User with id {user.Id} added to group successfully.");
         }
 
         public async Task RemoveMemberAsync(User user, int groupId){
@@ -250,8 +286,11 @@ namespace Roomiebill.Server.Facades
             // Remove the user from the group
             group.RemoveMember(user);
 
+            await _groupDb.UpdateGroupAsync(group);
+
             _logger.LogInformation($"User with id {user.Id} removed from group with id {groupId} successfully.");
         }
+
         private User MapToEntity(RegisterUserDto dto)
         {
             if(dto == null)
@@ -267,9 +306,6 @@ namespace Roomiebill.Server.Facades
                 PasswordHash = dto.Password
             };
         }
-
-
-        
 
         private Expense MapToEntity(ExpenseDto dto)
         {

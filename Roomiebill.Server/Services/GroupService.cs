@@ -31,6 +31,16 @@ namespace Roomiebill.Server.Services
             await _groupFacade.InviteToGroupByUsername(inviteDetails.InviterUsername, inviteDetails.InvitedUsername, inviteDetails.GroupId);
         }
 
+        public async Task AnswerInviteByUser(AnswerInviteByUserDto answerDetails)
+        {
+            if (!await _userFacade.IsUserLoggedInAsync(answerDetails.InvitedUsername))
+            {
+                throw new Exception($"User with username {answerDetails.InvitedUsername} is not logged in.");
+            }
+            await _userFacade.AnswerInviteByUser(answerDetails.InviteId, answerDetails.IsAccepted);
+            await _groupFacade.AnswerInviteByUser(answerDetails.InviteId);
+        }
+
         public async Task<Expense> AddExpenseAsync(ExpenseDto expense)
         {
             return await _groupFacade.AddExpenseAsync(expense);
