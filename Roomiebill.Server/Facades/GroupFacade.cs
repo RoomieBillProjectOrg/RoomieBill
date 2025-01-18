@@ -42,7 +42,7 @@ namespace Roomiebill.Server.Facades
 
             // Extract group members from UserFacade using usernames
             List<User> members = new List<User>();
-            foreach (string username in newGroupDto.GroupMembersPhoneNumbersList)
+            foreach (string username in newGroupDto.GroupMembersUsernamesList)
             {
                 User? member = await _userFacade.GetUserByUsernameAsync(username);
 
