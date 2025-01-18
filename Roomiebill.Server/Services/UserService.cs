@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Roomiebill.Server.Common;
 using Roomiebill.Server.Models;
 using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.DataAccessLayer.Dtos;
@@ -30,6 +28,11 @@ namespace Roomiebill.Server.Services
         public async Task<User> LoginAsync(LoginDto loginDto)
         {
             return await _userFacade.LoginAsync(loginDto);
+        }
+
+        public async Task LogoutAsync(string username)
+        {
+            await _userFacade.LogoutAsync(username);
         }
 
         public async Task<bool> IsUserAdminAsync(string username)

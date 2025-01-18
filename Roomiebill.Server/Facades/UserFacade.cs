@@ -214,6 +214,39 @@ namespace Roomiebill.Server.Facades
         }
 
         /// <summary>
+        /// Logout the user with the given username.
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="Exception"></exception>
+        public async Task LogoutAsync(string username)
+        {
+            _logger.LogInformation($"Logging out user {username}");
+
+            if (username == null)
+            {
+                _logger.LogError($"Username is null. Cannot logout user");
+                throw new ArgumentNullException(nameof(username));
+            }
+
+            // Check if the user exists by username
+            var existingUser = await _usersDb.GetUserByUsernameAsync(username);
+
+            if (existingUser == null)
+            {
+                _logger.LogError($"User with this username: {username} does not exist");
+                throw new Exception("User with this username does not exist");
+            }
+
+            existingUser.IsLoggedIn = false;
+
+            await _usersDb.UpdateUserAsync(existingUser);
+
+            _logger.LogInformation($"User {username} logged out successfully");
+        }
+
+        /// <summary>
         /// This function gets the user by username and returns if the user is an admin in the system.
         /// </summary>
         /// <param name="username"></param>
@@ -264,6 +297,12 @@ namespace Roomiebill.Server.Facades
             return existingUser.IsLoggedIn;
         }
 
+        /// <summary>
+        /// Add an invite to the invited user.
+        /// </summary>
+        /// <param name="invited"></param>
+        /// <param name="inv"></param>
+        /// <returns></returns>
         public async Task AddInviteToinvited(User invited, Invite inv)
         {
             _logger.LogInformation($"Adding invite to user {invited.Username}");
@@ -272,6 +311,13 @@ namespace Roomiebill.Server.Facades
             _logger.LogInformation($"Invite added to user {invited.Username}");
         }
 
+        /// <summary>
+        /// Answer an invite by the user.
+        /// </summary>
+        /// <param name="inviteId"></param>
+        /// <param name="isAccepted"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public async Task<Invite> AnswerInviteByUser(int inviteId, bool isAccepted)
         {
             _logger.LogInformation($"Answering invite with id {inviteId}");
