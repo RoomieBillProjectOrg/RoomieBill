@@ -75,5 +75,20 @@ namespace FrontendApplication.Services
                 throw new Exception(errorResponse.Message);
             }
         }
+
+        public async Task UpdateUserPasswordAsync(UpdatePasswordDto updatePasswordDto)
+        {
+            // Connect to the server and attempt to update the user password
+            var response = await _httpClient.PostAsJsonAsync($"{_httpClient.BaseAddress}/Users/updatePassword", updatePasswordDto);
+
+            // If there was an exception in the server and we want to fail the update password attempt
+            // and return the exception message to the user.
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                var errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(errorContent);
+                throw new Exception(errorResponse.Message);
+            }
+        }
     }
 }

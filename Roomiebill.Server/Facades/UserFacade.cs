@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Roomiebill.Server.Common.Enums;
 using Roomiebill.Server.Common.Validators;
 using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.DataAccessLayer.Dtos;
@@ -127,6 +126,19 @@ namespace Roomiebill.Server.Facades
             {
                 _logger.LogError($"New password is null. Cannot update password for user {updatePasswordDto.Username}");
                 throw new ArgumentNullException(nameof(updatePasswordDto.NewPassword));
+            }
+
+            if (updatePasswordDto.VerifyNewPassword == null)
+            {
+                _logger.LogError($"Verify new password is null. Cannot update password for user {updatePasswordDto.Username}");
+                throw new ArgumentNullException(nameof(updatePasswordDto.VerifyNewPassword));
+            }
+
+            // Check if the new password and verify new password are the same
+            if (updatePasswordDto.NewPassword != updatePasswordDto.VerifyNewPassword)
+            {
+                _logger.LogError("New password and verify new password are not the same");
+                throw new Exception("New password and verify new password are not the same");
             }
 
             // Check password validate using class PasswordValidator
