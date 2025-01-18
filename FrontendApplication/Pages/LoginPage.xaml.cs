@@ -24,9 +24,11 @@ public partial class LoginPage : ContentPage
         {
             // Try to login the user using api call to the server.
             user = await _userService.LoginUserAsync(username, password);
+
             await DisplayAlert("Success", "User logged in successfully!", "OK");
+
             // Navigate to UserHomePage
-            await Navigation.PushAsync(new UserHomePage());
+            await Navigation.PushAsync(new UserHomePage(user));
         }
         catch(Exception ex)
         {
