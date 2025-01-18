@@ -17,12 +17,16 @@ namespace Roomiebill.Server.DataAccessLayer
 
         public Task<Group?> GetGroupByIdAsync(int groupId, Func<IQueryable<Group>, IQueryable<Group>> includeFunc);
 
-        public void AddGroup(Group group);
+        public Task AddGroupAsync(Group group);
 
         public Group? GetGroupById(int id);
 
-        public void AddExpense(Expense expense);
-        public User? GetUserById(int payerId);
+        public Task AddExpenseAsync(Expense expense);
 
+        public Task<User?> GetUserByIdAsync(int payerId);
+
+        public Task<Invite?> GetInviteByIdAsync(int inviteId);
+
+        public Task UpdateInviteAsync(Invite invite);
     }
 }
