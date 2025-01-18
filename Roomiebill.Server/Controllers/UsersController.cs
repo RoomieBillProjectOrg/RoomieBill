@@ -48,5 +48,19 @@ namespace Roomiebill.Server.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout([FromBody] string username)
+        {
+            try
+            {
+                await _userService.LogoutAsync(username);
+                return Ok(new { Message = "User logged out successfully" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
     }
 }
