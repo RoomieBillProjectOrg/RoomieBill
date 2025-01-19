@@ -27,7 +27,6 @@ namespace Roomiebill.Server.Services
 
         public async Task<User> LoginAsync(LoginDto loginDto)
         {
-            Console.WriteLine("UserService.LoginAsync");
             return await _userFacade.LoginAsync(loginDto);
         }
 
