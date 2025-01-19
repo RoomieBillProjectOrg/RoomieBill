@@ -28,5 +28,7 @@ namespace Roomiebill.Server.DataAccessLayer
         public Task<Invite?> GetInviteByIdAsync(int inviteId);
 
         public Task UpdateInviteAsync(Invite invite);
+
+        public Task<Invite?> AddInviteAsync(Invite invite);
     }
 }

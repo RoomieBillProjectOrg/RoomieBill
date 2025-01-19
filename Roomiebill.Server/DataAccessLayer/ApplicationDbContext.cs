@@ -143,5 +143,11 @@ namespace Roomiebill.Server.DataAccessLayer
             await SaveChangesAsync();
         }
 
+        public async Task<Invite> AddInviteAsync(Invite invite)
+        {
+            await Invites.AddAsync(invite);
+            await SaveChangesAsync();
+            return invite;
+        }
     }
 }

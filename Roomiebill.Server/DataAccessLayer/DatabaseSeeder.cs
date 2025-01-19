@@ -25,76 +25,124 @@ namespace Roomiebill.Server.DataAccessLayer
                 await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Vladi", Email = "Vladi@bgu.ac.il", Password = "VladiPassword3#" });
                 await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Tal", Email = "Tal@bgu.ac.il", Password = "TalPassword4$" });
 
-                //_context.SaveChanges();
-                //}
-
                 // Log in all data users
                 await _userService.LoginAsync(new LoginDto { Username = "Inbar", Password = "InbarPassword1!" });
                 await _userService.LoginAsync(new LoginDto { Username = "Metar", Password = "MetarPassword2@" });
                 await _userService.LoginAsync(new LoginDto { Username = "Vladi", Password = "VladiPassword3#" });
                 await _userService.LoginAsync(new LoginDto { Username = "Tal", Password = "TalPassword4$" });
 
-
-                //if (!_context.Groups.Any())
-                //{
+                // Create a new group for all data users - "Roomiebill"
                 CreateNewGroupDto newGroupDetails = new CreateNewGroupDto
                 {
                     AdminGroupUsername = "Inbar",
-                    GroupMembersUsernamesList = new List<string> { "Metar" },
+                    GroupMembersUsernamesList = new List<string> { "Metar", "Vladi", "Tal" },
                     GroupName = "Roomiebill"
                 };
 
-                await _groupService.CreateNewGroupAsync(newGroupDetails);
+                Group group_Roomiebill = await _groupService.CreateNewGroupAsync(newGroupDetails);
 
-                //_context.SaveChanges();
-                //}
-
-                //if (!_context.Invites.Any())
+                // Invite users to the group
+                //InviteToGroupByUsernameDto inviteDetails_Metar = new InviteToGroupByUsernameDto
                 //{
+                //    InviterUsername = "Inbar",
+                //    InvitedUsername = "Metar",
+                //    GroupId = group_Roomiebill.Id
+                //};
+                //InviteToGroupByUsernameDto inviteDetails_Vladi = new InviteToGroupByUsernameDto
+                //{
+                //    InviterUsername = "Inbar",
+                //    InvitedUsername = "Vladi",
+                //    GroupId = group_Roomiebill.Id
+                //};
+                //InviteToGroupByUsernameDto inviteDetails_Tal = new InviteToGroupByUsernameDto
+                //{
+                //    InviterUsername = "Inbar",
+                //    InvitedUsername = "Tal",
+                //    GroupId = group_Roomiebill.Id
+                //};
 
-                InviteToGroupByUsernameDto inviteDetails = new InviteToGroupByUsernameDto
+                //await _groupService.InviteToGroupByUsername(inviteDetails_Metar);
+                //await _groupService.InviteToGroupByUsername(inviteDetails_Vladi);
+                //await _groupService.InviteToGroupByUsername(inviteDetails_Tal);
+
+                // User Metar accepts the invitation
+                var inviteMetar = _context.Invites.FirstOrDefault(i => i.Invited.Username.Equals("Metar"));
+                AnswerInviteByUserDto answerDetails1_Metar = new AnswerInviteByUserDto
                 {
-                    InviterUsername = "Inbar",
+                    InviteId = inviteMetar.Id,
+                    InvitedUsername = "Metar",
+                    IsAccepted = true
+                };
+                await _groupService.AnswerInviteByUser(answerDetails1_Metar);
+
+                // User Vladi accepts the invitation
+                var inviteVladi = _context.Invites.FirstOrDefault(i => i.Invited.Username.Equals("Vladi"));
+                AnswerInviteByUserDto answerDetails1_Vladi = new AnswerInviteByUserDto
+                {
+                    InviteId = inviteVladi.Id,
+                    InvitedUsername = "Vladi",
+                    IsAccepted = true
+                };
+                await _groupService.AnswerInviteByUser(answerDetails1_Vladi);
+
+                // User Tal accepts the invitation
+                var inviteTal = _context.Invites.FirstOrDefault(i => i.Invited.Username.Equals("Tal"));
+                AnswerInviteByUserDto answerDetails1_Tal = new AnswerInviteByUserDto
+                {
+                    InviteId = inviteTal.Id,
                     InvitedUsername = "Tal",
-                    GroupId = 3
+                    IsAccepted = true
+                };
+                await _groupService.AnswerInviteByUser(answerDetails1_Tal);
+
+                // Create new group for all data users - "Roomiebill_TestInvites"
+                CreateNewGroupDto newGroupDetails_TestInvites = new CreateNewGroupDto
+                {
+                    AdminGroupUsername = "Inbar",
+                    GroupMembersUsernamesList = new List<string> { "Metar", "Vladi", "Tal" },
+                    GroupName = "Test Invites"
                 };
 
-                await _groupService.InviteToGroupByUsername(inviteDetails);
+                Group group_Roomiebill_TestInvites = await _groupService.CreateNewGroupAsync(newGroupDetails_TestInvites);
 
-                //}
-
-                // Ensure the group exists
-                var group = _context.Groups.FirstOrDefault(g => g.GroupName == "Test Group");
-                //if (group == null)
+                // Invite users to the group
+                //InviteToGroupByUsernameDto inviteDetails_Metar_testInvite = new InviteToGroupByUsernameDto
                 //{
-                var user1 = _context.Users.FirstOrDefault(u => u.Username == "Inbar");
-                var user2 = _context.Users.FirstOrDefault(u => u.Username == "Metar");
-                var user3 = _context.Users.FirstOrDefault(u => u.Username == "Vladi");
-                var user4 = _context.Users.FirstOrDefault(u => u.Username == "Tal");
+                //    InviterUsername = "Inbar",
+                //    InvitedUsername = "Metar",
+                //    GroupId = group_Roomiebill_TestInvites.Id
+                //};
+                //InviteToGroupByUsernameDto inviteDetails_Vladi_testInvite = new InviteToGroupByUsernameDto
+                //{
+                //    InviterUsername = "Inbar",
+                //    InvitedUsername = "Vladi",
+                //    GroupId = group_Roomiebill_TestInvites.Id
+                //};
+                //InviteToGroupByUsernameDto inviteDetails_Tal_testInvite = new InviteToGroupByUsernameDto
+                //{
+                //    InviterUsername = "Inbar",
+                //    InvitedUsername = "Tal",
+                //    GroupId = group_Roomiebill_TestInvites.Id
+                //};
 
-                await _groupService.CreateNewGroupAsync(new CreateNewGroupDto
-                {
-                    GroupName = "Test Group",
-                    AdminGroupUsername = "Inbar",
-                    GroupMembersUsernamesList = new List<string> { "Metar", "Vladi", "Tal" }
-                });
-
-                //}
+                //await _groupService.InviteToGroupByUsername(inviteDetails_Metar_testInvite);
+                //await _groupService.InviteToGroupByUsername(inviteDetails_Vladi_testInvite);
+                //await _groupService.InviteToGroupByUsername(inviteDetails_Tal_testInvite);
 
                 // Create an expense
                 var expense = new Expense
                 {
                     Amount = 500.0,
-                    Description = "Tal's Mesibat Ravakim",
+                    Description = "Power 10-12.2024",
                     IsPaid = false,
-                    PayerId = group.Members.First().Id,
-                    GroupId = group.Id,
+                    PayerId = group_Roomiebill.Members.First().Id,
+                    GroupId = group_Roomiebill.Id,
                     ExpenseSplits = new List<ExpenseSplit>
                     {
-                        new ExpenseSplit { UserId = group.Members.ElementAt(0).Id, Percentage = 25.0 },
-                        new ExpenseSplit { UserId = group.Members.ElementAt(1).Id, Percentage = 25.0 },
-                        new ExpenseSplit { UserId = group.Members.ElementAt(2).Id, Percentage = 25.0 },
-                        new ExpenseSplit { UserId = group.Members.ElementAt(3).Id, Percentage = 25.0 }
+                        new ExpenseSplit { UserId = group_Roomiebill.Members.ElementAt(0).Id, Percentage = 25.0 },
+                        new ExpenseSplit { UserId = group_Roomiebill.Members.ElementAt(1).Id, Percentage = 25.0 },
+                        new ExpenseSplit { UserId = group_Roomiebill.Members.ElementAt(2).Id, Percentage = 25.0 },
+                        new ExpenseSplit { UserId = group_Roomiebill.Members.ElementAt(3).Id, Percentage = 25.0 }
                     }
                 };
 
@@ -102,7 +150,7 @@ namespace Roomiebill.Server.DataAccessLayer
                 _context.SaveChanges();
 
                 //update an expense
-                var expenseToUpdate = _context.Expenses.FirstOrDefault(e => e.Description == "Tal's Mesibat Ravakim");
+                var expenseToUpdate = _context.Expenses.FirstOrDefault(e => e.Description == "Power 10-12.2024");
 
                 if (expenseToUpdate != null)
                 {

@@ -17,5 +17,9 @@ namespace Roomiebill.Server.DataAccessLayer.Dtos
             InvitedUsername = invitedUsername;
             IsAccepted = isAccepted;
         }
+
+        public AnswerInviteByUserDto()
+        {
+        }
     }
 }
