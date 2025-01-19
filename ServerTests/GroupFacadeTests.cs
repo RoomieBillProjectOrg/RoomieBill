@@ -334,7 +334,7 @@ namespace ServerTests
             payer.Id = 1;
             user1.Id = 0;
             user2.Id = 2;
-            var group = new Group("Test Group", payer, new List<User> { payer, user1, user2 });
+            var group = new Group("Test Group", payer, new List<User> {user1, user2 });
 
             _groupDbMock.Setup(x => x.GetGroupById(groupId)).Returns(group);
             _userFacadeMock.Setup(x => x.GetUserByIdAsync(payerId)).ReturnsAsync(payer);
@@ -418,7 +418,6 @@ namespace ServerTests
             // Group with all members
             var group = new Group("Test Group", payer, new List<User>
     {
-        payer,
         new User { Id = 2, Username = "user2" },
         new User { Id = 3, Username = "user3" },
         new User { Id = 4, Username = "user4" }
@@ -511,7 +510,7 @@ namespace ServerTests
         }
             };
 
-            var group = new Group("Test Group", admin, new List<User> { admin, user1, user2 })
+            var group = new Group("Test Group", admin, new List<User> {user1, user2 })
             {
                 Id = groupId,
                 Expenses = new List<Expense> { }
@@ -578,7 +577,7 @@ namespace ServerTests
         }
             };
 
-            var group = new Group("Test Group", admin, new List<User> { admin, user1, user2, newMember })
+            var group = new Group("Test Group", admin, new List<User> {user1, user2, newMember })
             {
                 Id = groupId,
                 Expenses = new List<Expense> { }
