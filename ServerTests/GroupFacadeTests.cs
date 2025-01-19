@@ -232,7 +232,7 @@ namespace ServerTests
             {
                 GroupName = "Test Group",
                 AdminGroupUsername = inviterUsername, 
-                GroupMembersUsernamesList = new List<string> { } 
+                GroupMembersUsernamesList = new List<string> { invitedUsername } 
             });
             int groupId = group.Id;
 
@@ -257,7 +257,7 @@ namespace ServerTests
             {
                 GroupName = "Test Group",
                 AdminGroupUsername = inviterUsername, 
-                GroupMembersUsernamesList = new List<string> { invitedUsername } 
+                GroupMembersUsernamesList = new List<string> {  } 
             });
 
             _groupDbMock.Setup(x => x.GetGroupByIdAsync(group.Id, It.IsAny<Func<IQueryable<Group>, IQueryable<Group>>>()))!.ReturnsAsync(group);
