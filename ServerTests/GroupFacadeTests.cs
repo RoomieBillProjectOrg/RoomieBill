@@ -51,9 +51,7 @@ namespace ServerTests
             Assert.NotNull(result);
             Assert.Equal(newGroupDto.GroupName, result.GetGroupName());
             Assert.Equal(newGroupDto.AdminGroupUsername, result.GetAdmin().Username);
-            Assert.Equal(newGroupDto.GroupMembersUsernamesList.Count, result.GetMembers().Count);
-            Assert.Contains(result.GetMembers(), x => x.Username == "member1");
-            Assert.Contains(result.GetMembers(), x => x.Username == "member2");
+            Assert.Contains(admin, result.GetMembers());
         }
 
         [Fact]
@@ -67,26 +65,6 @@ namespace ServerTests
                 GroupMembersUsernamesList = new List<string> { "member1", "member2" }
             };
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync("admin"))!.ReturnsAsync((User?)null);
-
-            // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => _groupFacade.CreateNewGroupAsync(newGroupDto));
-        }
-
-        [Fact]
-        public async Task TestCreateNewGroupAsync_WhenMemberDoesNotExist_ThenThrowsException()
-        {
-            // Arrange
-            CreateNewGroupDto newGroupDto = new CreateNewGroupDto
-            {
-                GroupName = "Test Group",
-                AdminGroupUsername = "admin",
-                GroupMembersUsernamesList = new List<string> { "member1", "member2" }
-            };
-
-            User admin = new User("admin", "admin@bgu.ac.il", "adminPassword!1");
-
-            _userFacadeMock.Setup(x => x.GetUserByUsernameAsync("admin"))!.ReturnsAsync(admin);
-            _userFacadeMock.Setup(x => x.GetUserByUsernameAsync("member1"))!.ReturnsAsync((User?)null);
 
             // Act & Assert
             await Assert.ThrowsAsync<Exception>(() => _groupFacade.CreateNewGroupAsync(newGroupDto));
@@ -114,7 +92,8 @@ namespace ServerTests
             Assert.NotNull(result);
             Assert.Equal(newGroupDto.GroupName, result.GetGroupName());
             Assert.Equal(newGroupDto.AdminGroupUsername, result.GetAdmin().Username);
-            Assert.Empty(result.GetMembers());
+            Assert.Contains(admin, result.GetMembers());
+            Assert.Single(result.GetMembers());
         }
 
         #endregion
@@ -268,6 +247,60 @@ namespace ServerTests
 
             // Assert
             Assert.NotEmpty(group.Invites);
+        }
+
+        #endregion
+
+        #region AnswerInviteByUser
+
+        [Fact]
+        public async Task TestAnswerInviteByUser_WhenTrueAnswer_ThenAddUserToGroup()
+        {
+            // Arrange
+            string inviterUsername = "inviter";
+            string invitedUsername = "invited";
+            
+            User inviter = new User(inviterUsername, "Metar@bgu.ac.il",  "MetarPassword2@");
+            User invited = new User(invitedUsername, "Metar2@bgu.ac.il",  "MetarPassword2@");
+
+            Group group = new Group();
+
+            Invite invite = new Invite(inviter, invited, group);
+
+            invite.AcceptInvite();
+
+            _groupDbMock.Setup(x => x.GetInviteByIdAsync(invite.Id))!.ReturnsAsync(invite);
+        
+            // Act
+            await _groupFacade.AnswerInviteByUser(invite.Id);
+
+            // Assert
+            Assert.Contains(invited, group.GetMembers());
+        }
+
+        [Fact]
+        public async Task TestAnswerInviteByUser_WhenFalseAnswer_ThenDontAddUserToGroup()
+        {
+            // Arrange
+            string inviterUsername = "inviter";
+            string invitedUsername = "invited";
+            
+            User inviter = new User(inviterUsername, "Metar@bgu.ac.il",  "MetarPassword2@");
+            User invited = new User(invitedUsername, "Metar2@bgu.ac.il",  "MetarPassword2@");
+
+            Group group = new Group();
+
+            Invite invite = new Invite(inviter, invited, group);
+
+            invite.RejectInvite();
+
+            _groupDbMock.Setup(x => x.GetInviteByIdAsync(invite.Id))!.ReturnsAsync(invite);
+        
+            // Act
+            await _groupFacade.AnswerInviteByUser(invite.Id);
+
+            // Assert
+            Assert.DoesNotContain(invited, group.GetMembers());
         }
 
         #endregion
