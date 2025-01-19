@@ -26,6 +26,10 @@ jobs:
       - name: Build Backend
         working-directory: ./Roomiebill.Server
         run: dotnet build --no-restore --configuration Release
+      
+      - name: Restore Tests Dependencies
+        working-directory: ./ServerTests
+        run: dotnet restore
 
       - name: Test Backend
         working-directory: ./ServerTests # Adjust this path to your test project directory
