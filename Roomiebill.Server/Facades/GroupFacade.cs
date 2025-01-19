@@ -106,17 +106,7 @@ namespace Roomiebill.Server.Facades
 
             Invite invite = new Invite(inviter, invited, group);
 
-            // Add invite to database
-            Invite? inviteDb = await _applicationDbs.AddInviteAsync(invite);
-
-            // If the invite is successfully added to the database, add it to the invited user, else throw an exception
-            if (inviteDb == null)
-            {
-                _logger.LogError($"Error when trying to invite user to group: invite with id {invite.Id} could not be added to the database.");
-                throw new Exception($"Error when trying to invite user to group: invite with id {invite.Id} could not be added to the database.");
-            }
-
-            await _userFacade.AddInviteToinvited(invited, inviteDb);
+            await _userFacade.AddInviteToinvited(invited, invite);
 
             await AddInviteToGroup(group, invite);
 
