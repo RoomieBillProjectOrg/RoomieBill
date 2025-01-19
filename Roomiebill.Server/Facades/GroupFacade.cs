@@ -8,13 +8,13 @@ namespace Roomiebill.Server.Facades
 {
     public class GroupFacade
     {
-        private readonly IApplicationDbContext _groupDb;
+        private readonly IApplicationDbContext _applicationDbs;
         private ILogger<GroupFacade> _logger;
         private readonly IUserFacade _userFacade;
 
         public GroupFacade(IApplicationDbContext groupDb, ILogger<GroupFacade> logger, IUserFacade userFacade)
         {
-            _groupDb = groupDb;
+            _applicationDbs = groupDb;
             _logger = logger;
             _userFacade = userFacade;
         }
@@ -40,29 +40,11 @@ namespace Roomiebill.Server.Facades
                 throw new Exception($"Error when trying to create new group: admin with username {newGroupDto.AdminGroupUsername} does not exist in the system.");
             }
 
-            // Extract group members from UserFacade using usernames
-            List<User> members = new List<User>();
-            if (newGroupDto.GroupMembersUsernamesList != null)
-            {
-                foreach (string username in newGroupDto.GroupMembersUsernamesList)
-                {
-                    User? member = await _userFacade.GetUserByUsernameAsync(username);
-
-                    if (member == null)
-                    {
-                        _logger.LogError($"Error when trying to create new group: member with username {username} does not exist in the system.");
-                        throw new Exception($"Error when trying to create new group: member with username {username} does not exist in the system.");
-                    }
-
-                    members.Add(member);
-                }
-            }
-
             // Create new group
-            Group newGroup = new Group(newGroupDto.GroupName, admin, members);
+            Group newGroup = new Group(newGroupDto.GroupName, admin, new List<User>());
 
             // Add group to database
-            await _groupDb.AddGroupAsync(newGroup);
+            await _applicationDbs.AddGroupAsync(newGroup);
 
             return newGroup;
         }
@@ -95,7 +77,7 @@ namespace Roomiebill.Server.Facades
                 throw new Exception($"Error when trying to invite user to group: invited with username {invited_username} does not exist in the system.");
             }
 
-            Group? group = await _groupDb.GetGroupByIdAsync(groupId, query => query.Include(g => g.Invites).ThenInclude(i => i.Invited)
+            Group? group = await _applicationDbs.GetGroupByIdAsync(groupId, query => query.Include(g => g.Invites).ThenInclude(i => i.Invited)
                 .Include(g => g.Members));
 
             if (group == null)
@@ -124,7 +106,18 @@ namespace Roomiebill.Server.Facades
 
             Invite invite = new Invite(inviter, invited, group);
 
-            await _userFacade.AddInviteToinvited(invited, invite);
+            // Add invite to database
+            Invite? inviteDb = await _applicationDbs.AddInviteAsync(invite);
+
+            // If the invite is successfully added to the database, add it to the invited user, else throw an exception
+            if (inviteDb == null)
+            {
+                _logger.LogError($"Error when trying to invite user to group: invite with id {invite.Id} could not be added to the database.");
+                throw new Exception($"Error when trying to invite user to group: invite with id {invite.Id} could not be added to the database.");
+            }
+
+            await _userFacade.AddInviteToinvited(invited, inviteDb);
+
             await AddInviteToGroup(group, invite);
 
             _logger.LogInformation($"User with username {invited_username} has been invited to group with id {groupId}.");
@@ -140,7 +133,7 @@ namespace Roomiebill.Server.Facades
         {
             _logger.LogInformation($"Answering invite with id {inviteId}.");
 
-            Invite? invite = await _groupDb.GetInviteByIdAsync(inviteId);
+            Invite? invite = await _applicationDbs.GetInviteByIdAsync(inviteId);
 
             if (invite == null)
             {
@@ -166,7 +159,7 @@ namespace Roomiebill.Server.Facades
         {
             _logger.LogInformation($"Getting group with id {groupId}.");
 
-            Group? group = await _groupDb.GetGroupByIdAsync(groupId, null);
+            Group? group = await _applicationDbs.GetGroupByIdAsync(groupId, null);
 
             if (group == null)
             {
@@ -191,14 +184,17 @@ namespace Roomiebill.Server.Facades
         private async Task AddInviteToGroup(Group group, Invite invite)
         {
             _logger.LogInformation($"Adding invite to group with id {group.Id}.");
+
             group.AddInvite(invite);
-            await _groupDb.UpdateGroupAsync(group);
+
+            await _applicationDbs.UpdateGroupAsync(group);
+
             _logger.LogInformation($"Invite has been added to group with id {group.Id}.");
         }
 
         private bool IsUserInGroup(User user, Group group)
         {
-            return group.Members.Contains(user);
+            return group.Members.Contains(user) || group.Admin == user;
         }
 
         /// <summary>
@@ -210,7 +206,7 @@ namespace Roomiebill.Server.Facades
         public async Task<Expense> AddExpenseAsync(ExpenseDto expenseDto)
         {
             // Extract group from database
-            Group? group = _groupDb.GetGroupById(expenseDto.GroupId);
+            Group? group = _applicationDbs.GetGroupById(expenseDto.GroupId);
 
             // Alert if the group does not exist
             if (group == null)
@@ -233,7 +229,7 @@ namespace Roomiebill.Server.Facades
             // Add expense to group
             group.AddExpense(newExpense);
 
-            await _groupDb.UpdateGroupAsync(group);
+            await _applicationDbs.UpdateGroupAsync(group);
 
             return newExpense;
         }
@@ -248,7 +244,7 @@ namespace Roomiebill.Server.Facades
         public async Task<Expense> UpdateExpenseAsync(ExpenseDto oldExpenseDto, ExpenseDto updatedExpenseDto)
         {
             // Extract the group from the database
-            Group? group = await Task.Run(() => _groupDb.GetGroupById(updatedExpenseDto.GroupId));
+            Group? group = await Task.Run(() => _applicationDbs.GetGroupById(updatedExpenseDto.GroupId));
 
             // Alert if the group does not exist
             if (group == null)
@@ -273,7 +269,7 @@ namespace Roomiebill.Server.Facades
             // Use the Group's updateExpense method
             group.updateExpense(oldExpense, updatedExpense);
 
-            await _groupDb.UpdateGroupAsync(group);
+            await _applicationDbs.UpdateGroupAsync(group);
 
             _logger.LogInformation($"Expense with id {updatedExpenseDto.Id} updated successfully.");
 
@@ -290,8 +286,11 @@ namespace Roomiebill.Server.Facades
         {
             // Add the user to the group
             group.AddMember(user);
+            await _applicationDbs.UpdateGroupAsync(group);
 
-            await _groupDb.UpdateGroupAsync(group);
+            // Add the group to the user
+            user.AddGroup(group);
+            await _applicationDbs.UpdateUserAsync(user);
 
             _logger.LogInformation($"User with id {user.Id} added to group successfully.");
         }
@@ -305,7 +304,7 @@ namespace Roomiebill.Server.Facades
         /// <exception cref="Exception"></exception>
         public async Task RemoveMemberAsync(User user, int groupId){
             // Extract the group from the database
-            Group? group = await Task.Run(() => _groupDb.GetGroupById(groupId));
+            Group? group = await Task.Run(() => _applicationDbs.GetGroupById(groupId));
 
             // Alert if the group does not exist
             if (group == null)
@@ -317,7 +316,7 @@ namespace Roomiebill.Server.Facades
             // Remove the user from the group
             group.RemoveMember(user);
 
-            await _groupDb.UpdateGroupAsync(group);
+            await _applicationDbs.UpdateGroupAsync(group);
 
             _logger.LogInformation($"User with id {user.Id} removed from group with id {groupId} successfully.");
         }

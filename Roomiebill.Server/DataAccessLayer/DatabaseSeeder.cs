@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http.HttpResults;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Models;
 using Roomiebill.Server.Services;
@@ -43,28 +42,28 @@ namespace Roomiebill.Server.DataAccessLayer
                 Group group_Roomiebill = await _groupService.CreateNewGroupAsync(newGroupDetails);
 
                 // Invite users to the group
-                InviteToGroupByUsernameDto inviteDetails_Metar = new InviteToGroupByUsernameDto
-                {
-                    InviterUsername = "Inbar",
-                    InvitedUsername = "Metar",
-                    GroupId = group_Roomiebill.Id
-                };
-                InviteToGroupByUsernameDto inviteDetails_Vladi = new InviteToGroupByUsernameDto
-                {
-                    InviterUsername = "Inbar",
-                    InvitedUsername = "Vladi",
-                    GroupId = group_Roomiebill.Id
-                };
-                InviteToGroupByUsernameDto inviteDetails_Tal = new InviteToGroupByUsernameDto
-                {
-                    InviterUsername = "Inbar",
-                    InvitedUsername = "Tal",
-                    GroupId = group_Roomiebill.Id
-                };
+                //InviteToGroupByUsernameDto inviteDetails_Metar = new InviteToGroupByUsernameDto
+                //{
+                //    InviterUsername = "Inbar",
+                //    InvitedUsername = "Metar",
+                //    GroupId = group_Roomiebill.Id
+                //};
+                //InviteToGroupByUsernameDto inviteDetails_Vladi = new InviteToGroupByUsernameDto
+                //{
+                //    InviterUsername = "Inbar",
+                //    InvitedUsername = "Vladi",
+                //    GroupId = group_Roomiebill.Id
+                //};
+                //InviteToGroupByUsernameDto inviteDetails_Tal = new InviteToGroupByUsernameDto
+                //{
+                //    InviterUsername = "Inbar",
+                //    InvitedUsername = "Tal",
+                //    GroupId = group_Roomiebill.Id
+                //};
 
-                await _groupService.InviteToGroupByUsername(inviteDetails_Metar);
-                await _groupService.InviteToGroupByUsername(inviteDetails_Vladi);
-                await _groupService.InviteToGroupByUsername(inviteDetails_Tal);
+                //await _groupService.InviteToGroupByUsername(inviteDetails_Metar);
+                //await _groupService.InviteToGroupByUsername(inviteDetails_Vladi);
+                //await _groupService.InviteToGroupByUsername(inviteDetails_Tal);
 
                 // User Metar accepts the invitation
                 var inviteMetar = _context.Invites.FirstOrDefault(i => i.Invited.Username.Equals("Metar"));
@@ -101,34 +100,34 @@ namespace Roomiebill.Server.DataAccessLayer
                 {
                     AdminGroupUsername = "Inbar",
                     GroupMembersUsernamesList = new List<string> { "Metar", "Vladi", "Tal" },
-                    GroupName = "Roomiebill_TestInvites"
+                    GroupName = "Test Invites"
                 };
 
                 Group group_Roomiebill_TestInvites = await _groupService.CreateNewGroupAsync(newGroupDetails_TestInvites);
 
                 // Invite users to the group
-                InviteToGroupByUsernameDto inviteDetails_Metar_testInvite = new InviteToGroupByUsernameDto
-                {
-                    InviterUsername = "Inbar",
-                    InvitedUsername = "Metar",
-                    GroupId = group_Roomiebill_TestInvites.Id
-                };
-                InviteToGroupByUsernameDto inviteDetails_Vladi_testInvite = new InviteToGroupByUsernameDto
-                {
-                    InviterUsername = "Inbar",
-                    InvitedUsername = "Vladi",
-                    GroupId = group_Roomiebill_TestInvites.Id
-                };
-                InviteToGroupByUsernameDto inviteDetails_Tal_testInvite = new InviteToGroupByUsernameDto
-                {
-                    InviterUsername = "Inbar",
-                    InvitedUsername = "Tal",
-                    GroupId = group_Roomiebill_TestInvites.Id
-                };
+                //InviteToGroupByUsernameDto inviteDetails_Metar_testInvite = new InviteToGroupByUsernameDto
+                //{
+                //    InviterUsername = "Inbar",
+                //    InvitedUsername = "Metar",
+                //    GroupId = group_Roomiebill_TestInvites.Id
+                //};
+                //InviteToGroupByUsernameDto inviteDetails_Vladi_testInvite = new InviteToGroupByUsernameDto
+                //{
+                //    InviterUsername = "Inbar",
+                //    InvitedUsername = "Vladi",
+                //    GroupId = group_Roomiebill_TestInvites.Id
+                //};
+                //InviteToGroupByUsernameDto inviteDetails_Tal_testInvite = new InviteToGroupByUsernameDto
+                //{
+                //    InviterUsername = "Inbar",
+                //    InvitedUsername = "Tal",
+                //    GroupId = group_Roomiebill_TestInvites.Id
+                //};
 
-                await _groupService.InviteToGroupByUsername(inviteDetails_Metar_testInvite);
-                await _groupService.InviteToGroupByUsername(inviteDetails_Vladi_testInvite);
-                await _groupService.InviteToGroupByUsername(inviteDetails_Tal_testInvite);
+                //await _groupService.InviteToGroupByUsername(inviteDetails_Metar_testInvite);
+                //await _groupService.InviteToGroupByUsername(inviteDetails_Vladi_testInvite);
+                //await _groupService.InviteToGroupByUsername(inviteDetails_Tal_testInvite);
 
                 // Create an expense
                 var expense = new Expense
