@@ -77,8 +77,7 @@ namespace Roomiebill.Server.Facades
                 throw new Exception($"Error when trying to invite user to group: invited with username {invited_username} does not exist in the system.");
             }
 
-            Group? group = await _applicationDbs.GetGroupByIdAsync(groupId, query => query.Include(g => g.Invites).ThenInclude(i => i.Invited)
-                .Include(g => g.Members));
+            Group? group = await _applicationDbs.GetGroupByIdAsync(groupId);
 
             if (group == null)
             {
@@ -149,7 +148,7 @@ namespace Roomiebill.Server.Facades
         {
             _logger.LogInformation($"Getting group with id {groupId}.");
 
-            Group? group = await _applicationDbs.GetGroupByIdAsync(groupId, null);
+            Group? group = await _applicationDbs.GetGroupByIdAsync(groupId);
 
             if (group == null)
             {
@@ -196,7 +195,7 @@ namespace Roomiebill.Server.Facades
         public async Task<Expense> AddExpenseAsync(ExpenseDto expenseDto)
         {
             // Extract group from database
-            Group? group = _applicationDbs.GetGroupById(expenseDto.GroupId);
+            Group? group = await _applicationDbs.GetGroupByIdAsync(expenseDto.GroupId);
 
             // Alert if the group does not exist
             if (group == null)
@@ -234,7 +233,7 @@ namespace Roomiebill.Server.Facades
         public async Task<Expense> UpdateExpenseAsync(ExpenseDto oldExpenseDto, ExpenseDto updatedExpenseDto)
         {
             // Extract the group from the database
-            Group? group = await Task.Run(() => _applicationDbs.GetGroupById(updatedExpenseDto.GroupId));
+            Group? group = await _applicationDbs.GetGroupByIdAsync(updatedExpenseDto.GroupId);
 
             // Alert if the group does not exist
             if (group == null)
@@ -294,7 +293,7 @@ namespace Roomiebill.Server.Facades
         /// <exception cref="Exception"></exception>
         public async Task RemoveMemberAsync(User user, int groupId){
             // Extract the group from the database
-            Group? group = await Task.Run(() => _applicationDbs.GetGroupById(groupId));
+            Group? group = await _applicationDbs.GetGroupByIdAsync(groupId);
 
             // Alert if the group does not exist
             if (group == null)
@@ -310,6 +309,10 @@ namespace Roomiebill.Server.Facades
 
             _logger.LogInformation($"User with id {user.Id} removed from group with id {groupId} successfully.");
         }
+
+        // public async Task<List<Group>> GetUserGroupsAsync(int UserId){
+        //     await _applicationDbs.
+        // }
 
         #region Help functions
 
