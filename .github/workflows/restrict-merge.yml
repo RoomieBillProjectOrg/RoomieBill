@@ -17,7 +17,7 @@ jobs:
       - name: Set up .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '9.0.101' # Specify the required .NET version
+          dotnet-version: '8.0.0' # Specify the required .NET version
 
       - name: Restore Backend Dependencies
         working-directory: ./Roomiebill.Server # Adjust this path to your server directory
@@ -34,6 +34,25 @@ jobs:
       - name: Test Backend
         working-directory: ./ServerTests # Adjust this path to your test project directory
         run: dotnet test ./ServerTests.csproj --verbosity normal
+
+      - name: Dotnet Test Coverlet
+        uses: alsi-lawr/dotnet-test-coverlet@v1
+        with:
+          # Path to the .NET unit test project. Adjust it to your test project path.
+          project: ./ServerTests/ServerTests.csproj
+      
+          # Optional: Files to exclude from code coverage analysis. Use glob patterns if needed.
+          exclude-files: "**/Migrations/*,**/Generated/*"
+      
+          # Optional: Modules to exclude from code coverage analysis. Use module names.
+          exclude-modules: "System.*,Microsoft.*"
+      
+          # Optional: Code coverage threshold percentage. Fails if coverage is below this value.
+          threshold: 80
+      
+          # Optional: The .NET SDK version to use.
+          dotnet-version: 8.0
+
 
   frontend-build-and-test:
     runs-on: windows-latest # MAUI builds require Windows for full support
