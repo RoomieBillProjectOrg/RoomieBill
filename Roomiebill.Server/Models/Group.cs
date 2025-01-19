@@ -49,9 +49,6 @@ namespace Roomiebill.Server.Models
             if (groupAdmin == null)
                 throw new ArgumentNullException(nameof(groupAdmin), "Admin cannot be null.");
 
-            if (members == null || !members.Any())
-                throw new ArgumentException("Members list cannot be null or empty.", nameof(members));
-
             GroupName = groupName;
             Admin = groupAdmin;
             Members = new List<User>(members); // Defensive copy

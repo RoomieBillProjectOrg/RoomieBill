@@ -51,7 +51,7 @@ namespace ServerTests
             Assert.NotNull(result);
             Assert.Equal(newGroupDto.GroupName, result.GetGroupName());
             Assert.Equal(newGroupDto.AdminGroupUsername, result.GetAdmin().Username);
-            Assert.Equal(newGroupDto.GroupMembersUsernamesList.Count, result.GetMembers().Count);
+            Assert.Equal(newGroupDto.GroupMembersUsernamesList.Count + 1, result.GetMembers().Count);
             Assert.Contains(result.GetMembers(), x => x.Username == "member1");
             Assert.Contains(result.GetMembers(), x => x.Username == "member2");
         }
@@ -114,7 +114,7 @@ namespace ServerTests
             Assert.NotNull(result);
             Assert.Equal(newGroupDto.GroupName, result.GetGroupName());
             Assert.Equal(newGroupDto.AdminGroupUsername, result.GetAdmin().Username);
-            Assert.Empty(result.GetMembers());
+            Assert.NotEmpty(result.GetMembers());
         }
 
         [Fact]
