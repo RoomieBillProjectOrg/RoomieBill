@@ -352,6 +352,7 @@ namespace Roomiebill.Server.Facades
             _logger.LogInformation($"Invite with id {inviteId} answered");
             return invite;
         }
+
         public async Task<User?> GetUserByIdAsync(int payerId)
         {
             return await _usersDb.GetUserByIdAsync(payerId);
