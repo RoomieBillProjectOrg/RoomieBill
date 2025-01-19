@@ -50,6 +50,7 @@ namespace Roomiebill.Server.Services
                 {
                     continue;
                 }
+                // TODO: might be better to use the service method here.
                 await _groupFacade.InviteToGroupByUsername(group.AdminGroupUsername, member.Username, newGroup.Id);
             }
 

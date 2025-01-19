@@ -5,6 +5,7 @@ using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Facades;
 using Roomiebill.Server.Models;
+using Roomiebill.Server.Common.Enums;
 
 namespace ServerTests;
 
@@ -405,6 +406,64 @@ public class UserFacadeTests
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<Exception>(() => _userFacade.LogoutAsync(username));
+    }
+
+    #endregion
+
+    #region AnswerInviteByUser
+
+    [Fact]
+    public async Task TestAnswerInviteByUser_WhenTrueAnswer_ThenUpdatesInviteAndGroup()
+    {
+        // Arrange
+            string inviterUsername = "inviter";
+            string invitedUsername = "invited";
+            
+            User inviter = new User(inviterUsername, "Metar@bgu.ac.il",  "MetarPassword2@");
+            User invited = new User(invitedUsername, "Metar2@bgu.ac.il",  "MetarPassword2@");
+
+            Group group = new Group();
+
+            Invite invite = new Invite(inviter, invited, group);
+
+            group.AddInvite(invite);
+            invited.AddInvite(invite);
+
+            _usersDbMock.Setup(db => db.GetInviteByIdAsync(invite.Id)).ReturnsAsync(invite);
+
+            // Act 
+            await _userFacade.AnswerInviteByUser(invite.Id, true);
+
+            // Assert
+            Assert.True(invite.Status == Status.Accepted);
+            Assert.True(group.Invites[0] == invite);
+    }
+
+    [Fact]
+    public async Task TestAnswerInviteByUser_WhenFalseAnswer_ThenUpdatesInviteAndGroup()
+    {
+        // Arrange
+            string inviterUsername = "inviter";
+            string invitedUsername = "invited";
+            
+            User inviter = new User(inviterUsername, "Metar@bgu.ac.il",  "MetarPassword2@");
+            User invited = new User(invitedUsername, "Metar2@bgu.ac.il",  "MetarPassword2@");
+
+            Group group = new Group();
+
+            Invite invite = new Invite(inviter, invited, group);
+
+            group.AddInvite(invite);
+            invited.AddInvite(invite);
+
+            _usersDbMock.Setup(db => db.GetInviteByIdAsync(invite.Id)).ReturnsAsync(invite);
+
+            // Act 
+            await _userFacade.AnswerInviteByUser(invite.Id, false);
+
+            // Assert
+            Assert.True(invite.Status == Status.Rejected);
+            Assert.True(group.Invites[0] == invite);
     }
 
     #endregion
