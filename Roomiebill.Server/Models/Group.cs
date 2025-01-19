@@ -35,9 +35,9 @@ namespace Roomiebill.Server.Models
 
             Members = new List<User>();
             Invites = new List<Invite>();
-            this.GroupName = "Default Name";
-            this._debtArray = new int[1];
-            this.Expenses = new List<Expense>();
+            GroupName = "Default Name";
+            _debtArray = new int[1];
+            Expenses = new List<Expense>();
             expenseHandler = new ExpenseHandler(Members);
         }
 
@@ -49,16 +49,14 @@ namespace Roomiebill.Server.Models
             if (groupAdmin == null)
                 throw new ArgumentNullException(nameof(groupAdmin), "Admin cannot be null.");
 
-            if (members == null || !members.Any())
-                throw new ArgumentException("Members list cannot be null or empty.", nameof(members));
-
             GroupName = groupName;
             Admin = groupAdmin;
             Members = new List<User>(members); // Defensive copy
-            Members.Add(groupAdmin);
-            this._debtArray = new int[(members.Count * (members.Count - 1)) / 2]; // Calculate size for 1D representation
-            this.Expenses = new List<Expense>();
-            this.expenseHandler = new ExpenseHandler(Members);
+            Members.Add(groupAdmin); // Add the admin to the members list
+            Invites = new List<Invite>();
+            _debtArray = new int[(members.Count * (members.Count - 1)) / 2]; // Calculate size for 1D representation
+            Expenses = new List<Expense>();
+            expenseHandler = new ExpenseHandler(Members);
         }
 
 

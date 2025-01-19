@@ -50,7 +50,7 @@ namespace Roomiebill.Server.Controllers
         }
 
         [HttpPost("logout")]
-        public async Task<IActionResult> Logout([FromHeader] string username)
+        public async Task<IActionResult> Logout([FromBody] string username)
         {
             try
             {

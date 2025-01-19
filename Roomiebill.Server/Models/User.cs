@@ -22,6 +22,8 @@ namespace Roomiebill.Server.Models
             PasswordHash = passwordHash;
             IsSystemAdmin = isSystemAdmin;
             IsLoggedIn = isLoggedIn;
+            Invites = new List<Invite>();
+            GroupsUserIsMemberAt = new List<Group>();
         }
 
         public void AddInvite(Invite invite)
