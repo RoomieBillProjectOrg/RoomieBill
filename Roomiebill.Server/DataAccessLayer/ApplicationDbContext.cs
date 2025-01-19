@@ -105,16 +105,9 @@ namespace Roomiebill.Server.DataAccessLayer
         }
 
         /* Group methods */
-        public async Task<Group?> GetGroupByIdAsync(int groupId, Func<IQueryable<Group>, IQueryable<Group>> includeFunc)
+        public async Task<Group?> GetGroupByIdAsync(int groupId)
         {
-            IQueryable<Group> query = Groups;
-
-            if (includeFunc != null)
-            {
-                query = includeFunc(query);
-            }
-
-            return await query.FirstOrDefaultAsync(g => g.Id == groupId);
+            return await Groups.FirstOrDefaultAsync(g => g.Id == groupId);
         }
         public async Task AddGroupAsync(Group group)
         {
