@@ -284,34 +284,6 @@ namespace Roomiebill.Server.Facades
         /// This method adds a user to a group. If the user is already a member of the group, an exception is thrown.
         /// </summary>
         /// <param name="user"></param>
-        /// <param name="groupId"></param>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
-        public async Task AddMemberAsync(User user, int groupId)
-        {
-            // Extract the group from the database
-            Group? group = await Task.Run(() => _groupDb.GetGroupById(groupId));
-
-            // Alert if the group does not exist
-            if (group == null)
-            {
-                _logger.LogError($"Error when trying to add member: group with id {groupId} does not exist.");
-                throw new Exception($"Group with id {groupId} does not exist.");
-            }
-            // User newUser = MapToEntity(user);
-
-            // Add the user to the group
-            group.AddMember(user);
-
-            await _groupDb.UpdateGroupAsync(group);
-
-            _logger.LogInformation($"User with id {user.Id} added to group with id {groupId} successfully.");
-        }
-
-        /// <summary>
-        /// This method adds a user to a group. If the user is already a member of the group, an exception is thrown.
-        /// </summary>
-        /// <param name="user"></param>
         /// <param name="group"></param>
         /// <returns></returns>
         public async Task AddMemberToGroupAsync(User user, Group group)
