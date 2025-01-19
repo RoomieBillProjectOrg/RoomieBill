@@ -15,7 +15,7 @@ namespace Roomiebill.Server.DataAccessLayer
 
         public Task UpdateGroupAsync(Group group);
 
-        public Task<Group?> GetGroupByIdAsync(int groupId, Func<IQueryable<Group>, IQueryable<Group>> includeFunc);
+        public Task<Group?> GetGroupByIdAsync(int groupId);
 
         public Task AddGroupAsync(Group group);
 
