@@ -62,7 +62,8 @@ namespace FrontendApplication.Services
 
         public async Task LogoutUserAsync(string username)
         {
-            var usernameAsJson = new StringContent(username, Encoding.UTF8, "application/json");
+            // Serialize the username to JSON object
+            var usernameAsJson = new StringContent(JsonConvert.SerializeObject(username), Encoding.UTF8, "application/json");
 
             // Connect to the server and attempt to logout the user
             var response = await _httpClient.PostAsync($"{_httpClient.BaseAddress}/Users/logout", usernameAsJson);

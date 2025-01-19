@@ -11,15 +11,18 @@ public partial class UserHomePage : ContentPage
     public List<GroupModel> Groups { get; set; }
 
     public UserHomePage(UserServiceApi userServiceApi, UserModel user)
-	{
+    {
+        InitializeComponent();
+
         _userService = userServiceApi;
         User = user;
         Groups = user.GroupsUserIsMemberAt ?? new List<GroupModel>();
 
+        BindingContext = this;
+
         // Initialize the UI based on the groups
         InitializeUI();
     }
-
 
     private void InitializeUI()
     {
@@ -56,37 +59,40 @@ public partial class UserHomePage : ContentPage
 
             Content = buttonLayout;
         }
-
-        // Set up the 3-dots menu in the upper right corner
-        ToolbarItems.Add(new ToolbarItem
-        {
-            Text = "•••",
-            Command = new Command(ShowMenu)
-        });
     }
 
     // Show the menu when the 3-dot button is clicked
-    private async void ShowMenu()
-    {
-        // Set up the toolbar items
-        ToolbarItems.Add(new ToolbarItem
-        {
-            Text = "Log Out",
-            Command = new Command(OnLogOut)
-        });
-        ToolbarItems.Add(new ToolbarItem
-        {
-            Text = "Update User Details",
-            Command = new Command(OnUpdateUserDetails)
-        });
-        ToolbarItems.Add(new ToolbarItem
-        {
-            Text = "Add Group",
-            Command = new Command(OnAddGroup)
-        });
+    // Command that is bound to the ToolbarItem
+    public Command ShowMenuCommand => new Command(OnShowMenu);
 
-        // Show the menu at the current toolbar item
-        await DisplayActionSheet("Menu", "Cancel", null, "Log Out", "Update User Details", "Add Group");
+    // Method that is triggered when the toolbar item is clicked
+    private async void OnShowMenu()
+    {
+        // Show the options in an ActionSheet (a menu with multiple options)
+        string action = await DisplayActionSheet("Select an option", "Cancel", null, "Log Out", "Update User Details", "Add Group");
+
+        // Navigate based on the selected action
+        switch (action)
+        {
+            case "Log Out":
+                OnLogOut();
+                break;
+            case "Update User Details":
+                OnUpdateUserDetails();
+                break;
+            case "Add Group":
+                OnAddGroup();
+                break;
+            default:
+                break;
+        }
+    }
+
+    // Handle group button click
+    private void OnGroupButtonClicked(GroupModel group)
+    {
+        // TODO: Navigate to a new page based on the group
+        // await Navigation.PushAsync(new GroupPage(_userService));
     }
 
     // Methods for menu actions
@@ -120,12 +126,5 @@ public partial class UserHomePage : ContentPage
     {
         // Navigate to a group creation page
         await Navigation.PushAsync(new CreateGroupPage(_userService, User));
-    }
-
-    // Handle group button click
-    private void OnGroupButtonClicked(GroupModel group)
-    {
-        // TODO: Navigate to a new page based on the group
-        // await Navigation.PushAsync(new GroupPage(_userService));
     }
 }
