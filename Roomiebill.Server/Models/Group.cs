@@ -56,7 +56,7 @@ namespace Roomiebill.Server.Models
             Members = new List<User>(members); // Defensive copy
             Members.Add(groupAdmin); // Add the admin to the members list
             Invites = new List<Invite>();
-            _debtArray = new int[(members.Count * (members.Count - 1)) / 2]; // Calculate size for 1D representation
+            _debtArray = new int[(Members.Count * (Members.Count - 1)) / 2]; // Calculate size for 1D representation
             Expenses = new List<Expense>();
             expenseHandler = new ExpenseHandler(Members);
         }
