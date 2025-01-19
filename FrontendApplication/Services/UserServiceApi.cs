@@ -2,6 +2,7 @@
 using System.Text;
 using FrontendApplication.Models;
 using Newtonsoft.Json;
+using Roomiebill.Server.DataAccessLayer.Dtos;
 
 namespace FrontendApplication.Services
 {
@@ -61,7 +62,8 @@ namespace FrontendApplication.Services
 
         public async Task LogoutUserAsync(string username)
         {
-            var usernameAsJson = new StringContent(username, Encoding.UTF8, "application/json");
+            // Serialize the username to JSON object
+            var usernameAsJson = new StringContent(JsonConvert.SerializeObject(username), Encoding.UTF8, "application/json");
 
             // Connect to the server and attempt to logout the user
             var response = await _httpClient.PostAsync($"{_httpClient.BaseAddress}/Users/logout", usernameAsJson);
@@ -89,6 +91,26 @@ namespace FrontendApplication.Services
                 var errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(errorContent);
                 throw new Exception(errorResponse.Message);
             }
+        }
+
+        public async Task<GroupModel> CreateNewGroupAsync(CreateNewGroupDto newGroupDto)
+        {
+            // Connect to the server and attempt to create a new group
+            var response = await _httpClient.PostAsJsonAsync($"{_httpClient.BaseAddress}/Groups/createNewGroup", newGroupDto);
+
+            // If IsSuccessStatusCode is true, then the group was successfully created
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var groupResponse = JsonConvert.DeserializeObject<GroupModel>(content);
+                return groupResponse;
+            }
+
+            // Else - there was an exception in the server and we want to fail the group creation attempt
+            // and return the exception message to the user.
+            var errorContent = await response.Content.ReadAsStringAsync();
+            var errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(errorContent);
+            throw new Exception(errorResponse.Message);
         }
     }
 }

@@ -1,0 +1,13 @@
+﻿namespace Roomiebill.Server.DataAccessLayer.Dtos
+{
+    public class CreateNewGroupDto
+    {
+        public required string GroupName { get; set; }
+        public required string AdminGroupUsername { get; set; }
+
+        public List<string> GroupMembersUsernamesList { get; set; } = new List<string>();
+
+        // Empty constructor for deserialization
+        public CreateNewGroupDto() { }
+    }
+}
