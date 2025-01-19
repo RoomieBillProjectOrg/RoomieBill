@@ -8,8 +8,9 @@ using System;
 using Plugin.Firebase.Core.Platforms.iOS;
 #elif ANDROID
 using Plugin.Firebase.Core.Platforms.Android;
-#endif
+using CommunityToolkit.Maui;
 
+#endif
 namespace FrontendApplication
 {
     public static class MauiProgram
@@ -17,15 +18,12 @@ namespace FrontendApplication
         public static MauiApp CreateMauiApp()
         {
             var builder = MauiApp.CreateBuilder();
-            builder
-                .UseMauiApp<App>()
-                .ConfigureFonts(fonts =>
-                {
-                    fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                    fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                })
-                .RegisterFirebaseServices();
-
+            builder.UseMauiApp<App>().ConfigureFonts(fonts =>
+            {
+                fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+                fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+            }).RegisterFirebaseServices().UseMauiCommunityToolkit();
+            
             // Configure Https
             var baseUrl = new Uri(AppConfig.ApiBaseUrl);
 #if ANDROID
@@ -64,8 +62,7 @@ namespace FrontendApplication
                     return false;
                 }));
 #elif ANDROID
-                events.AddAndroid(android => android.OnCreate((activity, _) =>
-                    CrossFirebase.Initialize(activity)));
+                events.AddAndroid(android => android.OnCreate((activity, _) => CrossFirebase.Initialize(activity)));
 #endif
             });
 
