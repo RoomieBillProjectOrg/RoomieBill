@@ -232,7 +232,7 @@ namespace ServerTests
             {
                 GroupName = "Test Group",
                 AdminGroupUsername = inviterUsername, 
-                GroupMembersUsernamesList = new List<string> { invitedUsername } 
+                GroupMembersUsernamesList = new List<string> { } 
             });
             int groupId = group.Id;
 
