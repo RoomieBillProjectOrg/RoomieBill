@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Roomiebill.Server.Common.Enums;
 using Roomiebill.Server.DataAccessLayer;
@@ -68,6 +67,14 @@ namespace Roomiebill.Server.Facades
             return newGroup;
         }
 
+        /// <summary>
+        /// This method invites a user to a group by their username. If the inviter, invited or group do not exist in the system, an exception is thrown.
+        /// </summary>
+        /// <param name="inviter_username"></param>
+        /// <param name="invited_username"></param>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public async Task InviteToGroupByUsername(string inviter_username, string invited_username, int groupId)
         {
             _logger.LogInformation($"Inviting user with username {invited_username} to group with id {groupId}.");
@@ -123,6 +130,12 @@ namespace Roomiebill.Server.Facades
             _logger.LogInformation($"User with username {invited_username} has been invited to group with id {groupId}.");
         }
 
+        /// <summary>
+        /// This method answers an invite by a user. If the invite does not exist, an exception is thrown.
+        /// </summary>
+        /// <param name="inviteId"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public async Task AnswerInviteByUser(int inviteId)
         {
             _logger.LogInformation($"Answering invite with id {inviteId}.");
@@ -137,12 +150,18 @@ namespace Roomiebill.Server.Facades
 
             if (invite.Status == Status.Accepted)
             {
-                await AddMemberAsync(invite.Invited, invite.Group);
+                await AddMemberToGroupAsync(invite.Invited, invite.Group);
             }
 
             _logger.LogInformation($"Invite with id {inviteId} has been answered.");
         }
 
+        /// <summary>
+        /// This method gets a group by its id. If the group does not exist, an exception is thrown.
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public async Task<Group> GetGroupByIdAsync(int groupId)
         {
             _logger.LogInformation($"Getting group with id {groupId}.");
@@ -158,8 +177,12 @@ namespace Roomiebill.Server.Facades
             return group;
         }
 
-        #region Help functions
-
+        /// <summary>
+        /// This method checks if an invite for a user already exists in a group.
+        /// </summary>
+        /// <param name="invited"></param>
+        /// <param name="group"></param>
+        /// <returns></returns>
         private bool IsInviteForUserExistInGroup(User invited, Group group)
         {
             return group.Invites.Any(i => i.Invited == invited);
@@ -177,9 +200,13 @@ namespace Roomiebill.Server.Facades
         {
             return group.Members.Contains(user);
         }
-        
-        #endregion 
 
+        /// <summary>
+        /// This method adds an expense to a group. If the group or the payer do not exist in the system, an exception is thrown.
+        /// </summary>
+        /// <param name="expenseDto"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public async Task<Expense> AddExpenseAsync(ExpenseDto expenseDto)
         {
             // Extract group from database
@@ -210,6 +237,14 @@ namespace Roomiebill.Server.Facades
 
             return newExpense;
         }
+
+        /// <summary>
+        /// This method updates an expense in a group. If the expense does not exist in the group, an exception is thrown.
+        /// </summary>
+        /// <param name="oldExpenseDto"></param>
+        /// <param name="updatedExpenseDto"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public async Task<Expense> UpdateExpenseAsync(ExpenseDto oldExpenseDto, ExpenseDto updatedExpenseDto)
         {
             // Extract the group from the database
@@ -244,6 +279,14 @@ namespace Roomiebill.Server.Facades
 
             return updatedExpense;
         }
+
+        /// <summary>
+        /// This method adds a user to a group. If the user is already a member of the group, an exception is thrown.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public async Task AddMemberAsync(User user, int groupId)
         {
             // Extract the group from the database
@@ -265,7 +308,13 @@ namespace Roomiebill.Server.Facades
             _logger.LogInformation($"User with id {user.Id} added to group with id {groupId} successfully.");
         }
 
-        public async Task AddMemberAsync(User user, Group group)
+        /// <summary>
+        /// This method adds a user to a group. If the user is already a member of the group, an exception is thrown.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="group"></param>
+        /// <returns></returns>
+        public async Task AddMemberToGroupAsync(User user, Group group)
         {
             // Add the user to the group
             group.AddMember(user);
@@ -275,6 +324,13 @@ namespace Roomiebill.Server.Facades
             _logger.LogInformation($"User with id {user.Id} added to group successfully.");
         }
 
+        /// <summary>
+        /// This method removes a user from a group. If the user is not a member of the group, an exception is thrown.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public async Task RemoveMemberAsync(User user, int groupId){
             // Extract the group from the database
             Group? group = await Task.Run(() => _groupDb.GetGroupById(groupId));
@@ -293,6 +349,8 @@ namespace Roomiebill.Server.Facades
 
             _logger.LogInformation($"User with id {user.Id} removed from group with id {groupId} successfully.");
         }
+
+        #region Help functions
 
         private User MapToEntity(RegisterUserDto dto)
         {
@@ -328,5 +386,6 @@ namespace Roomiebill.Server.Facades
             };
         }
 
+        #endregion
     }
 }

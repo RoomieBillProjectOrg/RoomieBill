@@ -28,5 +28,20 @@ namespace Roomiebill.Server.Models
         {
             Invites.Add(invite);
         }
+
+        public void AddGroup(Group group)
+        {
+            GroupsUserIsMemberAt.Add(group);
+        }
+
+        public void RemoveGroup(Group group)
+        {
+            GroupsUserIsMemberAt.Remove(group);
+        }
+
+        public List<Group> GetGroups()
+        {
+            return GroupsUserIsMemberAt;
+        }
     }
 }
