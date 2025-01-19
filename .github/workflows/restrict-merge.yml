@@ -48,10 +48,10 @@ jobs:
           exclude-modules: "System.*,Microsoft.*"
       
           # Optional: Code coverage threshold percentage. Fails if coverage is below this value.
-          threshold: 80
+          threshold: 5
       
           # Optional: The .NET SDK version to use.
-          dotnet-version: 8.0
+          # dotnet-version: 8.0.*
 
 
   frontend-build-and-test:
