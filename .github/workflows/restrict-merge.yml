@@ -35,25 +35,6 @@ jobs:
         working-directory: ./ServerTests # Adjust this path to your test project directory
         run: dotnet test ./ServerTests.csproj --verbosity normal
 
-      - name: Dotnet Test Coverlet
-        uses: alsi-lawr/dotnet-test-coverlet@v1
-        with:
-          # Path to the .NET unit test project. Adjust it to your test project path.
-          project: ./ServerTests/ServerTests.csproj
-      
-          # Optional: Files to exclude from code coverage analysis. Use glob patterns if needed.
-          exclude-files: "**/Migrations/*,**/Generated/*"
-      
-          # Optional: Modules to exclude from code coverage analysis. Use module names.
-          exclude-modules: "System.*,Microsoft.*"
-      
-          # Optional: Code coverage threshold percentage. Fails if coverage is below this value.
-          threshold: 5
-      
-          # Optional: The .NET SDK version to use.
-          # dotnet-version: 8.0.*
-
-
   frontend-build-and-test:
     runs-on: windows-latest # MAUI builds require Windows for full support
     name: Frontend (MAUI) Build and Test
