@@ -357,6 +357,31 @@ namespace Roomiebill.Server.Facades
             return await _usersDb.GetUserByIdAsync(payerId);
         }
 
+        /// <summary>
+        /// Add a group to the user and update the user in the database.
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public async Task AddGroupToUser(string username, int groupId)
+        {
+            var user = await _usersDb.GetUserByUsernameAsync(username);
+            if (user == null)
+            {
+                _logger.LogError($"User with username {username} does not exist");
+                throw new Exception("User does not exist");
+            }
+            var group = await _usersDb.GetGroupByIdAsync(groupId, g => g);
+            if (group == null)
+            {
+                _logger.LogError($"Group with id {groupId} does not exist");
+                throw new Exception("Group does not exist");
+            }
+            user.AddGroup(group);
+            await _usersDb.UpdateUserAsync(user);
+        }
+
         #region Help functions
 
         public async Task<User?> GetUserByUsernameAsync(string username)

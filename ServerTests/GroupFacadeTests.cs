@@ -117,6 +117,10 @@ namespace ServerTests
             Assert.Empty(result.GetMembers());
         }
 
+        #endregion
+
+        #region InviteToGroupByUsername
+
         [Fact]
         public async Task TestInviteToGroupByUsername_WhenInviterDoesNotExist_ThenThrowsException()
         {
@@ -245,14 +249,17 @@ namespace ServerTests
             
             User inviter = new User(inviterUsername, "Metar@bgu.ac.il",  "MetarPassword2@");
             User invited = new User(invitedUsername, "Metar2@bgu.ac.il",  "MetarPassword2@");
+
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(inviterUsername))!.ReturnsAsync(inviter);
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(invitedUsername))!.ReturnsAsync(invited);
+
             Group group = await _groupFacade.CreateNewGroupAsync(new CreateNewGroupDto
             {
                 GroupName = "Test Group",
                 AdminGroupUsername = inviterUsername, 
-                GroupMembersUsernamesList = new List<string> {} 
+                GroupMembersUsernamesList = new List<string> { invitedUsername } 
             });
+
             _groupDbMock.Setup(x => x.GetGroupByIdAsync(group.Id, It.IsAny<Func<IQueryable<Group>, IQueryable<Group>>>()))!.ReturnsAsync(group);
             int groupId = group.Id;
 
@@ -262,6 +269,10 @@ namespace ServerTests
             // Assert
             Assert.NotEmpty(group.Invites);
         }
+
+        #endregion
+
+        #region AddExpenseAsync
 
         [Fact]
         public async Task TestAddExpense_WhenAllGood_ShouldAddExpense()
@@ -322,7 +333,11 @@ namespace ServerTests
             Assert.Equal(expenseDto.GroupId, addedExpense.GroupId);
             Assert.Equal(expenseDto.ExpenseSplits.Count, addedExpense.ExpenseSplits.Count);
         }
-        //Test for update expense
+
+        #endregion
+
+        #region UpdateExpenseAsync
+
         [Fact]
         public async Task TestUpdateExpense_WhenValidData_ShouldUpdateExpense()
         {
@@ -432,6 +447,11 @@ namespace ServerTests
             Assert.Equal(0, debt31);
             Assert.Equal(0, debt41);
         }
+
+        #endregion
+
+        #region AddMemberToGroupAsync
+
         [Fact]
         public async Task TestAddMemberToGroup_WhenGroupHasExpenses_ShouldAddMemberWithoutAffectingExpenses()
         {
@@ -476,7 +496,7 @@ namespace ServerTests
             // Act
             await _groupFacade.AddExpenseAsync(expensedto);
 
-            await _groupFacade.AddMemberAsync(newMember, groupId);
+            await _groupFacade.AddMemberToGroupAsync(newMember, group);
 
             // Assert
             Assert.Contains(group.GetMembers(), u => u.Id == newMember.Id); // New member is added
@@ -494,7 +514,11 @@ namespace ServerTests
             Assert.Contains(existingExpense.ExpenseSplits, es => es.UserId == user2.Id && es.Percentage == 20.0);
         }
 
-         [Fact]
+        #endregion
+
+        #region RemoveMemberFromGroupAsync
+
+        [Fact]
         public async Task TestRemoveMemberFromGroup_WhenGroupHasExpenses_ShouldAemoveMemberWithoutAffectingExpenses()
         {
             // Arrange
@@ -549,6 +573,10 @@ namespace ServerTests
             Assert.Contains(existingExpense.ExpenseSplits, es => es.UserId == user2.Id && es.Percentage == 20.0);
 
         }
+
+        #endregion
+
+        #region Helper Methods
 
         private Expense MapToEntity(ExpenseDto dto)
         {
