@@ -382,7 +382,7 @@ namespace Roomiebill.Server.Facades
                 _logger.LogError($"User with username {username} does not exist");
                 throw new Exception("User does not exist");
             }
-            var group = await _applicaitonDbs.GetGroupByIdAsync(groupId, g => g);
+            var group = await _applicaitonDbs.GetGroupByIdAsync(groupId);
             if (group == null)
             {
                 _logger.LogError($"Group with id {groupId} does not exist");
