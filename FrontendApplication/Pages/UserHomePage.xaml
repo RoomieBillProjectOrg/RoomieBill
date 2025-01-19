@@ -4,4 +4,10 @@
              x:Class="FrontendApplication.Pages.UserHomePage">
 
     <!-- Content of the page will be set dynamically in the code-behind -->
+
+    <ContentPage.ToolbarItems>
+        <!-- Define a ToolbarItem that will show the menu when clicked -->
+        <ToolbarItem Text="•••" Command="{Binding ShowMenuCommand}" />
+    </ContentPage.ToolbarItems>
+
 </ContentPage>
