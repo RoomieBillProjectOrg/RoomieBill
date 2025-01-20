@@ -239,7 +239,7 @@ namespace ServerTests
                 GroupMembersUsernamesList = new List<string> {  } 
             });
 
-            _groupDbMock.Setup(x => x.GetGroupByIdAsync(group.Id, It.IsAny<Func<IQueryable<Group>, IQueryable<Group>>>()))!.ReturnsAsync(group);
+            _groupDbMock.Setup(x => x.GetGroupByIdAsync(group.Id))!.ReturnsAsync(group);
             int groupId = group.Id;
 
             // Act 
@@ -336,7 +336,7 @@ namespace ServerTests
             user2.Id = 2;
             var group = new Group("Test Group", payer, new List<User> {user1, user2 });
 
-            _groupDbMock.Setup(x => x.GetGroupById(groupId)).Returns(group);
+            _groupDbMock.Setup(x => x.GetGroupByIdAsync(groupId)).ReturnsAsync(group);
             _userFacadeMock.Setup(x => x.GetUserByIdAsync(payerId)).ReturnsAsync(payer);
             // _groupDbMock.Setup(x => x.SaveChangesAsync()).Returns(Task.CompletedTask);
 
@@ -427,7 +427,7 @@ namespace ServerTests
             };
 
             // Mocking database and facade dependencies
-            _groupDbMock.Setup(x => x.GetGroupById(groupId)).Returns(group);
+            _groupDbMock.Setup(x => x.GetGroupByIdAsync(groupId)).ReturnsAsync(group);
             _userFacadeMock.Setup(x => x.GetUserByIdAsync(payerId)).ReturnsAsync(payer);
             _groupFacade = new GroupFacade(_groupDbMock.Object, _loggerMock.Object, _userFacadeMock.Object);
 
@@ -516,7 +516,7 @@ namespace ServerTests
                 Expenses = new List<Expense> { }
             };
 
-             _groupDbMock.Setup(x => x.GetGroupById(groupId)).Returns(group);
+            _groupDbMock.Setup(x => x.GetGroupByIdAsync(groupId)).ReturnsAsync(group);
             _userFacadeMock.Setup(x => x.GetUserByIdAsync(admin.Id)).ReturnsAsync(admin);
             _userFacadeMock.Setup(x => x.GetUserByIdAsync(newMember.Id)).ReturnsAsync(newMember);
             _groupFacade = new GroupFacade(_groupDbMock.Object, _loggerMock.Object, _userFacadeMock.Object);
@@ -583,7 +583,7 @@ namespace ServerTests
                 Expenses = new List<Expense> { }
             };
 
-             _groupDbMock.Setup(x => x.GetGroupById(groupId)).Returns(group);
+             _groupDbMock.Setup(x => x.GetGroupByIdAsync(groupId)).ReturnsAsync(group);
             _userFacadeMock.Setup(x => x.GetUserByIdAsync(admin.Id)).ReturnsAsync(admin);
             _userFacadeMock.Setup(x => x.GetUserByIdAsync(newMember.Id)).ReturnsAsync(newMember);
             _groupFacade = new GroupFacade(_groupDbMock.Object, _loggerMock.Object, _userFacadeMock.Object);
