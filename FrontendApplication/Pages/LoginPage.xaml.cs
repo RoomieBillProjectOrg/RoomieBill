@@ -6,11 +6,13 @@ namespace FrontendApplication.Pages;
 public partial class LoginPage : ContentPage
 {
     private readonly UserServiceApi _userService;
+    private readonly GroupServiceApi _groupService;
 
-    public LoginPage(UserServiceApi userService)
+    public LoginPage(UserServiceApi userService, GroupServiceApi groupService)
 	{
 		InitializeComponent();
         _userService = userService;
+        _groupService = groupService;
     }
 
     private async void OnLoginClicked(object sender, EventArgs e)
@@ -28,7 +30,7 @@ public partial class LoginPage : ContentPage
             await DisplayAlert("Success", "User logged in successfully!", "OK");
 
             // Navigate to UserHomePage
-            await Navigation.PushAsync(new UserHomePage(_userService, user));
+            await Navigation.PushAsync(new UserHomePage(_userService, _groupService, user));
         }
         catch(Exception ex)
         {

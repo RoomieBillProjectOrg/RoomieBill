@@ -143,6 +143,13 @@ namespace Roomiebill.Server.DataAccessLayer
             return invite;
         }
 
+        public async Task<List<Group>> GetUserGroupsAsync(int UserId){
+            return await Groups
+            .Include(g => g.Members)
+            .Where(g => g.Members.Any(m => m.Id == UserId))
+            .ToListAsync();
+        }
+
         public async Task<List<Invite>> GetUserInvitesAsync(string username)
         {
             return await Invites
