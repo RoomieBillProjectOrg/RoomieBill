@@ -8,7 +8,9 @@ namespace FrontendApplication
         public App(IServiceProvider serviceProvider)
         {
             InitializeComponent();
-            MainPage = new NavigationPage(new MainPage(serviceProvider.GetService<UserServiceApi>()));
+            MainPage = new NavigationPage(new MainPage(
+                serviceProvider.GetService<UserServiceApi>(),
+                serviceProvider.GetService<GroupServiceApi>()));
         }
     }
 }
