@@ -20,6 +20,7 @@ namespace Roomiebill.Server.DataAccessLayer
         public Task AddGroupAsync(Group group);
 
         public Group? GetGroupById(int id);
+        public Task<List<Group>> GetUserGroupsAsync(int UserId);
 
         public Task AddExpenseAsync(Expense expense);
 
