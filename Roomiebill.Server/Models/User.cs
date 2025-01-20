@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Roomiebill.Server.Models
 {
@@ -11,6 +12,8 @@ namespace Roomiebill.Server.Models
         public bool IsLoggedIn { get; set; } = false;
         public bool IsSystemAdmin { get; set; } = false;
         public List<Invite> Invites { get; set; } = [];
+        
+        [JsonIgnore]
         public List<Group> GroupsUserIsMemberAt { get; set; } = [];
 
         public User() { }

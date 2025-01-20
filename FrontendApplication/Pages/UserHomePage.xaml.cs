@@ -6,24 +6,41 @@ namespace FrontendApplication.Pages;
 public partial class UserHomePage : ContentPage
 {
     private readonly UserServiceApi _userService;
+    private readonly GroupServiceApi _groupService;
 
     public UserModel User { get; set; }
     public List<GroupModel> Groups { get; set; }
 
-    public UserHomePage(UserServiceApi userServiceApi, UserModel user)
+    public UserHomePage(UserServiceApi userServiceApi, GroupServiceApi groupService, UserModel user)
     {
         InitializeComponent();
 
         _userService = userServiceApi;
+        _groupService = groupService;
         User = user;
-        Groups = user.GroupsUserIsMemberAt ?? new List<GroupModel>();
-
         BindingContext = this;
-
-        // Initialize the UI based on the groups
-        InitializeUI();
     }
 
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        await InitializeAsync();
+    }
+
+    private async Task InitializeAsync()
+    {
+        try
+        {
+            // Fetch the group list
+            Groups = await _groupService.GetUserGroups(User);
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", "An error occurred while fetching user groups.\nError: "+ex.Message, "OK");
+            Groups = new List<GroupModel>();
+        }
+        InitializeUI();
+    }
     private void InitializeUI()
     {
         if (Groups.Count == 0)
@@ -32,8 +49,8 @@ public partial class UserHomePage : ContentPage
             var noGroupsLabel = new Label
             {
                 Text = "No groups were found for user.",
-                HorizontalOptions = LayoutOptions.Center,
-                VerticalOptions = LayoutOptions.CenterAndExpand
+                HorizontalTextAlignment = TextAlignment.Center,
+                VerticalTextAlignment = TextAlignment.Center
             };
             Content = noGroupsLabel;
         }
@@ -110,7 +127,7 @@ public partial class UserHomePage : ContentPage
             await DisplayAlert("Success", "User logged out successfully!", "OK");
 
             // Navigate to the main page
-            await Navigation.PushAsync(new MainPage(_userService));
+            await Navigation.PushAsync(new MainPage(_userService, _groupService));
         }
         catch (Exception ex)
         {
