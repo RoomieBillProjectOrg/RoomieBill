@@ -29,5 +29,19 @@ namespace Roomiebill.Server.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
+
+        [HttpGet("getUserGroups")]
+        public async Task<IActionResult> GetUserGroups([FromBody] int UserId)
+        {
+            try
+            {
+                List<Group> UserGroups = await _groupService.GetUserGroupsAsync(UserId);
+                return Ok(UserGroups);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
     }
 }

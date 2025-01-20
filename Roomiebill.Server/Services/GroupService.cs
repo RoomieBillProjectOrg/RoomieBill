@@ -60,9 +60,11 @@ namespace Roomiebill.Server.Services
             return newGroup;
         }
 
-        // public async Task <List<Group>> GetUserGroups(int UserId){
-        //     _groupFacade.GetGroupByIdAsync
-        // }
+        public async Task <List<Group>> GetUserGroupsAsync(int UserId){
+            // TODO: maybe add exception catch.
+            List<Group> UserGroups = await _groupFacade.GetUserGroupsAsync(UserId);
+            return UserGroups;
+        }
 
         public async Task InviteToGroupByUsername(InviteToGroupByUsernameDto inviteDetails)
         {

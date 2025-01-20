@@ -7,10 +7,12 @@ namespace FrontendApplication
     public partial class MainPage : ContentPage
     {
         private readonly UserServiceApi _userService;
-        public MainPage(UserServiceApi userService)
+        private readonly GroupServiceApi _groupService;
+        public MainPage(UserServiceApi userService, GroupServiceApi groupService)
         {
             InitializeComponent();
             _userService = userService;
+            _groupService = groupService;
         }
 
         protected override void OnAppearing()
@@ -60,7 +62,7 @@ namespace FrontendApplication
             loginPageButton.Clicked += async (sender, e) =>
             {
                 //await Shell.Current.GoToAsync(nameof(LoginPage));
-                await Navigation.PushAsync(new LoginPage(_userService));
+                await Navigation.PushAsync(new LoginPage(_userService, _groupService));
             };
             layout.Children.Add(loginPageButton);
 

@@ -310,9 +310,15 @@ namespace Roomiebill.Server.Facades
             _logger.LogInformation($"User with id {user.Id} removed from group with id {groupId} successfully.");
         }
 
-        // public async Task<List<Group>> GetUserGroupsAsync(int UserId){
-        //     await _applicationDbs.
-        // }
+        public async Task<List<Group>> GetUserGroupsAsync(int UserId){
+            List<Group> UserGroups = await _applicationDbs.GetUserGroupsAsync(UserId);
+            if (UserGroups == null){
+                _logger.LogError($"Error when trying to retrieve user {UserId} groups.");
+                throw new Exception($"Couldn't load groups for user {UserId}");
+            }
+            _logger.LogInformation($"User with id {UserId} retrieved his groups successfully.");
+            return UserGroups;
+        }
 
         #region Help functions
 
