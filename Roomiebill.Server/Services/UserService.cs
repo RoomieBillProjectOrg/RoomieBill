@@ -44,5 +44,10 @@ namespace Roomiebill.Server.Services
         {
             return await _userFacade.IsUserLoggedInAsync(username);
         }
+
+        public async Task<List<Invite>> GetUserInvitesAsync(string username)
+        {
+            return await _userFacade.GetUserInvitesAsync(username);
+        }
     }
 }

@@ -69,7 +69,7 @@ public partial class UserHomePage : ContentPage
     private async void OnShowMenu()
     {
         // Show the options in an ActionSheet (a menu with multiple options)
-        string action = await DisplayActionSheet("Select an option", "Cancel", null, "Log Out", "Update User Details", "Add Group");
+        string action = await DisplayActionSheet("Select an option", "Cancel", null, "Log Out", "Update User Details", "Add Group", "Invites");
 
         // Navigate based on the selected action
         switch (action)
@@ -82,6 +82,9 @@ public partial class UserHomePage : ContentPage
                 break;
             case "Add Group":
                 OnAddGroup();
+                break;
+            case "Invites":
+                onInvites();
                 break;
             default:
                 break;
@@ -126,5 +129,11 @@ public partial class UserHomePage : ContentPage
     {
         // Navigate to a group creation page
         await Navigation.PushAsync(new CreateGroupPage(_userService, User));
+    }
+
+    private async void onInvites()
+    {
+        // Navigate to a page that shows the invites
+        await Navigation.PushAsync(new InvitesPage(_userService, User));
     }
 }
