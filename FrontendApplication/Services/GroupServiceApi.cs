@@ -16,7 +16,7 @@ public class GroupServiceApi
     public async Task<List<GroupModel>> GetUserGroups(UserModel user)
     {
         //TODO: maybe exception catch needed
-        var response = await _httpClient.GetAsync($"{_httpClient.BaseAddress}/Groups/getUserGroups?userId={user.Id}");
+        var response = await _httpClient.GetAsync($"{_httpClient.BaseAddress}/Groups/getUserGroups?UserId={user.Id}");
         response.EnsureSuccessStatusCode();
         
         var groups = await response.Content.ReadFromJsonAsync<List<GroupModel>>();

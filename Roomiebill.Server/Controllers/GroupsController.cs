@@ -31,7 +31,7 @@ namespace Roomiebill.Server.Controllers
         }
 
         [HttpGet("getUserGroups")]
-        public async Task<IActionResult> GetUserGroups([FromBody] int UserId)
+        public async Task<IActionResult> GetUserGroups([FromQuery] int UserId)
         {
             try
             {
