@@ -142,5 +142,13 @@ namespace Roomiebill.Server.DataAccessLayer
             await SaveChangesAsync();
             return invite;
         }
+
+        public async Task<List<Invite>> GetUserInvitesAsync(string username)
+        {
+            return await Invites
+            .Include(i => i.Invited)
+            .Where(i => i.Invited.Username == username)
+            .ToListAsync();
+        }
     }
 }

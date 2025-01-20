@@ -392,6 +392,11 @@ namespace Roomiebill.Server.Facades
             await _applicaitonDbs.UpdateUserAsync(user);
         }
 
+        public async Task<List<Invite>> GetUserInvitesAsync(string username)
+        {
+            return await _applicaitonDbs.GetUserInvitesAsync(username);
+        }
+
         #region Help functions
 
         public async Task<User?> GetUserByUsernameAsync(string username)
