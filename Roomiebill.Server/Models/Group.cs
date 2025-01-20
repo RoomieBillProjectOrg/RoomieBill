@@ -1,6 +1,7 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Facades;
 
@@ -27,6 +28,7 @@ namespace Roomiebill.Server.Models
         public List<Invite> Invites { get; set; }
         
         [NotMapped]
+        [JsonIgnore]
         ExpenseHandler expenseHandler { get; set; }
 
         public Group()

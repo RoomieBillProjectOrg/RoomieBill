@@ -5,11 +5,13 @@ namespace FrontendApplication.Pages
     public partial class RegisterPage : ContentPage
     {
         private readonly UserServiceApi _userService;
+        private readonly GroupServiceApi _groupService;
 
-        public RegisterPage(UserServiceApi userService)
+        public RegisterPage(UserServiceApi userService, GroupServiceApi groupService)
         {
             InitializeComponent();
             _userService = userService;
+            _groupService = groupService;
         }
 
         private async void OnRegisterClicked(object sender, EventArgs e)
@@ -24,7 +26,7 @@ namespace FrontendApplication.Pages
                 await DisplayAlert("Success", "User registered successfully!", "OK");
 
                 // Navigate to LoginPage
-                await Navigation.PushAsync(new LoginPage(_userService));
+                await Navigation.PushAsync(new LoginPage(_userService, _groupService));
             }
             else
             {
