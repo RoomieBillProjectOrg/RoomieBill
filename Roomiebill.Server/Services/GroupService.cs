@@ -60,7 +60,8 @@ namespace Roomiebill.Server.Services
             return newGroup;
         }
 
-        public async Task <List<Group>> GetUserGroupsAsync(int UserId){
+        public async Task<List<Group>> GetUserGroupsAsync(int UserId)
+        {
             // TODO: maybe add exception catch.
             List<Group> UserGroups = await _groupFacade.GetUserGroupsAsync(UserId);
             return UserGroups;
@@ -71,7 +72,7 @@ namespace Roomiebill.Server.Services
             if (!await _userFacade.IsUserLoggedInAsync(inviteDetails.InviterUsername))
             {
                 throw new Exception($"User with username {inviteDetails.InviterUsername} is not logged in.");
-            } 
+            }
             await _groupFacade.InviteToGroupByUsername(inviteDetails.InviterUsername, inviteDetails.InvitedUsername, inviteDetails.GroupId);
         }
 
@@ -89,7 +90,26 @@ namespace Roomiebill.Server.Services
         {
             return await _groupFacade.AddExpenseAsync(expense);
         }
+        public async Task<List<DebtDto>> GetDebtsForUserAsync(int groupId, int userId)
+        {
+            // Fetch the group details
+            var group = await _groupFacade.GetGroupByIdAsync(groupId);
+            if (group == null) throw new Exception("Group not found.");
 
+            // Create a dictionary for quick member lookups
+            var memberLookup = group.Members.ToDictionary(m => m.Id, m => m.Username);
 
+            // Calculate debts
+            return group.Expenses
+                .SelectMany(expense => expense.ExpenseSplits, (expense, split) => new { Expense = expense, Split = split })
+                .Where(x => x.Split.UserId != userId && x.Split.Percentage > 0) // Exclude the current user and irrelevant splits
+                .Select(x => new DebtDto
+                {
+                    OwedByUserId = x.Split.UserId,
+                    OwedByUserName = memberLookup.TryGetValue(x.Split.UserId, out var username) ? username : "Unknown",
+                    Amount = Math.Round(x.Split.Percentage * x.Expense.Amount / 100, 2) // Round to 2 decimal places for accuracy
+                })
+                .ToList();
+        }
     }
 }
