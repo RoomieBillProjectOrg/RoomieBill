@@ -25,6 +25,7 @@ namespace Roomiebill.Server.Models
         [NotMapped]
         private int[] _debtArray; // 1D array to store debts
 
+        [JsonIgnore]
         public List<Invite> Invites { get; set; }
         
         [NotMapped]
