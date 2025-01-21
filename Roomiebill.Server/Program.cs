@@ -27,6 +27,8 @@ builder.Services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<GroupService>();
+builder.Services.AddScoped<InviteService>();
+builder.Services.AddScoped<GroupInviteMediatorService>();
 builder.Services.AddScoped<BillingService>();
 builder.Services.AddScoped<DatabaseSeeder>();
 

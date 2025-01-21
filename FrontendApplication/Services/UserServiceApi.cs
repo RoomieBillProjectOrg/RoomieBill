@@ -117,5 +117,20 @@ namespace FrontendApplication.Services
             var invites = await response.Content.ReadFromJsonAsync<List<InviteModel>>();
             return invites ?? new List<InviteModel>(); // Return an empty list if the deserialization results in null
         }
+
+        public async Task AcceptInviteAsync(InviteModel invite)
+        {
+            // Connect to the server and attempt to accept the invite
+            var response = await _httpClient.PostAsJsonAsync($"{_httpClient.BaseAddress}/Users/acceptInvite", invite);
+
+            // If there was an exception in the server and we want to fail the invite acceptance attempt
+            // and return the exception message to the user.
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                var errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(errorContent);
+                throw new Exception(errorResponse.Message);
+            }
+        }
     }
 }
