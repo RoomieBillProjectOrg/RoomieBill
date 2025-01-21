@@ -112,17 +112,10 @@ namespace FrontendApplication.Services
         public async Task<List<InviteModel>> ShowUserInvites(string username)
         {
             // Connect to the server and attempt to get the user invites
-            var response = await _httpClient.GetFromJsonAsync<List<InviteModel>>($"{_httpClient.BaseAddress}/Users/getUserInvites", username);
+            var response = await _httpClient.GetAsync($"{_httpClient.BaseAddress}/Users/getUserInvites?username={username}");
 
-            // If IsSuccessStatusCode is true, then the user invites were successfully retrieved
-            if (response != null)
-            {
-                return response;
-            }
-
-            // Else - there was an exception in the server and we want to fail the user invites retrieval attempt
-            // and return the exception message to the user.
-            throw new Exception("Failed to retrieve user invites");
+            var invites = await response.Content.ReadFromJsonAsync<List<InviteModel>>();
+            return invites ?? new List<InviteModel>(); // Return an empty list if the deserialization results in null
         }
     }
 }

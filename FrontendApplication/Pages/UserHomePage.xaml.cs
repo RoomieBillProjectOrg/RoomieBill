@@ -151,6 +151,6 @@ public partial class UserHomePage : ContentPage
     private async void onInvites()
     {
         // Navigate to a page that shows the invites
-        await Navigation.PushAsync(new InvitesPage(_userService, User));
+        await Navigation.PushAsync(new InvitesPage(_userService, User.Username));
     }
 }
