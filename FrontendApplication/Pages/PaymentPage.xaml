@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FrontendApplication.Pages.PaymentPage">
+    <VerticalStackLayout Padding="20" Spacing="15">
+
+       <Label x:Name="UserDebt" FontSize="24" HorizontalOptions="Center" />
+       <Button Text="Pay" Clicked="OnPayClicked" HorizontalOptions="Center" />
+   </VerticalStackLayout>
+
+</ContentPage>
