@@ -10,10 +10,12 @@ namespace Roomiebill.Server.Controllers
     public class GroupsController : ControllerBase
     {
         private readonly GroupService _groupService;
+        private readonly GroupInviteMediatorService _groupInviteMediatorService;
 
-        public GroupsController(GroupService groupService)
+        public GroupsController(GroupService groupService, GroupInviteMediatorService groupInviteMediatorService)
         {
             _groupService = groupService;
+            _groupInviteMediatorService = groupInviteMediatorService;
         }
 
         [HttpPost("createNewGroup")]
@@ -21,7 +23,7 @@ namespace Roomiebill.Server.Controllers
         {
             try
             {
-                var newGroup = await _groupService.CreateNewGroupAsync(group);
+                var newGroup = await _groupInviteMediatorService.CreateNewGroupSendInvitesAsync(group);
                 return Ok(newGroup);
             }
             catch (Exception ex)
