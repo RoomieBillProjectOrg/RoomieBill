@@ -11,11 +11,11 @@ public partial class UserHomePage : ContentPage
     public UserModel User { get; set; }
     public List<GroupModel> Groups { get; set; }
 
-    public UserHomePage(UserServiceApi userServiceApi, GroupServiceApi groupService, UserModel user)
+    public UserHomePage(UserServiceApi userService, GroupServiceApi groupService, UserModel user)
     {
         InitializeComponent();
 
-        _userService = userServiceApi;
+        _userService = userService;
         _groupService = groupService;
         User = user;
         BindingContext = this;
@@ -109,10 +109,9 @@ public partial class UserHomePage : ContentPage
     }
 
     // Handle group button click
-    private void OnGroupButtonClicked(GroupModel group)
+    private async void OnGroupButtonClicked(GroupModel group)
     {
-        // TODO: Navigate to a new page based on the group
-        // await Navigation.PushAsync(new GroupPage(_userService));
+        await Navigation.PushAsync(new GroupViewPage(_userService, _groupService, group));
     }
 
     // Methods for menu actions
