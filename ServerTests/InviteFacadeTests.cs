@@ -145,6 +145,7 @@ namespace ServerTests
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(inviterUsername))!.ReturnsAsync(inviter);
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(invitedUsername))!.ReturnsAsync(invited);
             _applicationDbs.Setup(x => x.GetGroupByIdAsync(group.Id))!.ReturnsAsync(group);
+            _groupFacadeMock.Setup(x => x.IsUserInGroup(inviter, group))!.Returns(true);
 
             // Act 
             await _inviteFacade.InviteToGroupByUsername(inviterUsername, invitedUsername, group.Id);
@@ -205,6 +206,56 @@ namespace ServerTests
             // Act
             await _inviteFacade.AnswerInviteByUser(invite.Id, false);
 
+            // Assert
+            Assert.DoesNotContain(invited, group.GetMembers());
+        }
+
+        [Fact]
+        public async Task TestAnswerInviteByUser_WhenAnswerAndInviteIsAccepted_ThenDontAddUserToGroup()
+        {
+            // Arrange
+            string inviterUsername = "inviter";
+            string invitedUsername = "invited";
+            
+            User inviter = new User(inviterUsername, "Metar@bgu.ac.il",  "MetarPassword2@");
+            User invited = new User(invitedUsername, "Metar2@bgu.ac.il",  "MetarPassword2@");
+
+            Group group = new Group();
+
+            Invite invite = new Invite(inviter, invited, group);
+
+            invite.AcceptInvite();
+
+            _applicationDbs.Setup(x => x.GetInviteByIdAsync(invite.Id))!.ReturnsAsync(invite);
+        
+            // Act
+            await Assert.ThrowsAsync<Exception>(() => _inviteFacade.AnswerInviteByUser(invite.Id, false));
+            
+            // Assert
+            Assert.DoesNotContain(invited, group.GetMembers());
+        }
+
+        [Fact]
+        public async Task TestAnswerInviteByUser_WhenAnswerAndInviteIsRejected_ThenDontAddUserToGroup()
+        {
+            // Arrange
+            string inviterUsername = "inviter";
+            string invitedUsername = "invited";
+            
+            User inviter = new User(inviterUsername, "Metar@bgu.ac.il",  "MetarPassword2@");
+            User invited = new User(invitedUsername, "Metar2@bgu.ac.il",  "MetarPassword2@");
+
+            Group group = new Group();
+
+            Invite invite = new Invite(inviter, invited, group);
+
+            invite.RejectInvite();
+
+            _applicationDbs.Setup(x => x.GetInviteByIdAsync(invite.Id))!.ReturnsAsync(invite);
+        
+            // Act
+            await Assert.ThrowsAsync<Exception>(() => _inviteFacade.AnswerInviteByUser(invite.Id, false));
+            
             // Assert
             Assert.DoesNotContain(invited, group.GetMembers());
         }
