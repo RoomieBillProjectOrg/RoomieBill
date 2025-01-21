@@ -169,6 +169,31 @@ namespace Roomiebill.Server.DataAccessLayer
                 await _userService.LogoutAsync("Vladi");
                 await _userService.LogoutAsync("Tal");
             }
+
+            await _userService.LoginAsync(new LoginDto { Username = "Inbar", Password = "InbarPassword1!" });
+            await _userService.LoginAsync(new LoginDto { Username = "Tal", Password = "TalPassword4$" });
+
+            // Create a new group for all data users - "Roomiebill"
+            CreateNewGroupDto newGroupDetails2 = new CreateNewGroupDto
+            {
+                AdminGroupUsername = "Inbar",
+                GroupMembersUsernamesList = new List<string> { "Metar", "Vladi", "Tal" },
+                GroupName = "NotificationTest6"
+            };
+
+            Group group_Roomiebill2 = await _groupInviteMediatorService.CreateNewGroupSendInvitesAsync(newGroupDetails2);
+
+            // User Tal accepts the invitation
+            var inviteTal2 = _context.Invites.FirstOrDefault(i => i.Invited.Username.Equals("Tal") && i.Group.GroupName == "NotificationTest6");
+            AnswerInviteByUserDto answerDetails2_Tal = new AnswerInviteByUserDto
+            {
+                InviteId = inviteTal2.Id,
+                InvitedUsername = "Tal",
+                IsAccepted = true
+            };
+            await _inviteService.AnswerInviteByUser(answerDetails2_Tal);
+
+
         }
     }
 }
