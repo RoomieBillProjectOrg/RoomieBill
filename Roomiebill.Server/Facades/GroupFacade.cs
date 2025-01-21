@@ -6,12 +6,13 @@ using Roomiebill.Server.Models;
 
 namespace Roomiebill.Server.Facades
 {
-    public class GroupFacade
+    public class GroupFacade : IGroupFacade
     {
         private readonly IApplicationDbContext _applicationDbs;
         private ILogger<GroupFacade> _logger;
         private readonly IUserFacade _userFacade;
 
+        public GroupFacade() {}
         public GroupFacade(IApplicationDbContext groupDb, ILogger<GroupFacade> logger, IUserFacade userFacade)
         {
             _applicationDbs = groupDb;

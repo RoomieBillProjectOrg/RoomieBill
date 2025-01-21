@@ -121,7 +121,7 @@ namespace FrontendApplication.Services
         public async Task AcceptInviteAsync(InviteModel invite)
         {
             // Connect to the server and attempt to accept the invite
-            var response = await _httpClient.PostAsJsonAsync($"{_httpClient.BaseAddress}/Users/acceptInvite", invite);
+            var response = await _httpClient.PostAsJsonAsync($"{_httpClient.BaseAddress}/Users/answerInvite", invite);
 
             // If there was an exception in the server and we want to fail the invite acceptance attempt
             // and return the exception message to the user.
