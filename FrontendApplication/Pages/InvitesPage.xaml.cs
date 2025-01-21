@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FrontendApplication.Models;
 using FrontendApplication.Services;
+using Roomiebill.FrontendApplication.Models;
 
 namespace FrontendApplication.Pages
 {
@@ -76,7 +77,8 @@ namespace FrontendApplication.Pages
                 var response = await _userService.ShowUserInvites(username);
                 foreach (var invite in response)
                 {
-                    _invitations.Add(invite);
+                    if (invite.Status == StatusModel.Pending)
+                        _invitations.Add(invite);
                 }
             }
             catch (Exception ex)
@@ -85,21 +87,25 @@ namespace FrontendApplication.Pages
             }
         }
 
-        private void AcceptButton_Clicked(object sender, EventArgs e)
+        private async void AcceptButton_Clicked(object sender, EventArgs e)
         {
             if (sender is Button button && button.CommandParameter is InviteModel invite)
             {
+                AnswerInviteByUserDto answer = new AnswerInviteByUserDto(invite.Id, invite.Invited.Username, true);
+                await _userService.AnswerInviteAsync(answer);
                 _invitations.Remove(invite);
-                DisplayAlert("Accepted", $"You accepted an invite from {invite.Inviter}", "OK");
+                await DisplayAlert("Accepted", $"You accepted an invite from {invite.Inviter.Username}", "OK");
             }
         }
 
-        private void RejectButton_Clicked(object sender, EventArgs e)
+        private async void RejectButton_Clicked(object sender, EventArgs e)
         {
             if (sender is Button button && button.CommandParameter is InviteModel invite)
             {
+                AnswerInviteByUserDto answer = new AnswerInviteByUserDto(invite.Id, invite.Invited.Username, false);
+                await _userService.AnswerInviteAsync(answer);
                 _invitations.Remove(invite);
-                DisplayAlert("Rejected", $"You rejected an invite from {invite.Inviter}", "OK");
+                await DisplayAlert("Rejected", $"You rejected an invite from {invite.Inviter.Username}", "OK");
             }
         }
     }

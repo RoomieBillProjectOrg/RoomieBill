@@ -118,10 +118,10 @@ namespace FrontendApplication.Services
             return invites ?? new List<InviteModel>(); // Return an empty list if the deserialization results in null
         }
 
-        public async Task AcceptInviteAsync(InviteModel invite)
+        public async Task AnswerInviteAsync(AnswerInviteByUserDto answer)
         {
             // Connect to the server and attempt to accept the invite
-            var response = await _httpClient.PostAsJsonAsync($"{_httpClient.BaseAddress}/Users/answerInvite", invite);
+            var response = await _httpClient.PostAsJsonAsync($"{_httpClient.BaseAddress}/Invites/answerInvite", answer);
 
             // If there was an exception in the server and we want to fail the invite acceptance attempt
             // and return the exception message to the user.

@@ -1,5 +1,6 @@
 using FrontendApplication.Models;
 using FrontendApplication.Services;
+using System.Collections.ObjectModel;
 
 namespace FrontendApplication.Pages;
 
@@ -9,7 +10,7 @@ public partial class UserHomePage : ContentPage
     private readonly GroupServiceApi _groupService;
 
     public UserModel User { get; set; }
-    public List<GroupModel> Groups { get; set; }
+    public ObservableCollection<GroupModel> Groups { get; set; }
 
     public UserHomePage(UserServiceApi userService, GroupServiceApi groupService, UserModel user)
     {
@@ -18,6 +19,7 @@ public partial class UserHomePage : ContentPage
         _userService = userService;
         _groupService = groupService;
         User = user;
+        Groups = new ObservableCollection<GroupModel>();
         BindingContext = this;
     }
 
@@ -32,12 +34,17 @@ public partial class UserHomePage : ContentPage
         try
         {
             // Fetch the group list
-            Groups = await _groupService.GetUserGroups(User);
+            var groups = await _groupService.GetUserGroups(User);
+            Groups.Clear();
+            foreach (var group in groups)
+            {
+                Groups.Add(group);
+            }
         }
         catch (Exception ex)
         {
             await DisplayAlert("Error", "An error occurred while fetching user groups.\nError: "+ex.Message, "OK");
-            Groups = new List<GroupModel>();
+            Groups.Clear();
         }
         InitializeUI();
     }
