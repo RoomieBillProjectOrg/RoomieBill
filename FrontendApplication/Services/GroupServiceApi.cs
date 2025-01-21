@@ -22,4 +22,16 @@ public class GroupServiceApi
         var groups = await response.Content.ReadFromJsonAsync<List<GroupModel>>();
         return groups ?? new List<GroupModel>(); // Return an empty list if the deserialization results in null
     }
+
+//get group by id
+    public async Task<GroupModel> GetGroup(int id)
+    {   
+        var response = await _httpClient.GetAsync($"{_httpClient.BaseAddress}/Groups/getGroup?id={id}");
+        response.EnsureSuccessStatusCode();
+        
+        var group = await response.Content.ReadFromJsonAsync<GroupModel>();
+        return group ?? new GroupModel(); // Return an empty group if the deserialization results in null
+    }
+    
+
 }
