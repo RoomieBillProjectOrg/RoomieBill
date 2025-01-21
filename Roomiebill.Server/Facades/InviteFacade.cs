@@ -13,9 +13,9 @@ namespace Roomiebill.Server.Facades
         private readonly IApplicationDbContext _applicationDbs;
         private ILogger<InviteFacade> _logger;
         private readonly IUserFacade _userFacade;
-        private readonly GroupFacade _groupFacade;
+        private readonly IGroupFacade _groupFacade;
 
-        public InviteFacade(IApplicationDbContext inviteDb, ILogger<InviteFacade> logger, IUserFacade userFacade, GroupFacade groupFacade)
+        public InviteFacade(IApplicationDbContext inviteDb, ILogger<InviteFacade> logger, IUserFacade userFacade, IGroupFacade groupFacade)
         {
             _applicationDbs = inviteDb;
             _logger = logger;
@@ -159,12 +159,16 @@ namespace Roomiebill.Server.Facades
                 _logger.LogError($"Invite with id {inviteId} does not exist");
                 throw new Exception("Invite does not exist");
             }
+            if (invite.Status != Status.Pending)
+            {
+                _logger.LogError($"Invite with id {inviteId} is not pending");
+                throw new Exception("Invite is not pending");
+            }
 
             if (isAccepted)
             {
                 invite.AcceptInvite();
             }
-
             else
             {
                 invite.RejectInvite();
