@@ -8,11 +8,15 @@ namespace Roomiebill.Server.DataAccessLayer
     {
         private UserService _userService;
         private GroupService _groupService;
+        private InviteService _inviteService;
+        private GroupInviteMediatorService _groupInviteMediatorService;
         private ApplicationDbContext _context;
-        public DatabaseSeeder(UserService userService, GroupService groupService, ApplicationDbContext context)
+        public DatabaseSeeder(UserService userService, GroupService groupService, InviteService inviteService, GroupInviteMediatorService groupInviteMediatorService, ApplicationDbContext context)
         {
             _userService = userService;
             _groupService = groupService;
+            _inviteService = inviteService;
+            _groupInviteMediatorService = groupInviteMediatorService;
             _context = context;
         }
         public async Task SeedAsync()
@@ -39,7 +43,7 @@ namespace Roomiebill.Server.DataAccessLayer
                     GroupName = "Roomiebill"
                 };
 
-                Group group_Roomiebill = await _groupService.CreateNewGroupAsync(newGroupDetails);
+                Group group_Roomiebill = await _groupInviteMediatorService.CreateNewGroupSendInvitesAsync(newGroupDetails);
 
                 // Invite users to the group
                 //InviteToGroupByUsernameDto inviteDetails_Metar = new InviteToGroupByUsernameDto
@@ -73,7 +77,7 @@ namespace Roomiebill.Server.DataAccessLayer
                     InvitedUsername = "Metar",
                     IsAccepted = true
                 };
-                await _groupService.AnswerInviteByUser(answerDetails1_Metar);
+                await _inviteService.AnswerInviteByUser(answerDetails1_Metar);
 
                 // User Vladi accepts the invitation
                 var inviteVladi = _context.Invites.FirstOrDefault(i => i.Invited.Username.Equals("Vladi"));
@@ -83,7 +87,7 @@ namespace Roomiebill.Server.DataAccessLayer
                     InvitedUsername = "Vladi",
                     IsAccepted = true
                 };
-                await _groupService.AnswerInviteByUser(answerDetails1_Vladi);
+                await _inviteService.AnswerInviteByUser(answerDetails1_Vladi);
 
                 // User Tal accepts the invitation
                 var inviteTal = _context.Invites.FirstOrDefault(i => i.Invited.Username.Equals("Tal"));
@@ -93,7 +97,7 @@ namespace Roomiebill.Server.DataAccessLayer
                     InvitedUsername = "Tal",
                     IsAccepted = true
                 };
-                await _groupService.AnswerInviteByUser(answerDetails1_Tal);
+                await _inviteService.AnswerInviteByUser(answerDetails1_Tal);
 
                 // Create new group for all data users - "Roomiebill_TestInvites"
                 CreateNewGroupDto newGroupDetails_TestInvites = new CreateNewGroupDto
@@ -103,7 +107,7 @@ namespace Roomiebill.Server.DataAccessLayer
                     GroupName = "Test Invites"
                 };
 
-                Group group_Roomiebill_TestInvites = await _groupService.CreateNewGroupAsync(newGroupDetails_TestInvites);
+                Group group_Roomiebill_TestInvites = await _groupInviteMediatorService.CreateNewGroupSendInvitesAsync(newGroupDetails_TestInvites);
 
                 // Invite users to the group
                 //InviteToGroupByUsernameDto inviteDetails_Metar_testInvite = new InviteToGroupByUsernameDto
