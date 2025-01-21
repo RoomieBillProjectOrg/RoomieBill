@@ -39,9 +39,9 @@
             <Label Text="Your owns" 
                    FontSize="18" 
                    HorizontalOptions="Center" />
-            <Frame BackgroundColor="#dddddd" Padding="10" CornerRadius="5">
-                <Label Text="You have no debt" />
-            </Frame>
+            <VerticalStackLayout x:Name="OwnsButtonsLayout" Spacing="10" HorizontalOptions="Center">
+                <!-- Buttons will be added dynamically here -->
+            </VerticalStackLayout>
 
             <!-- Buttons for Actions -->
             <Button Text="View Transaction" Clicked="OnViewTransactionClicked" HorizontalOptions="Center" />
