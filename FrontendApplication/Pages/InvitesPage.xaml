@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FrontendApplication.Pages.InvitesPage"
+             Title="InvitesPage">
+    <StackLayout Padding="20">
+        <CollectionView ItemsSource="{Binding Invitations}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid ColumnDefinitions="*,Auto,Auto" Padding="10" Margin="5" BackgroundColor="LightGray">
+                        <Label Grid.Column="0" Text="{Binding Name}" VerticalOptions="Center" />
+                        <Button Grid.Column="1" Text="✓" BackgroundColor="Green" TextColor="White" Command="{Binding AcceptCommand}" CommandParameter="{Binding}" />
+                        <Button Grid.Column="2" Text="✗" BackgroundColor="Red" TextColor="White" Command="{Binding RejectCommand}" CommandParameter="{Binding}" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </StackLayout>
+</ContentPage>

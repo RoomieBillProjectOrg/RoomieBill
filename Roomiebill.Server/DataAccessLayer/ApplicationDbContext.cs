@@ -127,7 +127,9 @@ namespace Roomiebill.Server.DataAccessLayer
 
         public async Task<Invite?> GetInviteByIdAsync(int inviteId)
         {
-            return await Invites.FirstOrDefaultAsync(i => i.Id == inviteId);
+            return await Invites
+            .Include(i => i.Group)
+            .FirstOrDefaultAsync(i => i.Id == inviteId);
         }
 
         public async Task UpdateInviteAsync(Invite invite)
@@ -144,9 +146,19 @@ namespace Roomiebill.Server.DataAccessLayer
         }
 
         public async Task<List<Group>> GetUserGroupsAsync(int UserId){
-             return await Groups
+            return await Groups
             .Include(g => g.Members)
             .Where(g => g.Members.Any(m => m.Id == UserId))
+            .ToListAsync();
+        }
+
+        public async Task<List<Invite>> GetUserInvitesAsync(string username)
+        {
+            return await Invites
+            .Include(i => i.Inviter)
+            .Include(i => i.Group)
+            .Include(i => i.Invited)
+            .Where(i => i.Invited.Username == username)
             .ToListAsync();
         }
     }

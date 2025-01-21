@@ -11,6 +11,8 @@ namespace Roomiebill.Server.Models
         public string PasswordHash { get; set; }  // Store the hashed password
         public bool IsLoggedIn { get; set; } = false;
         public bool IsSystemAdmin { get; set; } = false;
+        
+        [JsonIgnore]
         public List<Invite> Invites { get; set; } = [];
         
         [JsonIgnore]
