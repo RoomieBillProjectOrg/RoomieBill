@@ -39,13 +39,61 @@
             <Label Text="The Shame Table" 
                    FontSize="18" 
                    Padding="10,20,0,0" />
-            <!-- Placeholder for Shame Table -->
+
+            <!-- FlexLayout for Shame Table -->
+            <FlexLayout Wrap="Wrap" 
+                        JustifyContent="Center" 
+                        AlignItems="Center"
+                        BindableLayout.ItemsSource="{Binding ShameTable}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BorderColor="Gray" 
+                               Padding="10" 
+                               Margin="5" 
+                               CornerRadius="8"
+                               HasShadow="True">
+                            <VerticalStackLayout>
+                                <Label Text="{Binding OwedByUserName}" 
+                                       FontSize="16" 
+                                       TextColor="Black" />
+                                <Label Text="{Binding Amount, StringFormat='{0:C}'}" 
+                                       FontSize="14" 
+                                       TextColor="Red" />
+                            </VerticalStackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </FlexLayout>
 
             <!-- Your Owns Section -->
             <Label Text="Your Owns" 
                    FontSize="18" 
                    Padding="10,20,0,0" />
-            <!-- Placeholder for Your Owns -->
+
+            <!-- FlexLayout for Your Owns -->
+            <FlexLayout Wrap="Wrap" 
+                        JustifyContent="Center" 
+                        AlignItems="Center"
+                        BindableLayout.ItemsSource="{Binding YourOwnsTable}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BorderColor="Gray" 
+                               Padding="10" 
+                               Margin="5" 
+                               CornerRadius="8"
+                               HasShadow="True">
+                            <VerticalStackLayout>
+                                <Label Text="{Binding OwedToUserName}" 
+                                       FontSize="16" 
+                                       TextColor="Black" />
+                                <Label Text="{Binding Amount, StringFormat='{0:C}'}" 
+                                       FontSize="14" 
+                                       TextColor="Green" />
+                            </VerticalStackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </FlexLayout>
 
             <!-- Action Buttons -->
             <Button Text="View Transaction" 

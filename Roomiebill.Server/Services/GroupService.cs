@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Refit;
 using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Facades;
@@ -90,10 +91,30 @@ namespace Roomiebill.Server.Services
                 })
                 .ToList();
         }
+
+        public async Task<List<DebtDto>> GetDebtsOwedByUserAsync(int groupId, int userId)
+        {
+            var group = await _groupFacade.GetGroupByIdAsync(groupId);
+            if (group == null) throw new Exception("Group not found.");
+
+            return group.Expenses
+                .SelectMany(e => e.ExpenseSplits, (e, es) => new { Expense = e, ExpenseSplit = es })
+                .Where(x => x.ExpenseSplit.UserId == userId && x.ExpenseSplit.Percentage < 0) // Only debts the user owes
+                .Select(x => new DebtDto
+                {
+                    OwedByUserId = x.Expense.PayerId,
+                    OwedByUserName = group.Members.FirstOrDefault(m => m.Id == x.Expense.PayerId)?.Username ?? "Unknown",
+                    Amount = Math.Abs(x.ExpenseSplit.Percentage * x.Expense.Amount / 100) // Calculate the amount based on percentage
+                })
+                .ToList();
+        }
         //get group by id
         public async Task<Group> GetGroupAsync(int id)
         {
             return await _groupFacade.GetGroupByIdAsync(id);
         }
+
+
+
     }
 }
