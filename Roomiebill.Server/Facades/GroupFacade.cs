@@ -1,5 +1,7 @@
+using FirebaseAdmin.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Roomiebill.Server.Common.Enums;
+using Roomiebill.Server.Common.Notificaiton;
 using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Models;
@@ -69,17 +71,6 @@ namespace Roomiebill.Server.Facades
             }
 
             return group;
-        }
-
-        /// <summary>
-        /// This method checks if an invite for a user already exists in a group.
-        /// </summary>
-        /// <param name="invited"></param>
-        /// <param name="group"></param>
-        /// <returns></returns>
-        private bool IsInviteForUserExistInGroup(User invited, Group group)
-        {
-            return group.Invites.Any(i => i.Invited == invited);
         }
 
         public bool IsUserInGroup(User user, Group group)
@@ -181,6 +172,10 @@ namespace Roomiebill.Server.Facades
             // Add the group to the user
             user.AddGroup(group);
             await _applicationDbs.UpdateUserAsync(user);
+
+            NotificationsHandle notificationHandler = new NotificationsHandle();
+            
+            notificationHandler.SendNotificationByTopicAsync("Group Notification", $"{user.Username} joined the group.", $"Group_{group.Id}");
 
             _logger.LogInformation($"User with id {user.Id} added to group successfully.");
         }
