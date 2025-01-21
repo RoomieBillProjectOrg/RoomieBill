@@ -105,9 +105,20 @@ namespace Roomiebill.Server.DataAccessLayer
         }
 
         /* Group methods */
+        // public async Task<Group?> GetGroupByIdAsync(int groupId)
+        // {
+        //     return await Groups.FirstOrDefaultAsync(g => g.Id == groupId);
+        // }
+
+        //Include all the related fields that griup should have
         public async Task<Group?> GetGroupByIdAsync(int groupId)
         {
-            return await Groups.FirstOrDefaultAsync(g => g.Id == groupId);
+            return await Groups
+                .Include(g => g.Admin)
+                .Include(g => g.Members)
+                .Include(g => g.Expenses)
+                    .ThenInclude(e => e.ExpenseSplits)
+                .FirstOrDefaultAsync(g => g.Id == groupId);
         }
         public async Task AddGroupAsync(Group group)
         {

@@ -58,5 +58,35 @@ namespace Roomiebill.Server.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
+
+        //get all debts for a user
+        [HttpGet("getDebtsForUser")]
+        public async Task<IActionResult> GetDebtsForUser([FromQuery] int groupId, [FromQuery] int userId)
+        {
+            try
+            {
+                List<DebtDto> debts = await _groupService.GetDebtsForUserAsync(groupId, userId);
+                return Ok(debts);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("getDebtsOwedByUser")]
+        public async Task<IActionResult> GetDebtsOwedByUser([FromQuery] int groupId, [FromQuery] int userId)
+        {
+            try
+            {
+                List<DebtDto> debts = await _groupService.GetDebtsOwedByUserAsync(groupId, userId);
+                return Ok(debts);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
     }
+
 }
