@@ -309,59 +309,6 @@ namespace Roomiebill.Server.Facades
             return existingUser.IsLoggedIn;
         }
 
-        /// <summary>
-        /// Add an invite to the invited user.
-        /// </summary>
-        /// <param name="invited"></param>
-        /// <param name="inv"></param>
-        /// <returns></returns>
-        public async Task AddInviteToinvited(User invited, Invite inv)
-        {
-            _logger.LogInformation($"Adding invite to user {invited.Username}");
-
-            invited.AddInvite(inv);
-
-            await _applicaitonDbs.UpdateUserAsync(invited);
-
-            _logger.LogInformation($"Invite added to user {invited.Username}");
-        }
-
-        /// <summary>
-        /// Answer an invite by the user.
-        /// </summary>
-        /// <param name="inviteId"></param>
-        /// <param name="isAccepted"></param>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
-        public async Task<Invite> AnswerInviteByUser(int inviteId, bool isAccepted)
-        {
-            _logger.LogInformation($"Answering invite with id {inviteId}");
-            var invite = await _applicaitonDbs.GetInviteByIdAsync(inviteId);
-
-            // here is the place to delete the invite from the user if wanted.
-            if (invite == null)
-            {
-                _logger.LogError($"Invite with id {inviteId} does not exist");
-                throw new Exception("Invite does not exist");
-            }
-
-            if (isAccepted)
-            {
-                invite.AcceptInvite();
-            }
-
-            else
-            {
-                invite.RejectInvite();
-            }
-
-            await _applicaitonDbs.UpdateInviteAsync(invite);
-
-            _logger.LogInformation($"Invite with id {inviteId} answered");
-
-            return invite;
-        }
-
         public async Task<User?> GetUserByIdAsync(int payerId)
         {
             return await _applicaitonDbs.GetUserByIdAsync(payerId);

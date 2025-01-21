@@ -127,7 +127,9 @@ namespace Roomiebill.Server.DataAccessLayer
 
         public async Task<Invite?> GetInviteByIdAsync(int inviteId)
         {
-            return await Invites.FirstOrDefaultAsync(i => i.Id == inviteId);
+            return await Invites
+            .Include(i => i.Group)
+            .FirstOrDefaultAsync(i => i.Id == inviteId);
         }
 
         public async Task UpdateInviteAsync(Invite invite)
