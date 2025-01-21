@@ -90,5 +90,10 @@ namespace Roomiebill.Server.Services
                 })
                 .ToList();
         }
+        //get group by id
+        public async Task<Group> GetGroupAsync(int id)
+        {
+            return await _groupFacade.GetGroupByIdAsync(id);
+        }
     }
 }

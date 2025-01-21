@@ -1,57 +1,66 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-		xmlns:d="http://schemas.microsoft.com/dotnet/2021/maui/design"
-             x:Class="FrontendApplication.Pages.GroupViewPage"
-             Title="GroupViewPage">
-        <VerticalStackLayout Padding="20" Spacing="15">
+             x:Class="FrontendApplication.Pages.GroupViewPage">
+         
 
-            <!-- Group Name -->
+    <ScrollView>
+        <VerticalStackLayout Padding="10" Spacing="20">
+
+            <!-- Header -->
             <Label Text="My Home" 
                    FontSize="24" 
                    HorizontalOptions="Center" />
 
-            <!-- All Roomis Section -->
-            <Label Text="All Roomis" 
+            <!-- Group Members Section -->
+            <Label Text="All Roomies" 
                    FontSize="18" 
                    HorizontalOptions="Center" />
-            <FlexLayout Direction="Row" Wrap="Wrap" JustifyContent="Center">
-                <Button Text="Metar" />
-                <Button Text="Inbar" />
-                <Button Text="Vladi" />
-                <Button Text="Tal" />
+
+            <!-- FlexLayout for Group Members -->
+            <FlexLayout Wrap="Wrap" 
+                        JustifyContent="Center" 
+                        AlignItems="Center"
+                        BindableLayout.ItemsSource="{Binding Members}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <Button Text="{Binding Username}" 
+                                BackgroundColor="Purple" 
+                                TextColor="White" 
+                                Margin="5"
+                                FontSize="16"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type local:GroupViewPage}}, Path=OnMemberButtonClicked}"
+                                CommandParameter="{Binding .}" />
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
             </FlexLayout>
 
-            <!-- The Shame Table -->
+            <!-- The Shame Table Section -->
             <Label Text="The Shame Table" 
                    FontSize="18" 
-                   HorizontalOptions="Center" />
-            <Frame BackgroundColor="#dddddd" Padding="10" CornerRadius="5">
-                <Button Text="Tal owns you 570$" />
-                <!-- Add Snooze/Reminder Icon as needed -->
-            </Frame>
-            <Frame BackgroundColor="#dddddd" Padding="10" CornerRadius="5">
-                <Button Text="Metar owns you 50$" />
-                <!-- Add Snooze/Reminder Icon as needed -->
-            </Frame>
+                   Padding="10,20,0,0" />
+            <!-- Placeholder for Shame Table -->
 
             <!-- Your Owns Section -->
-            <Label Text="Your owns" 
+            <Label Text="Your Owns" 
                    FontSize="18" 
-                   HorizontalOptions="Center" />
-            <Frame BackgroundColor="#dddddd" Padding="10" CornerRadius="5">
-                <Label Text="You have no debt" />
-            </Frame>
+                   Padding="10,20,0,0" />
+            <!-- Placeholder for Your Owns -->
 
-            <!-- Buttons for Actions -->
-            <Button Text="View Transaction" Clicked="OnViewTransactionClicked" HorizontalOptions="Center" />
-            <Button Text="Add Expense" Clicked="OnAddExpenseClicked" HorizontalOptions="Center" />
+            <!-- Action Buttons -->
+            <Button Text="View Transaction" 
+                    BackgroundColor="Purple" 
+                    TextColor="White" 
+                    Margin="10"
+                    Command="{Binding OnViewTransactionClicked}" />
+
+            <Button Text="Add Expense" 
+                    BackgroundColor="Purple" 
+                    TextColor="White" 
+                    Margin="10"
+                    Command="{Binding OnAddExpenseClicked}" />
+
         </VerticalStackLayout>
+    </ScrollView>
 
-    <!-- Bottom Navigation (Optional) -->
-    <!-- <HorizontalStackLayout Padding="10" Spacing="20">
-        <Image Source="home_icon.png" WidthRequest="30" HeightRequest="30" />
-        <Image Source="transaction_icon.png" WidthRequest="30" HeightRequest="30" />
-        <Image Source="expense_icon.png" WidthRequest="30" HeightRequest="30" />
-    </HorizontalStackLayout> -->
 </ContentPage>
