@@ -52,6 +52,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+FirebaseApp.Create(new AppOptions()
+{
+    Credential = GoogleCredential.FromFile("roomiebill-firebase-adminsdk.json")
+});
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
