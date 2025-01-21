@@ -178,20 +178,20 @@ namespace Roomiebill.Server.DataAccessLayer
             {
                 AdminGroupUsername = "Inbar",
                 GroupMembersUsernamesList = new List<string> { "Metar", "Vladi", "Tal" },
-                GroupName = "NotificationTest6"
+                GroupName = "NotificationTest40"
             };
 
             Group group_Roomiebill2 = await _groupInviteMediatorService.CreateNewGroupSendInvitesAsync(newGroupDetails2);
 
             // User Tal accepts the invitation
-            var inviteTal2 = _context.Invites.FirstOrDefault(i => i.Invited.Username.Equals("Tal") && i.Group.GroupName == "NotificationTest6");
-            AnswerInviteByUserDto answerDetails2_Tal = new AnswerInviteByUserDto
-            {
-                InviteId = inviteTal2.Id,
-                InvitedUsername = "Tal",
-                IsAccepted = true
-            };
-            await _inviteService.AnswerInviteByUser(answerDetails2_Tal);
+            // var inviteTal2 = _context.Invites.FirstOrDefault(i => i.Invited.Username.Equals("Tal") && i.Group.GroupName == "NotificationTest22");
+            // AnswerInviteByUserDto answerDetails2_Tal = new AnswerInviteByUserDto
+            // {
+            //     InviteId = inviteTal2.Id,
+            //     InvitedUsername = "Tal",
+            //     IsAccepted = true
+            // };
+            // await _inviteService.AnswerInviteByUser(answerDetails2_Tal);
 
 
         }
