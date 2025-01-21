@@ -10,11 +10,11 @@ namespace Roomiebill.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class InviteController : ControllerBase
+    public class InvitesController : ControllerBase
     {
         private readonly InviteService _inviteService;
 
-        public InviteController(InviteService inviteService)
+        public InvitesController(InviteService inviteService)
         {
             _inviteService = inviteService;
         }
