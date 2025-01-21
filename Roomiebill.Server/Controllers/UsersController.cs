@@ -62,5 +62,19 @@ namespace Roomiebill.Server.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
+
+        [HttpGet("getUserInvites")]
+        public async Task<IActionResult> GetUserGroups([FromQuery] string username)
+        {
+            try
+            {
+                List<Invite> userInvites = await _userService.GetUserInvitesAsync(username);
+                return Ok(userInvites);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
     }
 }
