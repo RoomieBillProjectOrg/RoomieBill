@@ -286,5 +286,11 @@ namespace Roomiebill.Server.Facades
         }
             return userId;
         }
+
+        public int[]  UpdateDebtBetweenIndex(int payerIndex, int userIndex, int amount, int[] debtArray)
+        {
+            UpdateDebtArray(payerIndex, userIndex, amount, debtArray);
+            return debtArray;
+        }
     }
 }

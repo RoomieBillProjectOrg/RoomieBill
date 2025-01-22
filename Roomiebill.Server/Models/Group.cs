@@ -57,7 +57,7 @@ namespace Roomiebill.Server.Models
             GroupName = groupName;
             Admin = groupAdmin;
             Members = new List<User>(members); // Defensive copy
-            Members.Add(groupAdmin); // Add the admin to the members list
+            // Members.Add(groupAdmin); // Add the admin to the members list
             Invites = new List<Invite>();
             Expenses = new List<Expense>();
             expenseHandler = new ExpenseHandler(Members);
@@ -98,16 +98,16 @@ namespace Roomiebill.Server.Models
             UpdateDebtArray();
         }
 
-        public void AddExpense(Expense expense)
-        {
-            Expenses.Add(expense);
-            UpdateDebtArray();
-        }
         // public void AddExpense(Expense expense)
         // {
-        //     expenseHandler.AddExpense(expense, _debtArray);
         //     Expenses.Add(expense);
+        //     UpdateDebtArray();
         // }
+        public void AddExpense(Expense expense)
+        {
+            expenseHandler.AddExpense(expense, _debtArray);
+            Expenses.Add(expense);
+        }
         private void EnlargeDebtArraySize(int newUserCount, int oldUserCount)
         {
             // Copy existing data to the new array
@@ -211,6 +211,30 @@ namespace Roomiebill.Server.Models
             }
             return debts;
         }
+        internal List<DebtDto> GetDebtsOwedByUser(int userId)
+        {
+            List<DebtDto> debts = new List<DebtDto>();
+            foreach (User member in Members)
+            {
+                if (member.Id != userId)
+                {
+                    int amount = expenseHandler.GetDebtBetweenIndex(userId, member.Id, _debtArray);
+                    if (amount > 0)
+                    {
+                        DebtDto debt = new DebtDto();
+                        debt.OwedByUserId = userId;
+                        debt.OwedToUserId = member.Id;
+                        debt.Amount = amount;
+                        debt.OwedByUserName = Admin.Username;
+                        debt.OwedToUserName = member.Username;
+                        debts.Add(debt);
+                    }
+                }
+            }
+            return debts;
+        }
+       
+        
 
         public User GetAdmin()
         {
@@ -226,5 +250,7 @@ namespace Roomiebill.Server.Models
         {
             return GroupName;
         }
+
+        
     }
 }

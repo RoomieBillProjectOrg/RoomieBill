@@ -2,111 +2,161 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:FrontendApplication.Pages"
              x:Class="FrontendApplication.Pages.GroupViewPage"
-             Title="Group View Page">
+             Title="Group View Page"
+             BackgroundColor="#F8F9FA">
 
     <ScrollView>
-        <VerticalStackLayout Padding="10" Spacing="20">
+        <VerticalStackLayout Padding="20" Spacing="20">
 
             <!-- Header -->
-            <Label Text="My Home" 
-                   FontSize="24" 
-                   HorizontalOptions="Center" />
+            <Label Text="My Home"
+                   FontSize="28"
+                   HorizontalOptions="Center"
+                   TextColor="#222831"
+                   FontAttributes="Bold"
+                   Margin="0,20,0,10" />
 
             <!-- Group Members Section -->
-            <Label Text="All Roomies" 
-                   FontSize="18" 
-                   HorizontalOptions="Center" />
+            <Label Text="All Roomies"
+                   FontSize="22"
+                   HorizontalOptions="Center"
+                   TextColor="#00ADB5"
+                   FontAttributes="Bold"
+                   Padding="0,10,0,5" />
 
-            <!-- FlexLayout for Group Members -->
-            <FlexLayout Wrap="Wrap" 
-                        JustifyContent="Center" 
-                        AlignItems="Center"
-                        BindableLayout.ItemsSource="{Binding Members}">
-                <BindableLayout.ItemTemplate>
+            <!-- Grid for Group Members -->
+            <CollectionView ItemsSource="{Binding Members}"
+                            HorizontalOptions="FillAndExpand">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="3" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Button Text="{Binding Username}" 
-                                BackgroundColor="Purple" 
-                                TextColor="White" 
-                                Margin="5"
-                                FontSize="16"
-                                Command="{Binding Source={RelativeSource AncestorType={x:Type local:GroupViewPage}}, Path=OnMemberButtonClicked}"
-                                CommandParameter="{Binding .}" />
+                        <Button Text="{Binding Username}"
+                                BackgroundColor="#00ADB5"
+                                TextColor="White"
+                                FontSize="18"
+                                CornerRadius="15"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type local:GroupViewPage}}, Path=OnMemberClicked}"
+                                CommandParameter="{Binding .}"
+                                Padding="10"
+                                Margin="5" />
                     </DataTemplate>
-                </BindableLayout.ItemTemplate>
-            </FlexLayout>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
 
             <!-- The Shame Table Section -->
-            <Label Text="The Shame Table" 
-                   FontSize="18" 
-                   Padding="10,20,0,0" />
+            <Label Text="The Shame Table"
+                   FontSize="22"
+                   TextColor="#FF5722"
+                   FontAttributes="Bold"
+                   Padding="0,20,0,5" />
 
-            <!-- FlexLayout for Shame Table -->
-            <FlexLayout Wrap="Wrap" 
-                        JustifyContent="Center" 
-                        AlignItems="Center"
-                        BindableLayout.ItemsSource="{Binding ShameTable}">
-                <BindableLayout.ItemTemplate>
+                <!-- Grid for Shame Table -->
+            <CollectionView ItemsSource="{Binding ShameTable}"
+                            HorizontalOptions="FillAndExpand">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="2" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Frame BorderColor="Gray" 
-                               Padding="10" 
-                               Margin="5" 
-                               CornerRadius="8"
-                               HasShadow="True">
+                        <Frame BorderColor="#FF5722"
+                            Padding="10"
+                            Margin="5"
+                            CornerRadius="12"
+                            HasShadow="True"
+                            BackgroundColor="#FFF9F9">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type local:GroupViewPage}}, Path=OnShameTableItemTapped}"
+                                    CommandParameter="{Binding .}" />
+                            </Frame.GestureRecognizers>
                             <VerticalStackLayout>
-                                <Label Text="{Binding OwedByUserName}" 
-                                       FontSize="16" 
-                                       TextColor="Black" />
-                                <Label Text="{Binding Amount, StringFormat='{0:C}'}" 
-                                       FontSize="14" 
-                                       TextColor="Red" />
+                                <Label Text="{Binding OwedByUserName, StringFormat='{0} owes you'}"
+                                    FontSize="18"
+                                    TextColor="#222831" />
+                                <Label Text="{Binding Amount, StringFormat='{0:C}'}"
+                                    FontSize="16"
+                                    TextColor="#FF5722"
+                                    FontAttributes="Bold" />
                             </VerticalStackLayout>
                         </Frame>
                     </DataTemplate>
-                </BindableLayout.ItemTemplate>
-            </FlexLayout>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Label Text="🎉 Congratulations, you’re the friend's ATM 🏧😂"
+                FontSize="16"
+                TextColor="#B0BEC5"
+                HorizontalOptions="Center"
+                IsVisible="{Binding IsShameTableEmpty}" />
 
             <!-- Your Owns Section -->
-            <Label Text="Your Owns" 
-                   FontSize="18" 
-                   Padding="10,20,0,0" />
+            <Label Text="Your Owns"
+                   FontSize="22"
+                   TextColor="#4CAF50"
+                   FontAttributes="Bold"
+                   Padding="0,20,0,5" />
 
-            <!-- FlexLayout for Your Owns -->
-            <FlexLayout Wrap="Wrap" 
-                        JustifyContent="Center" 
-                        AlignItems="Center"
-                        BindableLayout.ItemsSource="{Binding YourOwnsTable}">
-                <BindableLayout.ItemTemplate>
+            <!-- Grid for Your Owns -->
+            <CollectionView ItemsSource="{Binding YourOwnsTable}"
+                            HorizontalOptions="FillAndExpand">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="2" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Frame BorderColor="Gray" 
-                               Padding="10" 
-                               Margin="5" 
-                               CornerRadius="8"
-                               HasShadow="True">
+                        <Frame BorderColor="#4CAF50"
+                            Padding="10"
+                            Margin="5"
+                            CornerRadius="12"
+                            HasShadow="True"
+                            BackgroundColor="#F9FFF9">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type local:GroupViewPage}}, Path=OnYourOwnsItemTapped}"
+                                    CommandParameter="{Binding .}" />
+                            </Frame.GestureRecognizers>
                             <VerticalStackLayout>
-                                <Label Text="{Binding OwedToUserName}" 
-                                       FontSize="16" 
-                                       TextColor="Black" />
-                                <Label Text="{Binding Amount, StringFormat='{0:C}'}" 
-                                       FontSize="14" 
-                                       TextColor="Green" />
+                                <Label Text="{Binding OwedToUserName, StringFormat='You owe {0}'}"
+                                    FontSize="18"
+                                    TextColor="#222831" />
+                                <Label Text="{Binding Amount, StringFormat='{0:C}'}"
+                                    FontSize="16"
+                                    TextColor="#4CAF50"
+                                    FontAttributes="Bold" />
                             </VerticalStackLayout>
                         </Frame>
                     </DataTemplate>
-                </BindableLayout.ItemTemplate>
-            </FlexLayout>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Label Text="👏 Debt-free and living large! 💸😎"
+                FontSize="16"
+                TextColor="#B0BEC5"
+                HorizontalOptions="Center"
+                IsVisible="{Binding IsYourOwnsTableEmpty}" />
 
             <!-- Action Buttons -->
-            <Button Text="View Transaction" 
-                    BackgroundColor="Purple" 
-                    TextColor="White" 
-                    Margin="10"
-                    Command="{Binding OnViewTransactionClicked}" />
-
-            <Button Text="Add Expense" 
-                    BackgroundColor="Purple" 
-                    TextColor="White" 
-                    Margin="10"
-                    Command="{Binding OnAddExpenseClicked}" />
+            <HorizontalStackLayout Spacing="15"
+                                   Padding="10,20,10,0"
+                                   HorizontalOptions="Center">
+                <Button Text="View Transactions"
+                        BackgroundColor="#00ADB5"
+                        TextColor="White"
+                        FontSize="18"
+                        CornerRadius="20"
+                        WidthRequest="180"
+                        HeightRequest="50"
+                        Command="{Binding OnViewTransactionClicked}" />
+                <Button Text="Add Expense"
+                        BackgroundColor="#00ADB5"
+                        TextColor="White"
+                        Margin="10"
+                        CornerRadius="10"
+                        FontSize="18"
+                        Clicked="OnAddExpenseClicked" />
+            </HorizontalStackLayout>
 
         </VerticalStackLayout>
     </ScrollView>
