@@ -190,7 +190,7 @@ public partial class GroupViewPage : ContentPage
 			await DisplayAlert("Item Tapped", $"You owe User : {_currentUser.Username}.", "OK");
 
 			// Add your logic here (e.g., navigation or additional functionality)
-			await Navigation.PushAsync(new PaymentPage(selectedItem, _paymentService));
+			await Navigation.PushAsync(new PaymentPage(selectedItem, _group, _paymentService));
 		}
 	});
 

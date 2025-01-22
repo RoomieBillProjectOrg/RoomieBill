@@ -30,7 +30,7 @@ namespace Roomiebill.Server.Models
 
         [NotMapped]
         [JsonIgnore]
-        ExpenseHandler expenseHandler { get; set; }
+        public ExpenseHandler expenseHandler { get; set; }
 
         public Group()
         {
@@ -230,7 +230,10 @@ namespace Roomiebill.Server.Models
             return debts;
         }
        
-        
+        public void SettleDebt(decimal amount, int creditor, int debtor){
+            //TODO: Here we should think of supporting amount of payment.
+            expenseHandler.SettleDebt(creditor, debtor, _debtArray);
+        }
 
         public User GetAdmin()
         {

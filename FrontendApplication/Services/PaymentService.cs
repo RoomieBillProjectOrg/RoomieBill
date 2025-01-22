@@ -16,7 +16,7 @@ public class PaymentService
 
     public async Task<bool> ProcessPaymentAsync(PaymentRequestModel request)
     {
-        var response = await _httpClient.PostAsJsonAsync("api/payment/process", request);
+        var response = await _httpClient.PostAsJsonAsync("/Users/processPayment", request);
         response.EnsureSuccessStatusCode();
         return response.IsSuccessStatusCode;
     }
