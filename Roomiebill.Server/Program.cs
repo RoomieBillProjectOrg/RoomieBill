@@ -31,6 +31,7 @@ builder.Services.AddScoped<InviteService>();
 builder.Services.AddScoped<GroupInviteMediatorService>();
 builder.Services.AddScoped<BillingService>();
 builder.Services.AddScoped<DatabaseSeeder>();
+builder.Services.AddScoped<IPaymentService, MockPaymentService>();
 
 var app = builder.Build();
 

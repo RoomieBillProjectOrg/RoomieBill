@@ -1,17 +1,21 @@
 using FrontendApplication.Models;
+using FrontendApplication.Services;
 
 namespace FrontendApplication.Pages;
 
 public partial class PaymentPage : ContentPage
 {
-	public DebtDto _debt { get; }
-	public PaymentPage(DebtDto debt)
+	public DebtModel _debt { get; }
+	private readonly PaymentService _paymentService;
+	public PaymentPage(DebtModel debt, PaymentService paymentService)
 	{
 		InitializeComponent();
+		_paymentService = paymentService;
 		_debt = debt;
 
+
 		// Set the label text dynamically
-        UserDebt.Text = $"You owe {_debt.amount}$ to {_debt.recipient}";
+        UserDebt.Text = $"You owe {_debt.amount}$ to {_debt.creditor.Username}";
 	}
 
 	// Event handler for Pay button
@@ -19,6 +23,13 @@ public partial class PaymentPage : ContentPage
 	{
 		// Show the details of the debt when clicked
 		await DisplayAlert("Payment", 
-			$"You will pay {_debt.amount}$ to {_debt.recipient}", "OK");
+			$"You will pay {_debt.amount}$ to {_debt.creditor}", "OK");
+		//TODO: for now currenct is always NIS and method is CARD
+		try{
+			PaymentRequestModel request = new PaymentRequestModel(_debt.amount, "NIS", _debt.creditor, _debt.debtor, "CARD");
+			await _paymentService.ProcessPaymentAsync(request);
+		}catch(Exception ex){
+			await DisplayAlert("Error", ex.Message, "OK");
+		}
 	}
 }
