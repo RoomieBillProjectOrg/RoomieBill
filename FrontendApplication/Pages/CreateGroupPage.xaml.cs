@@ -1,3 +1,4 @@
+using Firebase.Messaging;
 using FrontendApplication.Models;
 using FrontendApplication.Services;
 using Roomiebill.Server.DataAccessLayer.Dtos;
@@ -44,7 +45,7 @@ public partial class CreateGroupPage : ContentPage
         {
             // Call backend service to create the group
             var newGroup = await _userService.CreateNewGroupAsync(newGroupDto);
-
+            FirebaseMessaging.Instance.SubscribeToTopic($"Group_{newGroup.Id}");
             // If successful, navigate to another page or show a success message
             await DisplayAlert("Success", $"Group '{newGroup.GroupName}' created successfully!", "OK");
 
