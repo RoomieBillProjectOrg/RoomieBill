@@ -139,7 +139,24 @@ public partial class GroupViewPage : ContentPage
 			var expenseData = (dynamic)result;
 			var amount = expenseData.Amount;
 			var description = expenseData.Description;
+			var expenseSplits = new List<ExpenseSplitModel>();
+			foreach (var member in expenseData.Members)
+			{
+				expenseSplits.Add(new ExpenseSplitModel
+				{
+					UserId = member.Id,
+					Percentage = member.Percentage
+				});
+			}
 
+			var expenseModel = new ExpenseModel
+			{
+				PayerId = _user.Id,
+				Amount = amount,
+				Description = description,
+				GroupId = _group.Id,
+				ExpenseSplits = expenseSplits
+			};
 			await DisplayAlert("Expense Added", $"Amount: {amount}\nDescription: {description}", "OK");
 			// Add logic to handle the expense (e.g., save to the database or update UI)
 		}

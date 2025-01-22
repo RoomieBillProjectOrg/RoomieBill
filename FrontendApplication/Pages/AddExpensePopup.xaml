@@ -4,48 +4,110 @@
              xmlns:popup="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="FrontendApplication.Popups.AddExpensePopup">
 
-    <!-- Use a Frame to create a styled popup container -->
-    <Frame BackgroundColor="#FFFFFF"
-           CornerRadius="15"
+    <Frame BackgroundColor="#E0F7FA"
+           CornerRadius="20"
            Padding="20"
-           WidthRequest="300"
-           HeightRequest="400"
+           WidthRequest="350"
+           HeightRequest="650"
            VerticalOptions="Center"
            HorizontalOptions="Center"
            HasShadow="True">
-           
-        <VerticalStackLayout Spacing="15">
 
+        <VerticalStackLayout Spacing="20">
+            <!-- Title -->
             <Label Text="Add Expense"
-                   FontSize="20"
+                   FontSize="22"
                    HorizontalOptions="Center"
                    FontAttributes="Bold"
-                   TextColor="#4A4A4A" />
+                   TextColor="#00695C" />
 
-            <Entry x:Name="AmountEntry"
-                   Placeholder="Amount"
-                   Keyboard="Numeric"
-                   FontSize="16"
-                   TextColor="#333" />
+            <!-- Amount Entry -->
+            <VerticalStackLayout>
+                <Label Text="Amount:"
+                       FontSize="16"
+                       TextColor="#00695C"
+                       FontAttributes="Bold" />
+                <Entry x:Name="AmountEntry"
+                       Placeholder="Enter amount"
+                       Keyboard="Numeric"
+                       FontSize="16"
+                       BackgroundColor="#FFFFFF"
+                       TextColor="#333"
+                       HeightRequest="40"
+                       Margin="0,5,0,0" />
+            </VerticalStackLayout>
 
-            <Entry x:Name="DescriptionEntry"
-                   Placeholder="Description"
-                   FontSize="16"
-                   TextColor="#333" />
+            <!-- Description Entry -->
+            <VerticalStackLayout>
+                <Label Text="Description:"
+                       FontSize="16"
+                       TextColor="#00695C"
+                       FontAttributes="Bold" />
+                <Entry x:Name="DescriptionEntry"
+                       Placeholder="Enter description"
+                       FontSize="16"
+                       BackgroundColor="#FFFFFF"
+                       TextColor="#333"
+                       HeightRequest="40"
+                       Margin="0,5,0,0" />
+            </VerticalStackLayout>
 
-            <Button Text="Submit"
-                    Command="{Binding AddExpenseCommand}"
-                    BackgroundColor="#4CAF50"
-                    TextColor="White"
-                    CornerRadius="10" />
+            <!-- Divide Dropdown -->
+            <VerticalStackLayout>
+                <Label Text="Divide:"
+                       FontSize="16"
+                       TextColor="#00695C"
+                       FontAttributes="Bold" />
+                <Picker x:Name="DividePicker"
+                        Title="Select division type"
+                        FontSize="16"
+                        BackgroundColor="#FFFFFF"
+                        TextColor="#333"
+                        HeightRequest="40"
+                        SelectedIndexChanged="OnDividePickerChanged">
+                    <Picker.Items>
+                        <x:String>Equally</x:String>
+                        <x:String>Custom</x:String>
+                    </Picker.Items>
+                </Picker>
+            </VerticalStackLayout>
 
-            <Button Text="Cancel"
-                    Command="{Binding CancelCommand}"
-                    BackgroundColor="#F44336"
-                    TextColor="White"
-                    CornerRadius="10" />
+            <!-- Custom Percentages -->
+            <VerticalStackLayout x:Name="CustomPercentageLayout" IsVisible="False">
+                <Label Text="Custom Percentages:"
+                       FontSize="16"
+                       TextColor="#00695C"
+                       FontAttributes="Bold" />
+                <CollectionView ItemsSource="{Binding Members}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Padding="10" ColumnDefinitions="*, Auto">
+                                <Label Text="{Binding Username}" FontSize="16" TextColor="#333" />
+                                <Entry Placeholder="%" Keyboard="Numeric" WidthRequest="50"
+                                       Text="{Binding CustomPercentage}" BackgroundColor="#FFFFFF" />
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
 
+            <!-- Submit and Cancel Buttons -->
+            <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+                <Button Text="CANCEL"
+                        Command="{Binding CancelCommand}"
+                        BackgroundColor="#B0BEC5"
+                        TextColor="White"
+                        CornerRadius="20"
+                        FontSize="18"
+                        Padding="10" />
+                <Button Text="SUBMIT"
+                        Command="{Binding AddExpenseCommand}"
+                        BackgroundColor="#FF5722"
+                        TextColor="White"
+                        CornerRadius="20"
+                        FontSize="18"
+                        Padding="10" />
+            </HorizontalStackLayout>
         </VerticalStackLayout>
     </Frame>
-
 </popup:Popup>
