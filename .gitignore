@@ -43,3 +43,4 @@ artifacts/
 .local/
 
 .DS_Store
+Roomiebill.Server/private_key.json
