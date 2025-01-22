@@ -62,7 +62,7 @@ public partial class GroupViewPage : ContentPage
 			ShameTable.Clear();
 
 			// Fetch debts for the current user
-			var debts = await _groupService.GetDebtsForUserAsync(_group.Id, 1);
+			var debts = await _groupService.GetDebtsForUserAsync(_group.Id, 2);
 
 			// Populate the ShameTable collection
 			foreach (var debt in debts)

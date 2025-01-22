@@ -70,27 +70,41 @@ namespace Roomiebill.Server.Services
         {
             return await _groupFacade.AddExpenseAsync(expense);
         }
+        // GetDebtsForUserAsync use the groupFacade to get the group details and calculate the debts for a user.
+
         public async Task<List<DebtDto>> GetDebtsForUserAsync(int groupId, int userId)
         {
-            // Fetch the group details
-            var group = await _groupFacade.GetGroupByIdAsync(groupId);
-            if (group == null) throw new Exception("Group not found.");
-
-            // Create a dictionary for quick member lookups
-            var memberLookup = group.Members.ToDictionary(m => m.Id, m => m.Username);
-
-            // Calculate debts
-            return group.Expenses
-                .SelectMany(expense => expense.ExpenseSplits, (expense, split) => new { Expense = expense, Split = split })
-                .Where(x => x.Split.UserId != userId && x.Split.Percentage > 0) // Exclude the current user and irrelevant splits
-                .Select(x => new DebtDto
-                {
-                    OwedByUserId = x.Split.UserId,
-                    OwedByUserName = memberLookup.TryGetValue(x.Split.UserId, out var username) ? username : "Unknown",
-                    Amount = Math.Round(x.Split.Percentage * x.Expense.Amount / 100, 2) // Round to 2 decimal places for accuracy
-                })
-                .ToList();
+            return await _groupFacade.GetDebtsForUserAsync(groupId, userId);
         }
+        public async Task<Group> GetGroupByIdAsync(int groupId)
+        {
+            return await _groupFacade.GetGroupByIdAsync(groupId);
+        }
+
+
+        // public async Task<List<DebtDto>> GetDebtsForUserAsync(int groupId, int userId)
+        // {
+        //     // Fetch the group details
+        //     var group = await _groupFacade.GetGroupByIdAsync(groupId);
+        //     if (group == null) throw new Exception("Group not found.");
+
+        //     // Create a dictionary for quick member lookups
+        //     var memberLookup = group.Members.ToDictionary(m => m.Id, m => m.Username);
+
+        //     _groupFacade.g
+
+        //     // Calculate debts
+        //     return group.Expenses
+        //         .SelectMany(expense => expense.ExpenseSplits, (expense, split) => new { Expense = expense, Split = split })
+        //         .Where(x => x.Split.UserId != userId && x.Split.Percentage > 0) // Exclude the current user and irrelevant splits
+        //         .Select(x => new DebtDto
+        //         {
+        //             OwedByUserId = x.Split.UserId,
+        //             OwedByUserName = memberLookup.TryGetValue(x.Split.UserId, out var username) ? username : "Unknown",
+        //             Amount = Math.Round(x.Split.Percentage * x.Expense.Amount / 100, 2) // Round to 2 decimal places for accuracy
+        //         })
+        //         .ToList();
+        // }
 
         public async Task<List<DebtDto>> GetDebtsOwedByUserAsync(int groupId, int userId)
         {

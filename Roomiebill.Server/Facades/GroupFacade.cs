@@ -221,6 +221,27 @@ namespace Roomiebill.Server.Facades
             return UserGroups;
         }
 
+        //GetDebtsForUserAsync
+        public async Task<List<DebtDto>> GetDebtsForUserAsync(int groupId, int userId)
+        {
+            Group? group = await _applicationDbs.GetGroupByIdAsync(groupId);
+            if (group == null)
+            {
+                _logger.LogError($"Error when trying to get debts for user: group with id {groupId} does not exist.");
+                throw new Exception($"Group with id {groupId} does not exist.");
+            }
+
+            User? user = await _userFacade.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                _logger.LogError($"Error when trying to get debts for user: user with id {userId} does not exist.");
+                throw new Exception($"User with id {userId} does not exist.");
+            }
+
+            List<DebtDto> debts = group.GetDebtsForUser(userId);
+            return debts;
+        }
+
         #region Help functions
 
         private User MapToEntity(RegisterUserDto dto)
