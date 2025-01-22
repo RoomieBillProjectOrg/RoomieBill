@@ -31,6 +31,8 @@ namespace FrontendApplication
 #endif
             // Register the HttpClient with a platform-specific base address
             builder.Services.AddSingleton<HttpClientService>();
+            
+            builder.UseMauiApp<App>().UseMauiCommunityToolkit();
 
             builder.Services.AddHttpClient("DefaultClient", client =>
             {
