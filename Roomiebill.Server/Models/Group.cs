@@ -200,18 +200,16 @@ namespace Roomiebill.Server.Models
                     if (amount > 0)
                     {
                         DebtDto debt = new DebtDto();
-                        debt.OwedByUserId = member.Id;
-                        debt.OwedToUserId = userId;
-                        debt.Amount = amount;
-                        debt.OwedByUserName = member.Username;
-                        debt.OwedToUserName = Admin.Username;
+                        debt.amount = amount;
+                        debt.creditor = getUserById(userId);
+                        debt.debtor = getUserById(member.Id);
                         debts.Add(debt);
                     }
                 }
             }
             return debts;
         }
-        internal List<DebtDto> GetDebtsOwedByUser(int userId)
+        public List<DebtDto> GetDebtsOwedByUser(int userId)
         {
             List<DebtDto> debts = new List<DebtDto>();
             foreach (User member in Members)
@@ -222,11 +220,9 @@ namespace Roomiebill.Server.Models
                     if (amount > 0)
                     {
                         DebtDto debt = new DebtDto();
-                        debt.OwedByUserId = userId;
-                        debt.OwedToUserId = member.Id;
-                        debt.Amount = amount;
-                        debt.OwedByUserName = Admin.Username;
-                        debt.OwedToUserName = member.Username;
+                        debt.amount = amount;
+                        debt.creditor = getUserById(member.Id);
+                        debt.debtor = getUserById(userId);
                         debts.Add(debt);
                     }
                 }
@@ -249,6 +245,13 @@ namespace Roomiebill.Server.Models
         public string GetGroupName()
         {
             return GroupName;
+        }
+
+        public User getUserById(int userId){
+            if(userId < 0){
+                throw new Exception("User with wrong id");
+            }
+            return Members.FirstOrDefault(m => m.Id == userId);
         }
 
         

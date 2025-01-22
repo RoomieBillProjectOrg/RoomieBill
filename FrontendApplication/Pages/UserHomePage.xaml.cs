@@ -8,16 +8,18 @@ public partial class UserHomePage : ContentPage
 {
     private readonly UserServiceApi _userService;
     private readonly GroupServiceApi _groupService;
+    private readonly PaymentService _paymentService;
 
     public UserModel User { get; set; }
     public ObservableCollection<GroupModel> Groups { get; set; }
 
-    public UserHomePage(UserServiceApi userService, GroupServiceApi groupService, UserModel user)
+    public UserHomePage(UserServiceApi userService, GroupServiceApi groupService, PaymentService paymentService, UserModel user)
     {
         InitializeComponent();
 
         _userService = userService;
         _groupService = groupService;
+        _paymentService = paymentService;
         User = user;
         Groups = new ObservableCollection<GroupModel>();
         BindingContext = this;
@@ -118,7 +120,7 @@ public partial class UserHomePage : ContentPage
     // Handle group button click
     private async void OnGroupButtonClicked(GroupModel group)
     {
-        await Navigation.PushAsync(new GroupViewPage(_userService, _groupService, group,User));
+        await Navigation.PushAsync(new GroupViewPage(_userService, _groupService, _paymentService, group, User));
     }
 
     // Methods for menu actions
@@ -133,7 +135,7 @@ public partial class UserHomePage : ContentPage
             await DisplayAlert("Success", "User logged out successfully!", "OK");
 
             // Navigate to the main page
-            await Navigation.PushAsync(new MainPage(_userService, _groupService));
+            await Navigation.PushAsync(new MainPage(_userService, _groupService, _paymentService));
         }
         catch (Exception ex)
         {

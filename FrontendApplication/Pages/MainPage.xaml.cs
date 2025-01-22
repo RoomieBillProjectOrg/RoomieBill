@@ -8,11 +8,13 @@ namespace FrontendApplication
     {
         private readonly UserServiceApi _userService;
         private readonly GroupServiceApi _groupService;
-        public MainPage(UserServiceApi userService, GroupServiceApi groupService)
+        private readonly PaymentService _paymentService;
+        public MainPage(UserServiceApi userService, GroupServiceApi groupService, PaymentService paymentService)
         {
             InitializeComponent();
             _userService = userService;
             _groupService = groupService;
+            _paymentService = paymentService;
         }
 
         protected override void OnAppearing()
@@ -62,7 +64,7 @@ namespace FrontendApplication
             loginPageButton.Clicked += async (sender, e) =>
             {
                 //await Shell.Current.GoToAsync(nameof(LoginPage));
-                await Navigation.PushAsync(new LoginPage(_userService, _groupService));
+                await Navigation.PushAsync(new LoginPage(_userService, _groupService, _paymentService));
             };
             layout.Children.Add(loginPageButton);
 
