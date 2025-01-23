@@ -10,7 +10,7 @@ namespace Roomiebill.Server.Common.Notificaiton
     {
         public NotificationsHandle() { }
 
-        public void SendNotificationByTopicAsync(string title, string body, string topic)
+        public static void SendNotificationByTopicAsync(string title, string body, string topic)
         {
             if (string.IsNullOrWhiteSpace(topic) || topic.Length > 900 || !System.Text.RegularExpressions.Regex.IsMatch(topic, @"^[a-zA-Z0-9_-]+$"))
                 {
@@ -38,6 +38,35 @@ namespace Roomiebill.Server.Common.Notificaiton
                 throw new Exception("Error sending notification: " + ex.Message);
             }
             
+        }
+
+        public static void SendNotificationByTokenAsync(string title, string body, string token)
+        {
+            if (string.IsNullOrWhiteSpace(token) || token.Length > 900)
+            {
+                throw new ArgumentException("Invalid token.");
+            }
+
+            var message = new Message()
+            {
+                Token = token,
+                Notification = new Notification()
+                {
+                    Title = title,
+                    Body = body
+                }
+            };
+
+            try
+            {
+                // Send a message to the device corresponding to the provided
+                // registration token.
+                string response = FirebaseMessaging.DefaultInstance.SendAsync(message).Result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error sending notification: " + ex.Message);
+            }
         }
     }
 }

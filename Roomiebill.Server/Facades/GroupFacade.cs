@@ -172,10 +172,8 @@ namespace Roomiebill.Server.Facades
             // Add the group to the user
             user.AddGroup(group);
             await _applicationDbs.UpdateUserAsync(user);
-
-            NotificationsHandle notificationHandler = new NotificationsHandle();
             
-            notificationHandler.SendNotificationByTopicAsync("Group Notification", $"{user.Username} joined the group.", $"Group_{group.Id}");
+            NotificationsHandle.SendNotificationByTopicAsync("Group Notification", $"{user.Username} joined the group.", $"Group_{group.Id}");
 
             _logger.LogInformation($"User with id {user.Id} added to group successfully.");
         }
