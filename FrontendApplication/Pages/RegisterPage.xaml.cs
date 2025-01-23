@@ -1,3 +1,4 @@
+using Firebase.Messaging;
 using FrontendApplication.Services;
 
 namespace FrontendApplication.Pages
@@ -19,8 +20,9 @@ namespace FrontendApplication.Pages
             var email = EmailEntry.Text;
             var username = UsernameEntry.Text;
             var password = PasswordEntry.Text;
+            var firebaseToken = GetUserFirebaseToken();
 
-            var success = await _userService.RegisterUserAsync(email, username, password);
+            var success = await _userService.RegisterUserAsync(email, username, password, firebaseToken);
             if (success)
             {
                 await DisplayAlert("Success", "User registered successfully!", "OK");
@@ -32,6 +34,11 @@ namespace FrontendApplication.Pages
             {
                 await DisplayAlert("Error", "Failed to register user.", "OK");
             }
+        }
+
+        private string GetUserFirebaseToken()
+        {
+            return (string) FirebaseMessaging.Instance.GetToken();
         }
     }
 }

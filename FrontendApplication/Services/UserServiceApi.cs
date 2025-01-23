@@ -15,13 +15,14 @@ namespace FrontendApplication.Services
             _httpClient = httpClientFactory.CreateClient("DefaultClient");
         }
 
-        public async Task<bool> RegisterUserAsync(string email, string username, string password)
+        public async Task<bool> RegisterUserAsync(string email, string username, string password, string firebaseToken)
         {
             RegisterUserDto user = new RegisterUserDto()
             {
                 username = username,
                 password = password,
-                email = email
+                email = email,
+                firebaseToken = firebaseToken
             };
             try{
                 var response = await _httpClient.PostAsJsonAsync($"{_httpClient.BaseAddress}/Users/register", user);
