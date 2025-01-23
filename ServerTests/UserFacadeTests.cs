@@ -174,7 +174,7 @@ public class UserFacadeTests
         var updateDto = new UpdatePasswordDto
         {
             Username = "testuser",
-            CurrentPassword = "oldPassword!1",
+            OldPassword = "oldPassword!1",
             NewPassword = "newPassword!1",
             VerifyNewPassword = "newPassword!1"
         };
@@ -184,7 +184,7 @@ public class UserFacadeTests
             PasswordHash = "oldPassword!1"
         };
         _usersDbMock.Setup(db => db.GetUserByUsernameAsync(updateDto.Username)).ReturnsAsync(user);
-        _passwordHasherMock.Setup(ph => ph.VerifyHashedPassword(user, user.PasswordHash, updateDto.CurrentPassword))
+        _passwordHasherMock.Setup(ph => ph.VerifyHashedPassword(user, user.PasswordHash, updateDto.OldPassword))
             .Returns(PasswordVerificationResult.Success);
         _passwordHasherMock.Setup(ph => ph.HashPassword(user, updateDto.NewPassword))
             .Returns("newHashedPassword!1");
@@ -203,7 +203,7 @@ public class UserFacadeTests
         var updateDto = new UpdatePasswordDto
         {
             Username = "testuser",
-            CurrentPassword = "oldPassword!1",
+            OldPassword = "oldPassword!1",
             NewPassword = "short",
             VerifyNewPassword = "short"
         };
@@ -213,7 +213,7 @@ public class UserFacadeTests
             PasswordHash = "oldPassword!1"
         };
         _usersDbMock.Setup(db => db.GetUserByUsernameAsync(updateDto.Username)).ReturnsAsync(user);
-        _passwordHasherMock.Setup(ph => ph.VerifyHashedPassword(user, user.PasswordHash, updateDto.CurrentPassword))
+        _passwordHasherMock.Setup(ph => ph.VerifyHashedPassword(user, user.PasswordHash, updateDto.OldPassword))
             .Returns(PasswordVerificationResult.Success);
 
         // Act & Assert
@@ -228,7 +228,7 @@ public class UserFacadeTests
         var updateDto = new UpdatePasswordDto
         {
             Username = "testuser",
-            CurrentPassword = "wrongPassword!1",
+            OldPassword = "wrongPassword!1",
             NewPassword = "newPassword!1",
             VerifyNewPassword = "newPassword!1"
         };
@@ -238,7 +238,7 @@ public class UserFacadeTests
             PasswordHash = "oldPassword!1"
         };
         _usersDbMock.Setup(db => db.GetUserByUsernameAsync(updateDto.Username)).ReturnsAsync(user);
-        _passwordHasherMock.Setup(ph => ph.VerifyHashedPassword(user, user.PasswordHash, updateDto.CurrentPassword))
+        _passwordHasherMock.Setup(ph => ph.VerifyHashedPassword(user, user.PasswordHash, updateDto.OldPassword))
             .Returns(PasswordVerificationResult.Failed);
 
         // Act & Assert
@@ -253,7 +253,7 @@ public class UserFacadeTests
         var updateDto = new UpdatePasswordDto
         {
             Username = "nonexistentuser",
-            CurrentPassword = "oldPassword!1",
+            OldPassword = "oldPassword!1",
             NewPassword = "newPassword!1",
             VerifyNewPassword = "newPassword!1"
         };
@@ -271,7 +271,7 @@ public class UserFacadeTests
         var updateDto = new UpdatePasswordDto
         {
             Username = "testuser",
-            CurrentPassword = "oldPassword!1",
+            OldPassword = "oldPassword!1",
             NewPassword = "newPassword!1",
             VerifyNewPassword = "newPassword!2"
         };
@@ -283,7 +283,7 @@ public class UserFacadeTests
         };
 
         _usersDbMock.Setup(db => db.GetUserByUsernameAsync(updateDto.Username)).ReturnsAsync(user);
-        _passwordHasherMock.Setup(ph => ph.VerifyHashedPassword(user, user.PasswordHash, updateDto.CurrentPassword))
+        _passwordHasherMock.Setup(ph => ph.VerifyHashedPassword(user, user.PasswordHash, updateDto.OldPassword))
             .Returns(PasswordVerificationResult.Success);
 
         // Act & Assert
@@ -297,7 +297,7 @@ public class UserFacadeTests
         var updateDto = new UpdatePasswordDto
         {
             Username = "testuser",
-            CurrentPassword = "oldPassword!1",
+            OldPassword = "oldPassword!1",
             NewPassword = null,
             VerifyNewPassword = "newPassword!1"
         };
