@@ -79,7 +79,7 @@ namespace Roomiebill.Server.Facades
             int indexj = _userIndexMap[j];
             int index = GetIndex(indexi, indexj);
             int debt = debtArray[index];
-        if (indexi < indexj)
+            if (indexi < indexj)
             {
                 return debt > 0 ? debt : 0; // Positive: i owes j; Zero or negative: i owes j nothing
             }
