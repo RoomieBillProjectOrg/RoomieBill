@@ -1,14 +1,96 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="FrontendApplication.Pages.RegisterPage">
-    <StackLayout Padding="20">
-        <Label Text="Register Page" 
-               VerticalOptions="Center" 
-               HorizontalOptions="Center" />
-        <Entry x:Name="EmailEntry" Placeholder="Email"/>
-        <Entry x:Name="UsernameEntry" Placeholder="Username"/>
-        <Entry x:Name="PasswordEntry" Placeholder="Password" IsPassword="True"/>
-        <Button Text="Register" Clicked="OnRegisterClicked"/>
-    </StackLayout>
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FrontendApplication.Pages.RegisterPage"
+             BackgroundColor="Black">
+    <ContentPage.Content>
+        <VerticalStackLayout Spacing="20" Padding="30">
+            
+            <!-- Title -->
+            <Label Text="Create new Account" 
+                   FontSize="36" 
+                   HorizontalOptions="Center" 
+                   TextColor="White" 
+                   FontAttributes="Bold"/>
+            
+            <!-- Subtitle -->
+            <Label Text="Already Registered? Log in here."
+                   FontSize="16"
+                   HorizontalOptions="Center"
+                   TextColor="White" />
+
+            <!-- Name Entry -->
+            <VerticalStackLayout Spacing="5">
+                <Label Text="NAME" 
+                       FontSize="14" 
+                       TextColor="White" />
+                <Entry x:Name="UsernameEntry" 
+                       Placeholder="Israel Israeli" 
+                       BackgroundColor="#2A2A2A" 
+                       TextColor="White"
+                       PlaceholderColor="#A9A9A9"
+                       HeightRequest="40" />
+            </VerticalStackLayout>
+
+            <!-- Email Entry -->
+            <VerticalStackLayout Spacing="5">
+                <Label Text="EMAIL" 
+                       FontSize="14" 
+                       TextColor="White" />
+                <Entry x:Name="EmailEntry" 
+                       Placeholder="israel@post.bgu.ac.il" 
+                       Keyboard="Email"
+                       BackgroundColor="#2A2A2A"
+                       TextColor="White"
+                       PlaceholderColor="#A9A9A9"
+                       HeightRequest="40" />
+            </VerticalStackLayout>
+
+            <!-- Password Entry -->
+            <VerticalStackLayout Spacing="5">
+                <Label Text="PASSWORD" 
+                       FontSize="14" 
+                       TextColor="White" />
+                <Entry x:Name="PasswordEntry" 
+                       IsPassword="True"
+                       Placeholder="******" 
+                       BackgroundColor="#2A2A2A"
+                       TextColor="White"
+                       PlaceholderColor="#A9A9A9"
+                       HeightRequest="40" />
+            </VerticalStackLayout>
+
+            <!-- Password Confirmation Entry -->
+            <VerticalStackLayout Spacing="5">
+                <Label Text="PASSWORD CONFIRMATION" 
+                       FontSize="14" 
+                       TextColor="White" />
+                <Entry x:Name="PasswordConfirmationEntry" 
+                       IsPassword="True"
+                       Placeholder="******" 
+                       BackgroundColor="#2A2A2A"
+                       TextColor="White"
+                       PlaceholderColor="#A9A9A9"
+                       HeightRequest="40" />
+            </VerticalStackLayout>
+
+            <!-- Checkbox -->
+            <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                <CheckBox x:Name="NotRobotCheckBox" />
+                <Label Text="I'M NOT A BOT" 
+                       VerticalTextAlignment="Center"
+                       TextColor="White" />
+            </HorizontalStackLayout>
+
+            <!-- Register Button -->
+            <Button Text="sign up"
+                    BackgroundColor="Black"
+                    TextColor="White"
+                    BorderColor="White"
+                    BorderWidth="2"
+                    HeightRequest="50"
+                    CornerRadius="25"
+                    Clicked="OnRegisterClicked" />
+        </VerticalStackLayout>
+    </ContentPage.Content>
 </ContentPage>
