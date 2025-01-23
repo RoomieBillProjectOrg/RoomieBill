@@ -12,6 +12,7 @@
         public List<GroupModel> GroupsUserIsMemberAt { get; set; } = [];
         public string FirebaseToken { get; set; }
 
+
         public UserModel() { }
     }
 }
