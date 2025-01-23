@@ -223,22 +223,6 @@ namespace Roomiebill.Server.Facades
 
         #region Help functions
 
-        private User MapToEntity(RegisterUserDto dto)
-        {
-            if(dto == null)
-            {
-                return null;
-            }
-            else
-            return new User
-            {
-                Id = dto.Id,
-                Username = dto.Username,
-                Email = dto.Email,
-                PasswordHash = dto.Password
-            };
-        }
-
         private Expense MapToEntity(ExpenseDto dto)
         {
             return new Expense

@@ -30,6 +30,15 @@ namespace Roomiebill.Server.Controllers
         [HttpPut("updatePassword")]
         public async Task<IActionResult> UpdatePassword([FromBody] UpdatePasswordDto updatePasswordDto)
         {
+            try
+            {
+                await _userService.UpdatePasswordAsync(updatePasswordDto);
+                return Ok(new { Message = "Password updated successfully" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
             await _userService.UpdatePasswordAsync(updatePasswordDto);
 
             return Ok(new { Message = "Password updated successfully" });

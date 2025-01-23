@@ -90,7 +90,7 @@
                     BorderWidth="2"
                     HeightRequest="50"
                     CornerRadius="25"
-                    Command="{Binding RegisterCommand}" />
+                    Clicked="OnRegisterClicked" />
         </VerticalStackLayout>
     </ContentPage.Content>
 </ContentPage>
