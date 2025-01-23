@@ -145,7 +145,7 @@ public partial class UserHomePage : ContentPage
     private async void OnUpdateUserDetails()
     {
         // Navigate to a password updater page
-        await Navigation.PushAsync(new UpdateUserDetailsPage(_userService, User));
+        await Navigation.PushAsync(new UpdateUserDetailsPage(_userService, _groupService, User));
     }
 
     private async void OnAddGroup()
