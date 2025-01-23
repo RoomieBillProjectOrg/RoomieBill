@@ -83,38 +83,32 @@ namespace Roomiebill.Server.Models
         }
 
 
-        public void UpdateDebtArray()
-        {
-            // Reset the debt array
-            InitializeDebtArray();
+        // public void UpdateDebtArray()
+        // {
+        //     // Reset the debt array
+        //     InitializeDebtArray();
 
-            // Update the debt array based on the current expenses
-            foreach (var expense in Expenses)
-            {
-                foreach (var split in expense.ExpenseSplits)
-                {
-                    int payerIndex = Members.ToList().FindIndex(m => m.Id == expense.PayerId);
-                    int userIndex = Members.ToList().FindIndex(m => m.Id == split.UserId);
-                    if (payerIndex != -1 && userIndex != -1 && payerIndex != userIndex)
-                    {
-                        int amount = (int)(split.Percentage * expense.Amount / 100);
-                        expenseHandler.UpdateDebtBetweenIndex(payerIndex, userIndex, amount, _debtArray);
-                    }
-                }
-            }
-        }
+        //     // Update the debt array based on the current expenses
+        //     foreach (var expense in Expenses)
+        //     {
+        //         foreach (var split in expense.ExpenseSplits)
+        //         {
+        //             int payerIndex = Members.ToList().FindIndex(m => m.Id == expense.PayerId);
+        //             int userIndex = Members.ToList().FindIndex(m => m.Id == split.UserId);
+        //             if (payerIndex != -1 && userIndex != -1 && payerIndex != userIndex)
+        //             {
+        //                 int amount = (int)(split.Percentage * expense.Amount / 100);
+        //                 expenseHandler.UpdateDebtBetweenIndex(payerIndex, userIndex, amount, _debtArray);
+        //             }
+        //         }
+        //     }
+        // }
 
         public void InitializeNonPersistentProperties()
         {
             expenseHandler = new ExpenseHandler(Members);
-            UpdateDebtArray();
         }
 
-        // public void AddExpense(Expense expense)
-        // {
-        //     Expenses.Add(expense);
-        //     UpdateDebtArray();
-        // }
         public void AddExpense(Expense expense)
         {
             expenseHandler.AddExpense(expense, _debtArray);
