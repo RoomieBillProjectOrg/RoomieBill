@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Roomiebill.Server.Models
 {
@@ -10,7 +11,9 @@ namespace Roomiebill.Server.Models
 
         [Required]
         public int ExpenseId { get; set; } // Foreign Key to Expense
+
         [ForeignKey("ExpenseId")]
+        [JsonIgnore]
         public Expense? Expense { get; set; } // Navigation Property
 
         [Required]

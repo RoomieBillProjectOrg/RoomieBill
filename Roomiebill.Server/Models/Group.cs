@@ -1,8 +1,6 @@
-﻿
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
-using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Facades;
 
 namespace Roomiebill.Server.Models
@@ -30,7 +28,7 @@ namespace Roomiebill.Server.Models
 
         [NotMapped]
         [JsonIgnore]
-        ExpenseHandler expenseHandler { get; set; }
+        public ExpenseHandler expenseHandler { get; set; }
 
         public Group()
         {
@@ -108,7 +106,8 @@ namespace Roomiebill.Server.Models
             expenseHandler.AddExpense(expense, _debtArray);
             Expenses.Add(expense);
         }
-        private void EnlargeDebtArraySize(int newUserCount, int oldUserCount)
+
+        public void EnlargeDebtArraySize(int newUserCount, int oldUserCount)
         {
             // Copy existing data to the new array
             _debtArray = expenseHandler.EnlargeDebtArraySize(newUserCount, oldUserCount, _debtArray);
@@ -117,9 +116,12 @@ namespace Roomiebill.Server.Models
         public void AddMember(User user)
         {
             Members.Add(user);
+
             // Update the debt array size
             EnlargeDebtArraySize(Members.Count, Members.Count - 1);
 
+            // Add the user to the user index map
+            expenseHandler.AddUserToUserIndexMap(user.Id);
         }
 
         public void AddMember(List<User> newMembers)
@@ -133,7 +135,6 @@ namespace Roomiebill.Server.Models
 
         private void ReduceDebtArraySize(int newUserCount, int oldUserCount, List<int> removedUsers)
         {
-
             _debtArray = expenseHandler.ReduceDebtArraySize(newUserCount, oldUserCount, removedUsers, _debtArray);
         }
 
@@ -162,28 +163,32 @@ namespace Roomiebill.Server.Models
             // Update the debt array size
             ReduceDebtArraySize(Members.Count, Members.Count + removedMembers.Count, removedUsers);
         }
+
         //TODO: check for operation completion
-        
         public void updateExpense(Expense oldExpense, Expense newExpense)
         {
             Expense updatedExpense = expenseHandler.UpdateExpense(oldExpense, newExpense, _debtArray);
             bool flag = Expenses.Remove(oldExpense);
             Expenses.Add(updatedExpense);
         }
+
         //TODO: check for operation completion
         public void DeleteExpense(Expense expense)
         {
             expenseHandler.DeleteExpense(expense, _debtArray);
             Expenses.Remove(expense);
         }
+
         public int[] getDebtArray()
         {
             return _debtArray;
         }
+
         public int getDebtBetweenUsers(int user1Id, int user2Id)
         {
             return expenseHandler.GetDebtBetweenIndex(user1Id, user2Id, _debtArray);
         }
+
         /// <summary>
         /// calculate the debts owed to a specific user
         /// </summary>
