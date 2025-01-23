@@ -35,12 +35,13 @@ namespace FrontendApplication.Services
             }
         }
 
-        public async Task<UserModel> LoginUserAsync(string username, string password)
+        public async Task<UserModel> LoginUserAsync(string username, string password, string firebaseToken)
         {
             LoginDto user = new LoginDto()
             {
                 username = username,
-                password = password
+                password = password,
+                firebaseToken = firebaseToken
             };
 
             // Connect to the server and attempt to login the user

@@ -1,5 +1,6 @@
 using Firebase.Messaging;
 using FrontendApplication.Services;
+using Plugin.Firebase.CloudMessaging;
 
 namespace FrontendApplication.Pages
 {
@@ -20,7 +21,7 @@ namespace FrontendApplication.Pages
             var email = EmailEntry.Text;
             var username = UsernameEntry.Text;
             var password = PasswordEntry.Text;
-            var firebaseToken = GetUserFirebaseToken();
+            var firebaseToken = await GetUserFirebaseToken();
 
             var success = await _userService.RegisterUserAsync(email, username, password, firebaseToken);
             if (success)
@@ -36,9 +37,10 @@ namespace FrontendApplication.Pages
             }
         }
 
-        private string GetUserFirebaseToken()
+        private async Task<string> GetUserFirebaseToken()
         {
-            return (string) FirebaseMessaging.Instance.GetToken();
+            await CrossFirebaseCloudMessaging.Current.CheckIfValidAsync();
+            return await CrossFirebaseCloudMessaging.Current.GetTokenAsync();
         }
     }
 }

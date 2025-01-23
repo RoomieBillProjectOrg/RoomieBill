@@ -1,5 +1,6 @@
 using FrontendApplication.Models;
 using FrontendApplication.Services;
+using Plugin.Firebase.CloudMessaging;
 
 namespace FrontendApplication.Pages;
 
@@ -19,13 +20,14 @@ public partial class LoginPage : ContentPage
     {
         var username = UsernameEntry.Text;
         var password = PasswordEntry.Text;
+        var firebaseToken = await GetUserFirebaseToken();
 
         UserModel user = null;
 
         try
         {
             // Try to login the user using api call to the server.
-            user = await _userService.LoginUserAsync(username, password);
+            user = await _userService.LoginUserAsync(username, password, firebaseToken);
 
             await DisplayAlert("Success", "User logged in successfully!", "OK");
 
@@ -38,4 +40,10 @@ public partial class LoginPage : ContentPage
             await DisplayAlert("Error", ex.Message, "OK");
         }
     }
+
+    private async Task<string> GetUserFirebaseToken()
+        {
+            await CrossFirebaseCloudMessaging.Current.CheckIfValidAsync();
+            return await CrossFirebaseCloudMessaging.Current.GetTokenAsync();
+        }
 }
