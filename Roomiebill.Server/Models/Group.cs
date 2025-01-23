@@ -1,6 +1,7 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Facades;
@@ -13,7 +14,6 @@ namespace Roomiebill.Server.Models
 
         [Required]
         [StringLength(20, ErrorMessage = "Group name cannot exceed 20 characters.")]
-
         public string GroupName { get; set; }
 
         public User Admin { get; set; }
@@ -22,8 +22,14 @@ namespace Roomiebill.Server.Models
 
         public ICollection<Expense> Expenses { get; set; } = new List<Expense>(); // Expenses of the group
 
-        [NotMapped]
-        private int[] _debtArray; // 1D array to store debts
+        [Column("DebtArray")] // Save as JSON string in the database
+        public string DebtArray
+        {
+            get => JsonSerializer.Serialize(_debtArray);
+            set => _debtArray = string.IsNullOrEmpty(value) 
+                                ? [] 
+                                : JsonSerializer.Deserialize<int[]>(value) ?? [];
+        }
 
         [JsonIgnore]
         public List<Invite> Invites { get; set; }
@@ -32,18 +38,17 @@ namespace Roomiebill.Server.Models
         [JsonIgnore]
         public ExpenseHandler expenseHandler { get; set; }
 
+        [NotMapped]
+        private int[] _debtArray; // Backing field for the serialized DebtArray
+
         public Group()
         {
             // Default constructor required by EF Core
-
-            Members = new List<User>();
-            Invites = new List<Invite>();
             GroupName = "Default Name";
-            Expenses = new List<Expense>();
-            expenseHandler = new ExpenseHandler(Members);
+            InitializeCollections();
             InitializeDebtArray();
         }
-        
+
         public Group(string groupName, User groupAdmin, List<User> members)
         {
             if (string.IsNullOrWhiteSpace(groupName))
@@ -55,13 +60,21 @@ namespace Roomiebill.Server.Models
             GroupName = groupName;
             Admin = groupAdmin;
             Members = new List<User>(members); // Defensive copy
-            if(!Members.Contains(groupAdmin)){
+
+            if (!Members.Contains(groupAdmin))
+            {
                 Members.Add(groupAdmin); // Add the admin to the members list
             }
+
+            InitializeCollections();
+            InitializeDebtArray();
+        }
+
+        private void InitializeCollections()
+        {
             Invites = new List<Invite>();
             Expenses = new List<Expense>();
             expenseHandler = new ExpenseHandler(Members);
-            InitializeDebtArray();
         }
 
         private void InitializeDebtArray()
@@ -70,6 +83,7 @@ namespace Roomiebill.Server.Models
             int size = (memberCount * (memberCount - 1)) / 2; // Calculate size for 1D representation
             _debtArray = new int[size];
         }
+
 
         public void UpdateDebtArray()
         {
