@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Roomiebill.Server.Common.Enums;
+using Roomiebill.Server.Common.Notificaiton;
 using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.Models;
 
@@ -82,6 +83,8 @@ namespace Roomiebill.Server.Facades
             await AddInviteToinvited(invited, invite);
 
             await AddInviteToGroup(group, invite);
+
+            NotificationsHandle.SendNotificationByTokenAsync("You have been invited to a group", $"You have been invited to a group with id {groupId}.", invited.FirebaseToken);
 
             _logger.LogInformation($"User with username {invited_username} has been invited to group with id {groupId}.");
         }
