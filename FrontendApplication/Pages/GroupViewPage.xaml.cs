@@ -52,7 +52,6 @@ public partial class GroupViewPage : ContentPage
 	{
 		try
 		{
-			// var group = await _groupService.GetGroup(_group.Id);
 			Members.Clear();
 			foreach (var member in _group.Members)
 			{
