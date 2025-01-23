@@ -23,19 +23,18 @@ public partial class UpdateUserDetailsPage : ContentPage
         var newPassword = NewPasswordEntry.Text;
         var verifyNewPassword = VeriftNewPasswordEntry.Text;
 
-        // Check if the new password and verify new password are the same
+        // Validate if the new password matches the confirmation
         if (newPassword != verifyNewPassword)
         {
-            await DisplayAlert("Error", "New password and verify new password do not match.", "OK");
+            await DisplayAlert("Error", "New password and confirmation do not match.", "OK");
 
-            // Delete the new password and verify new password entries
-            NewPasswordEntry.Text = "";
-            VeriftNewPasswordEntry.Text = "";
-
+            // Clear the new password fields
+            NewPasswordEntry.Text = string.Empty;
+            VeriftNewPasswordEntry.Text = string.Empty;
             return;
         }
 
-        UpdatePasswordDto updatePasswordDto = new UpdatePasswordDto()
+        var updatePasswordDto = new UpdatePasswordDto
         {
             Username = _user.Username,
             OldPassword = oldPassword,
@@ -45,12 +44,13 @@ public partial class UpdateUserDetailsPage : ContentPage
 
         try
         {
-            UserModel userNewPass = await _userService.UpdateUserPasswordAsync(updatePasswordDto);
+            // Attempt to update the password
+            var updatedUser = await _userService.UpdateUserPasswordAsync(updatePasswordDto);
 
-            await DisplayAlert("Success", "The password was updated successfuly.", "OK");
+            await DisplayAlert("Success", "Password updated successfully.", "OK");
 
-            // Navigate back to the user home page
-            await Navigation.PushAsync(new UserHomePage(_userService, _groupService, userNewPass));
+            // Navigate to the user's home page after success
+            await Navigation.PushAsync(new UserHomePage(_userService, _groupService, updatedUser));
         }
         catch (Exception ex)
         {

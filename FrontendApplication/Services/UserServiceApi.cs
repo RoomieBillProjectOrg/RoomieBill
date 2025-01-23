@@ -14,7 +14,7 @@ namespace FrontendApplication.Services
             _httpClient = httpClientFactory.CreateClient("DefaultClient");
         }
 
-        public async Task<bool> RegisterUserAsync(string email, string username, string password)
+        public async Task<UserModel> RegisterUserAsync(string email, string username, string password)
         {
             RegisterUserDto user = new RegisterUserDto()
             {
@@ -23,8 +23,7 @@ namespace FrontendApplication.Services
                 email = email
             };
 
-
-            // Connect to the server and attempt to login the user
+            // Connect to the server and attempt to register new user
             var response = await _httpClient.PostAsJsonAsync($"{_httpClient.BaseAddress}/Users/register", user);
 
             // If IsSuccessStatusCode is true, then the user was successfully registered
@@ -32,10 +31,10 @@ namespace FrontendApplication.Services
             {
                 var content = await response.Content.ReadAsStringAsync();
                 var userResponse = JsonConvert.DeserializeObject<UserModel>(content);
-                return true;
+                return userResponse;
             }
 
-            // Else - there was an exception in the server and we want to fail to register new user to thr system attempt
+            // Else - there was an exception in the server and we want to fail the register attempt
             // and return the exception message to the user.
             var errorContent = await response.Content.ReadAsStringAsync();
             var errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(errorContent);
