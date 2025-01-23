@@ -26,7 +26,7 @@ namespace FrontendApplication.Pages
             try
             {
                 // Try to register the user to the application using api call to the server.
-                var success = await _userService.RegisterUserAsync(email, username, password);
+                var success = await _userService.RegisterUserAsync(email, username, password, firebaseToken);
 
                 await DisplayAlert("Success", "User registered successfully!", "OK");
 
