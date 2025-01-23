@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Roomiebill.Server.Facades;
 using Roomiebill.Server.Models;
 
 namespace Roomiebill.Server.DataAccessLayer
@@ -122,15 +123,15 @@ namespace Roomiebill.Server.DataAccessLayer
             if (group == null) {
                 return null;
             }
+            group.Expenses = await Expenses
+            .Include(e => e.Payer)
+            .Include(e => e.ExpenseSplits)
+            .Where(e => e.GroupId == groupId)
+            .ToListAsync();
 
-            if (group != null)
-            {
-                group.Expenses = await Expenses
-                .Include(e => e.Payer)
-                .Include(e => e.ExpenseSplits)
-                .Where(e => e.GroupId == groupId)
-                .ToListAsync();
-            }
+            group.expenseHandler = new ExpenseHandler(group.Members);
+
+            //group.EnlargeDebtArraySize(group.Members.Count, 0);
 
             return group;
         }
