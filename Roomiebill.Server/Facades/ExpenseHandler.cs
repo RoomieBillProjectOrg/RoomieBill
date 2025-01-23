@@ -19,6 +19,7 @@ namespace Roomiebill.Server.Facades
                 _userIndexMap[userIds[i]] = i;
             }
         }
+
         public ExpenseHandler(List<User> member)
         {
             List<int> userIds = new List<int>();
@@ -291,6 +292,11 @@ namespace Roomiebill.Server.Facades
         {
             UpdateDebtArray(payerIndex, userIndex, amount, debtArray);
             return debtArray;
+        }
+
+        public void AddUserToUserIndexMap(int userId)
+        {
+            _userIndexMap[userId] = userId;
         }
     }
 }
