@@ -17,10 +17,11 @@ namespace Roomiebill.Server.Models
         
         [JsonIgnore]
         public List<Group> GroupsUserIsMemberAt { get; set; } = [];
+        public string FirebaseToken { get; set; }        
 
         public User() { }
 
-        public User(string username, string email, string passwordHash, bool isSystemAdmin = false, bool isLoggedIn = false)
+        public User(string username, string email, string passwordHash, bool isSystemAdmin = false, bool isLoggedIn = false, string firebaseToken = "")
         {
             Username = username;
             Email = email;
@@ -29,6 +30,7 @@ namespace Roomiebill.Server.Models
             IsLoggedIn = isLoggedIn;
             Invites = new List<Invite>();
             GroupsUserIsMemberAt = new List<Group>();
+            FirebaseToken = firebaseToken;
         }
 
         public void AddInvite(Invite invite)
