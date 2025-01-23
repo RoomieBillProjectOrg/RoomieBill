@@ -1,5 +1,7 @@
 using System.Collections.ObjectModel;
+using System.Text.RegularExpressions;
 using CommunityToolkit.Maui.Views;
+using FrontendApplication.Models;
 
 namespace FrontendApplication.Popups;
 
@@ -8,15 +10,19 @@ public partial class AddExpensePopup : Popup
     public ObservableCollection<MemberViewModel> Members { get; set; } = new ObservableCollection<MemberViewModel>();
     public ObservableCollection<MemberViewModel> SelectedMembers => new ObservableCollection<MemberViewModel>(Members.Where(m => m.IsSelected));
 
-    public AddExpensePopup()
+    public AddExpensePopup(GroupModel group)
     {
         InitializeComponent();
         BindingContext = this;
 
-        // Mock members for demonstration
-        Members.Add(new MemberViewModel { Id = 1, Username = "Metar" });
-        Members.Add(new MemberViewModel { Id = 2, Username = "Vladi" });
-        Members.Add(new MemberViewModel { Id = 3, Username = "Tal" });
+        // Initialize members
+        foreach (var member in group.Members)
+        {
+            Members.Add(new MemberViewModel
+            {
+                Member = member
+            });
+        }
     }
 
     private void OnDividePickerChanged(object sender, EventArgs e)
@@ -31,8 +37,6 @@ public partial class AddExpensePopup : Popup
         }
     }
 
-    // Command for adding an expense
-    // Command for adding an expense
     // Command for adding an expense
     public Command AddExpenseCommand => new Command(() =>
     {
@@ -78,9 +82,9 @@ public partial class AddExpensePopup : Popup
                 Description = description,
                 Members = contributingMembers.Select(m => new
                 {
-                    m.Id,
-                    m.Username,
-                    CustomPercentage = m.CustomPercentage
+                    m.Member.Id,
+                    m.Member.Username,
+                    m.CustomPercentage
                 }).ToList()
             });
             return;
@@ -89,8 +93,8 @@ public partial class AddExpensePopup : Popup
         // If not custom division, equally split
         var equalSplit = Members.Select(m => new
         {
-            m.Id,
-            m.Username,
+            m.Member.Id,
+            m.Member.Username,
             CustomPercentage = (100m / Members.Count).ToString("F2") // Equal percentage
         }).ToList();
 
@@ -113,8 +117,8 @@ public partial class AddExpensePopup : Popup
 
 public class MemberViewModel
 {
-    public int Id { get; set; }
-    public string Username { get; set; }
+    public UserModel Member { get; set; }
     public bool IsSelected { get; set; } = false;
     public string CustomPercentage { get; set; } = string.Empty;
+
 }
