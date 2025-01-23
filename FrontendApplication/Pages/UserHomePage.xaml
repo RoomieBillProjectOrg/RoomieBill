@@ -9,5 +9,6 @@
         <!-- Define a ToolbarItem that will show the menu when clicked -->
         <ToolbarItem Text="•••" Command="{Binding ShowMenuCommand}" />
     </ContentPage.ToolbarItems>
+    
 
 </ContentPage>

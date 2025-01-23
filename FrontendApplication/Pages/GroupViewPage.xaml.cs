@@ -1,4 +1,7 @@
+using System.Collections.ObjectModel;
+using CommunityToolkit.Maui.Views;
 using FrontendApplication.Models;
+using FrontendApplication.Popups;
 using FrontendApplication.Services;
 namespace FrontendApplication.Pages;
 
@@ -6,40 +9,116 @@ public partial class GroupViewPage : ContentPage
 {
 
 	private readonly UserServiceApi _userService;
-    private readonly GroupServiceApi _groupService;
+	private readonly GroupServiceApi _groupService;
+
+
+
+	public ObservableCollection<UserModel> Members { get; set; } = new ObservableCollection<UserModel>();
+	public ObservableCollection<DebtModel> ShameTable { get; set; } = new ObservableCollection<DebtModel>();
+	public ObservableCollection<DebtModel> YourOwnsTable { get; set; } = new ObservableCollection<DebtModel>();
+
+	public bool IsShameTableEmpty => ShameTable.Count == 0;
+	public bool IsYourOwnsTableEmpty => YourOwnsTable.Count == 0;
+
+
 
 	public GroupModel _group { get; set; }
-	public GroupViewPage(UserServiceApi userService, GroupServiceApi groupService, GroupModel group)
+	public UserModel _user { get; set; }
+
+	public GroupViewPage(UserServiceApi userService, GroupServiceApi groupService, GroupModel group, UserModel user)
 	{
 		InitializeComponent();
 
 		_userService = userService;
-        _groupService = groupService;
+		_groupService = groupService;
 		_group = group;
+		_user = user;
 
-		InitializeUI();
+		// Set BindingContext to this page
+		BindingContext = this;
+
+
 	}
 
-	private void InitializeUI(){
-		
-		// This list should be fetched from database (Metar will add)
-		var debts = new List<DebtDto>
-		{
-			new DebtDto { recipient = "Vladi" , amount = 50 },
-			new DebtDto { recipient = "Metar" , amount = 30 },
-			new DebtDto { recipient = "Inbar" , amount = 100 }
-		};
+	protected override async void OnAppearing()
+	{
+		base.OnAppearing();
+		await LoadGroupMembersAsync();
+		await LoadShameTableAsync();
+		await LoadYourOwnsTableAsync();
+		OnPropertyChanged(nameof(IsShameTableEmpty));
+		OnPropertyChanged(nameof(IsYourOwnsTableEmpty));
+	}
 
-		// Create buttons dynamically based on the debts
-		foreach (var debt in debts)
+	private async Task LoadGroupMembersAsync()
+	{
+		try
 		{
-			var button = new Button
+			// var group = await _groupService.GetGroup(_group.Id);
+			Members.Clear();
+			foreach (var member in _group.Members)
 			{
-				Text = $"You own {debt.amount}$ to {debt.recipient}",
-				Command = new Command(() => OnOwnsButtonClicked(debt))
-			};
-			OwnsButtonsLayout.Children.Add(button);
+				Members.Add(member);
+			}
 		}
+		catch (Exception ex)
+		{
+			await DisplayAlert("Error", $"Failed to load group details: {ex.Message}", "OK");
+		}
+	}
+	private async Task LoadShameTableAsync()
+	{
+		try
+		{
+			// Clear existing data
+			ShameTable.Clear();
+
+			// Fetch debts for the current user
+			var debts = await _groupService.GetDebtsForUserAsync(_group.Id, _user.Id);
+
+			// Populate the ShameTable collection
+			foreach (var debt in debts)
+			{
+				ShameTable.Add(debt);
+			}
+		}
+		catch (Exception ex)
+		{
+			await DisplayAlert("Error", $"Failed to load shame table: {ex.Message}", "OK");
+		}
+	}
+	private async Task LoadYourOwnsTableAsync()
+	{
+		try
+		{
+			// Clear existing data
+			YourOwnsTable.Clear();
+
+			// Fetch debts the current user owes
+			//TODO: Change the user id to the current user id
+			var debts = await _groupService.GetDebtsOwedByUserAsync(_group.Id, _user.Id);
+
+			// Populate the YourOwnsTable collection
+			foreach (var debt in debts)
+			{
+				YourOwnsTable.Add(debt);
+			}
+		}
+		catch (Exception ex)
+		{
+			await DisplayAlert("Error", $"Failed to load 'Your Owns' table: {ex.Message}", "OK");
+		}
+	}
+
+	public Command OnMemberButtonClicked => new Command<UserModel>((member) =>
+	   {
+		   DisplayAlert("Member Clicked", $"{member.Username} button clicked", "OK");
+	   });
+
+
+	private void InitializeUI()
+	{
+
 	}
 
 	private async void OnViewTransactionClicked(object sender, EventArgs e)
@@ -49,17 +128,83 @@ public partial class GroupViewPage : ContentPage
 		// Navigate to the transaction page or perform other actions
 	}
 
+	//add a new pop up window to add an expense
 	private async void OnAddExpenseClicked(object sender, EventArgs e)
 	{
-		// Handle the Add Expense button click
-		await DisplayAlert("Add Expense", "Add Expense button clicked", "OK");
-		// Navigate to the add expense page or perform other actions
-	}
+		var popup = new AddExpensePopup();
+		var result = await this.ShowPopupAsync(popup);
 
-	// Event handler for "You own..." buttons
-	private async Task OnOwnsButtonClicked(DebtDto debt)
-	{
-		await Navigation.PushAsync(new PaymentPage(debt));
-		// Add further logic for handling payment or other actions
+		if (result is not null)
+		{
+			var expenseData = (dynamic)result;
+			var amount = expenseData.Amount;
+			var description = expenseData.Description;
+			var expenseSplits = new List<ExpenseSplitModel>();
+			foreach (var member in expenseData.Members)
+			{
+				expenseSplits.Add(new ExpenseSplitModel
+				{
+					UserId = member.Id,
+					Percentage = member.Percentage
+				});
+			}
+
+			var expenseModel = new ExpenseModel
+			{
+				PayerId = _user.Id,
+				Amount = amount,
+				Description = description,
+				GroupId = _group.Id,
+				ExpenseSplits = expenseSplits
+			};
+			await DisplayAlert("Expense Added", $"Amount: {amount}\nDescription: {description}", "OK");
+			// Add logic to handle the expense (e.g., save to the database or update UI)
+		}
+		else
+		{
+			await DisplayAlert("Canceled", "No expense was added.", "OK");
+		}
 	}
+	public Command<UserModel> OnMemberClicked => new Command<UserModel>((selectedMember) =>
+	{
+		if (selectedMember != null)
+		{
+			// Retrieve the ID of the selected member
+			int userId = selectedMember.Id;
+
+			// Example action: Show an alert with the user ID
+			DisplayAlert("Member Clicked", $"Member ID: {userId}, Username: {selectedMember.Username}", "OK");
+
+			// Add additional logic here (e.g., navigation or action)
+		}
+	});
+
+	public Command<DebtModel> OnShameTableItemTapped => new Command<DebtModel>((selectedItem) =>
+	{
+		if (selectedItem != null)
+		{
+			// Retrieve the ID of the user who was tapped
+			int userId = selectedItem.OwedByUserId;
+
+			// Example action: Show an alert with the user ID
+			DisplayAlert("Item Tapped", $"User ID: {userId} tapped.", "OK");
+
+			// Add your logic here (e.g., navigation or additional functionality)
+		}
+	});
+
+	public Command<DebtModel> OnYourOwnsItemTapped => new Command<DebtModel>((selectedItem) =>
+	{
+		if (selectedItem != null)
+		{
+			// Retrieve the ID of the user you owe money to
+			int userId = selectedItem.OwedToUserId;
+
+			// Example action: Show an alert with the user ID
+			DisplayAlert("Item Tapped", $"You owe User ID: {userId}.", "OK");
+
+			// Add your logic here (e.g., navigation or additional functionality)
+		}
+	});
+
 }

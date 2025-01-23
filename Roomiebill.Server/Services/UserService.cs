@@ -20,9 +20,9 @@ namespace Roomiebill.Server.Services
             return await _userFacade.RegisterUserAsync(registerUserDto);
         }
 
-        public async Task UpdatePasswordAsync(UpdatePasswordDto updatePasswordDto)
+        public async Task<User> UpdatePasswordAsync(UpdatePasswordDto updatePasswordDto)
         {
-            await _userFacade.UpdatePasswordAsync(updatePasswordDto);
+            return await _userFacade.UpdatePasswordAsync(updatePasswordDto);
         }
 
         public async Task<User> LoginAsync(LoginDto loginDto)
