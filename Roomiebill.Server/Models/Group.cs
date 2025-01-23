@@ -122,6 +122,7 @@ namespace Roomiebill.Server.Models
             expenseHandler.AddExpense(expense, _debtArray);
             Expenses.Add(expense);
         }
+
         private void EnlargeDebtArraySize(int newUserCount, int oldUserCount)
         {
             // Copy existing data to the new array
@@ -131,9 +132,12 @@ namespace Roomiebill.Server.Models
         public void AddMember(User user)
         {
             Members.Add(user);
+
             // Update the debt array size
             EnlargeDebtArraySize(Members.Count, Members.Count - 1);
 
+            // Add the user to the user index map
+            expenseHandler.AddUserToUserIndexMap(user.Id);
         }
 
         public void AddMember(List<User> newMembers)

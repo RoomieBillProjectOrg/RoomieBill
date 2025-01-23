@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Roomiebill.Server.Models;
 
 namespace Roomiebill.Server.DataAccessLayer
@@ -122,33 +121,29 @@ namespace Roomiebill.Server.DataAccessLayer
         //Include all the related fields that griup should have
         public async Task<Group?> GetGroupByIdAsync(int groupId)
         {
-            var groupData = await Groups
-                .Include(g => g.Admin)
-                .Include(g => g.Members)
-                .Include(g => g.Expenses)
-                    .ThenInclude(e => e.ExpenseSplits)
-                .FirstOrDefaultAsync(g => g.Id == groupId);
+            Group? group = await Groups
+            .Include(g => g.Admin)
+            .Include(g => g.Members)
+            .Include(g => g.Expenses)
+            .Include(g => g.Invites)
+            .FirstOrDefaultAsync(g => g.Id == groupId);
 
-            if (groupData == null)
-            {
+            if (group == null) {
                 return null;
             }
 
-            // Manually create the Group object using the desired constructor
-            var group = new Group(groupData.GroupName, groupData.Admin, groupData.Members.ToList())
+            if (group != null)
             {
-                Id = groupData.Id,
-                Invites = groupData.Invites.ToList()
-            };
-
-            // Add each expense using the AddExpense method
-            foreach (var expense in groupData.Expenses)
-            {
-                group.AddExpense(expense);
+                group.Expenses = await Expenses
+                .Include(e => e.Payer)
+                .Include(e => e.ExpenseSplits)
+                .Where(e => e.GroupId == groupId)
+                .ToListAsync();
             }
 
             return group;
         }
+
         public async Task AddGroupAsync(Group group)
         {
             await Groups.AddAsync(group);
