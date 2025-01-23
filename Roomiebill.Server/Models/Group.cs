@@ -35,12 +35,9 @@ namespace Roomiebill.Server.Models
         [NotMapped]
         [JsonIgnore]
         public ExpenseHandler expenseHandler { get; set; }
-<<<<<<< HEAD
 
         [NotMapped]
         private int[] _debtArray; // Backing field for the serialized DebtArray
-=======
->>>>>>> 59fa871 (add exspense handler to group)
 
         public Group()
         {
