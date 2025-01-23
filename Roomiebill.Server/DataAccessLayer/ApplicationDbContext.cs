@@ -15,8 +15,8 @@ namespace Roomiebill.Server.DataAccessLayer
         public DbSet<User> Users { get; set; }
         public DbSet<Group> Groups { get; set; }
         public DbSet<Invite> Invites { get; set; }
-        public DbSet<Expense> Expenses { get; set; }    
-        public DbSet<ExpenseSplit> ExpenseSplits { get; set; }  
+        public DbSet<Expense> Expenses { get; set; }
+        public DbSet<ExpenseSplit> ExpenseSplits { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -32,7 +32,7 @@ namespace Roomiebill.Server.DataAccessLayer
             modelBuilder.Entity<Group>()
                 .HasMany(g => g.Members)
                 .WithMany(u => u.GroupsUserIsMemberAt);
-                        // Define the one-to-many relationship between Group and Expenses
+            // Define the one-to-many relationship between Group and Expenses
             modelBuilder.Entity<Group>()
                 .HasMany(g => g.Expenses)
                 .WithOne(e => e.Group)
@@ -53,7 +53,7 @@ namespace Roomiebill.Server.DataAccessLayer
                 .HasForeignKey(es => es.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            
+
             // Make so user can have many invites and each invite can have only one invited
             modelBuilder.Entity<Invite>()
                 .HasOne(i => i.Inviter)
@@ -84,7 +84,7 @@ namespace Roomiebill.Server.DataAccessLayer
         {
             return Groups.FirstOrDefault(g => g.Id == id);
         }
-      
+
 
         public void AddUser(User user)
         {
@@ -105,9 +105,40 @@ namespace Roomiebill.Server.DataAccessLayer
         }
 
         /* Group methods */
+        // public async Task<Group?> GetGroupByIdAsync(int groupId)
+        // {
+        //     return await Groups.FirstOrDefaultAsync(g => g.Id == groupId);
+        // }
+
+        //Include all the related fields that griup should have
         public async Task<Group?> GetGroupByIdAsync(int groupId)
         {
-            return await Groups.FirstOrDefaultAsync(g => g.Id == groupId);
+            var groupData = await Groups
+                .Include(g => g.Admin)
+                .Include(g => g.Members)
+                .Include(g => g.Expenses)
+                    .ThenInclude(e => e.ExpenseSplits)
+                .FirstOrDefaultAsync(g => g.Id == groupId);
+
+            if (groupData == null)
+            {
+                return null;
+            }
+
+            // Manually create the Group object using the desired constructor
+            var group = new Group(groupData.GroupName, groupData.Admin, groupData.Members.ToList())
+            {
+                Id = groupData.Id,
+                Invites = groupData.Invites.ToList()
+            };
+
+            // Add each expense using the AddExpense method
+            foreach (var expense in groupData.Expenses)
+            {
+                group.AddExpense(expense);
+            }
+
+            return group;
         }
         public async Task AddGroupAsync(Group group)
         {
@@ -119,7 +150,7 @@ namespace Roomiebill.Server.DataAccessLayer
             await Expenses.AddAsync(expense);
             await SaveChangesAsync();
         }
-      
+
         public async Task<User?> GetUserByIdAsync(int payerId)
         {
             return await Users.FirstOrDefaultAsync(u => u.Id == payerId);
@@ -145,7 +176,8 @@ namespace Roomiebill.Server.DataAccessLayer
             return invite;
         }
 
-        public async Task<List<Group>> GetUserGroupsAsync(int UserId){
+        public async Task<List<Group>> GetUserGroupsAsync(int UserId)
+        {
             return await Groups
             .Include(g => g.Members)
             .Where(g => g.Members.Any(m => m.Id == UserId))

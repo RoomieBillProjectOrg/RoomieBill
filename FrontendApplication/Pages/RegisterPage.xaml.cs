@@ -23,17 +23,20 @@ namespace FrontendApplication.Pages
             var password = PasswordEntry.Text;
             var firebaseToken = await GetUserFirebaseToken();
 
-            var success = await _userService.RegisterUserAsync(email, username, password, firebaseToken);
-            if (success)
+            try
             {
+                // Try to register the user to the application using api call to the server.
+                var success = await _userService.RegisterUserAsync(email, username, password);
+
                 await DisplayAlert("Success", "User registered successfully!", "OK");
 
                 // Navigate to LoginPage
                 await Navigation.PushAsync(new LoginPage(_userService, _groupService));
             }
-            else
+            catch (Exception ex)
             {
-                await DisplayAlert("Error", "Failed to register user.", "OK");
+                // If the server returns error, display the error message to the user.
+                await DisplayAlert("Error", ex.Message, "OK");
             }
         }
 

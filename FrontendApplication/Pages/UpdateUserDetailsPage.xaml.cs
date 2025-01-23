@@ -6,12 +6,14 @@ namespace FrontendApplication.Pages;
 public partial class UpdateUserDetailsPage : ContentPage
 {
     private readonly UserServiceApi _userService;
+    private readonly GroupServiceApi _groupService;
     private UserModel _user;
 
-    public UpdateUserDetailsPage(UserServiceApi userService, UserModel user)
+    public UpdateUserDetailsPage(UserServiceApi userService, GroupServiceApi groupServiceApi, UserModel user)
     {
         InitializeComponent();
         _userService = userService;
+        _groupService = groupServiceApi;
         _user = user;
     }
 
@@ -43,7 +45,12 @@ public partial class UpdateUserDetailsPage : ContentPage
 
         try
         {
-            await _userService.UpdateUserPasswordAsync(updatePasswordDto);
+            UserModel userNewPass = await _userService.UpdateUserPasswordAsync(updatePasswordDto);
+
+            await DisplayAlert("Success", "The password was updated successfuly.", "OK");
+
+            // Navigate back to the user home page
+            await Navigation.PushAsync(new UserHomePage(_userService, _groupService, userNewPass));
         }
         catch (Exception ex)
         {
