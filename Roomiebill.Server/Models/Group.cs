@@ -43,9 +43,7 @@ namespace Roomiebill.Server.Models
             expenseHandler = new ExpenseHandler(Members);
             InitializeDebtArray();
         }
-
-
-
+        
         public Group(string groupName, User groupAdmin, List<User> members)
         {
             if (string.IsNullOrWhiteSpace(groupName))
@@ -57,7 +55,9 @@ namespace Roomiebill.Server.Models
             GroupName = groupName;
             Admin = groupAdmin;
             Members = new List<User>(members); // Defensive copy
-            // Members.Add(groupAdmin); // Add the admin to the members list
+            if(!Members.Contains(groupAdmin)){
+                Members.Add(groupAdmin); // Add the admin to the members list
+            }
             Invites = new List<Invite>();
             Expenses = new List<Expense>();
             expenseHandler = new ExpenseHandler(Members);
