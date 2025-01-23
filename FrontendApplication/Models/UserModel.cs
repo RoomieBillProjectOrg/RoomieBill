@@ -2,7 +2,7 @@
 {
     public class UserModel
     {
-        public int Id { get; set; }
+        public int Id { get; set; } = 1;
         public string Username { get; set; } = "DefaultUser";
         public string Email { get; set; } = "DefaultUser@email.com";
         public string PasswordHash { get; set; }  = "";// Store the hashed password

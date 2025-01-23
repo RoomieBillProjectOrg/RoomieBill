@@ -24,11 +24,14 @@ public partial class PaymentPage : ContentPage
 	{
 		// Show the details of the debt when clicked
 		await DisplayAlert("Payment", 
-			$"You will pay {_debt.amount}$ to {_debt.creditor.Username}", "OK");
+			$"You will pay {_debt.amount} NIS to {_debt.creditor.Username}", "OK");
 		//TODO: for now currenct is always NIS and method is CARD
 		try{
 			PaymentRequestModel request = new PaymentRequestModel(_debt.amount, "NIS", _debt.creditor, _debt.debtor, "CARD", _groupOfUsers.Id);
 			await _paymentService.ProcessPaymentAsync(request);
+			await DisplayAlert("Transfer complete", 
+				$"You successfuly transfered {_debt.amount} NIS to {_debt.creditor.Username}", "OK");
+			await Navigation.PopAsync();
 		}catch(Exception ex){
 			await DisplayAlert("Error", ex.Message, "OK");
 		}
