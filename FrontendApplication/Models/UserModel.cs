@@ -11,6 +11,7 @@
         public List<InviteModel> Invites { get; set; } = [];
         public List<GroupModel> GroupsUserIsMemberAt { get; set; } = [];
 
+
         public UserModel() { }
     }
 }

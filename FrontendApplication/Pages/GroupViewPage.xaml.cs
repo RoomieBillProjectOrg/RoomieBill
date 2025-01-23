@@ -185,7 +185,6 @@ public partial class GroupViewPage : ContentPage
 		{
 			// Retrieve the ID of the user who was tapped
 			int userId = selectedItem.OwedByUserId;
-
 			// Example action: Show an alert with the user ID
 			DisplayAlert("Item Tapped", $"User ID: {userId} tapped.", "OK");
 
