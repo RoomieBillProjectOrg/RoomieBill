@@ -1,5 +1,4 @@
 ﻿using System.Net.Http.Json;
-using System.Text;
 using FrontendApplication.Models;
 using Newtonsoft.Json;
 using Roomiebill.Server.DataAccessLayer.Dtos;
@@ -65,7 +64,7 @@ namespace FrontendApplication.Services
             // and return the exception message to the user.
             var errorContent = await response.Content.ReadAsStringAsync();
             var errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(errorContent);
-            throw new Exception(errorResponse.Message);
+         throw new Exception(errorResponse.Message);
         }
 
         public async Task LogoutUserAsync(string username)
@@ -82,19 +81,24 @@ namespace FrontendApplication.Services
             }
         }
 
-        public async Task UpdateUserPasswordAsync(UpdatePasswordDto updatePasswordDto)
+        public async Task<UserModel> UpdateUserPasswordAsync(UpdatePasswordDto updatePasswordDto)
         {
             // Connect to the server and attempt to update the user password
-            var response = await _httpClient.PostAsJsonAsync($"{_httpClient.BaseAddress}/Users/updatePassword", updatePasswordDto);
+            var response = await _httpClient.PutAsJsonAsync($"{_httpClient.BaseAddress}/Users/updatePassword", updatePasswordDto);
+
+            // If IsSuccessStatusCode is true, then the user changed his password successfully
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var userResponse = JsonConvert.DeserializeObject<UserModel>(content);
+                return userResponse;
+            }
 
             // If there was an exception in the server and we want to fail the update password attempt
             // and return the exception message to the user.
-            if (!response.IsSuccessStatusCode)
-            {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                var errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(errorContent);
-                throw new Exception(errorResponse.Message);
-            }
+            var errorContent = await response.Content.ReadAsStringAsync();
+            var errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(errorContent);
+            throw new Exception(errorResponse.Message);
         }
 
         public async Task<GroupModel> CreateNewGroupAsync(CreateNewGroupDto newGroupDto)
@@ -122,8 +126,22 @@ namespace FrontendApplication.Services
             // Connect to the server and attempt to get the user invites
             var response = await _httpClient.GetAsync($"{_httpClient.BaseAddress}/Users/getUserInvites?username={username}");
 
-            var invites = await response.Content.ReadFromJsonAsync<List<InviteModel>>();
-            return invites ?? new List<InviteModel>(); // Return an empty list if the deserialization results in null
+
+
+            // If IsSuccessStatusCode is true, then the group was successfully created
+            if (response.IsSuccessStatusCode)
+            {
+                var invites = await response.Content.ReadFromJsonAsync<List<InviteModel>>();
+
+                // Return an empty list if the deserialization results in null
+                return invites ?? new List<InviteModel>(); 
+            }
+
+            // Else - there was an exception in the server and we want to fail the function with coresponding exception
+            // and return the exception message to the user.
+            var errorContent = await response.Content.ReadAsStringAsync();
+            var errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(errorContent);
+            throw new Exception(errorResponse.Message);
         }
 
         public async Task AnswerInviteAsync(AnswerInviteByUserDto answer)

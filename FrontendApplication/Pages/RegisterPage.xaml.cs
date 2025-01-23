@@ -35,6 +35,7 @@ namespace FrontendApplication.Pages
 
             try
             {
+                // Try to register the user to the application using api call to the server.
                 var user = await _userService.RegisterUserAsync(email, username, password);
                 await DisplayAlert("Success", "User registered successfully!", "OK");
 
@@ -43,6 +44,7 @@ namespace FrontendApplication.Pages
             }
             catch (Exception ex)
             {
+                // If the server returns error, display the error message to the user.
                 await DisplayAlert("Error", ex.Message, "OK");
             }
         }

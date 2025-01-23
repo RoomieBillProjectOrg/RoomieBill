@@ -1,7 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Roomiebill.Server.DataAccessLayer;
-using System;
 using Roomiebill.Server.Models;
 using Roomiebill.Server.Services;
 using Roomiebill.Server.DataAccessLayer.Dtos;
@@ -22,9 +19,16 @@ namespace Roomiebill.Server.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDto user)
         {
-            await _userService.RegisterUserAsync(user);
+            try
+            {
+                await _userService.RegisterUserAsync(user);
 
-            return Ok(new { Message = "User registered successfully" });
+                return Ok(new { Message = "User registered successfully" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
         }
 
         [HttpPut("updatePassword")]
@@ -32,16 +36,14 @@ namespace Roomiebill.Server.Controllers
         {
             try
             {
-                await _userService.UpdatePasswordAsync(updatePasswordDto);
-                return Ok(new { Message = "Password updated successfully" });
+                var user = await _userService.UpdatePasswordAsync(updatePasswordDto);
+
+                return Ok(user);
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new { Message = ex.Message});
             }
-            await _userService.UpdatePasswordAsync(updatePasswordDto);
-
-            return Ok(new { Message = "Password updated successfully" });
         }
 
         [HttpPost("login")]
