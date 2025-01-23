@@ -76,6 +76,7 @@ namespace Roomiebill.Server.Services
         {
             return await _groupFacade.GetDebtsForUserAsync(groupId, userId);
         }
+
         public async Task<Group> GetGroupByIdAsync(int groupId)
         {
             return await _groupFacade.GetGroupByIdAsync(groupId);

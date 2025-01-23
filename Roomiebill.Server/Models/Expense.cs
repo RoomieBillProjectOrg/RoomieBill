@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Roomiebill.Server.Models
 {
@@ -28,6 +29,7 @@ namespace Roomiebill.Server.Models
         [Required]
         public int GroupId { get; set; } // Foreign Key to the Group this expense belongs to
 
+        [JsonIgnore]
         [ForeignKey("GroupId")]
         public Group? Group { get; set; } // Navigation property for the group
 
