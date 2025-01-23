@@ -1,51 +1,21 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="FrontendApplication.Pages.CreateGroupPage"
-             Title="Create Group"
-             BackgroundColor="Black">
+             x:Class="FrontendApplication.Pages.CreateGroupPage">
 
-    <ScrollView>
-        <StackLayout Padding="20" Spacing="15">
-            <!-- Header -->
-            <Label Text="Create a New Group"
-                   FontSize="24"
-                   TextColor="White"
-                   FontAttributes="Bold"
-                   HorizontalOptions="Center" />
+    <StackLayout Padding="20">
+        <!-- Group Name -->
+        <Label Text="Group Name" />
+        <Entry x:Name="GroupNameEntry" Placeholder="Enter group name" />
 
-            <!-- Group Name -->
-            <Label Text="Group Name"
-                   FontSize="16"
-                   TextColor="#A9A9A9" />
-            <Entry x:Name="GroupNameEntry" 
-                   Placeholder="Enter group name"
-                   PlaceholderColor="#666"
-                   TextColor="White"
-                   BackgroundColor="#2A2A2A" />
+        <!-- Group Members -->
+        <Label Text="Group Members (comma separated)" />
+        <Entry x:Name="MembersEntry" Placeholder="Enter member usernames" />
 
-            <!-- Group Members -->
-            <Label Text="Group Members (comma separated)"
-                   FontSize="16"
-                   TextColor="#A9A9A9" />
-            <Entry x:Name="MembersEntry" 
-                   Placeholder="Enter member usernames"
-                   PlaceholderColor="#666"
-                   TextColor="White"
-                   BackgroundColor="#2A2A2A" />
+        <!-- Submit Button -->
+        <Button Text="Create Group" Clicked="OnCreateGroupClicked" />
 
-            <!-- Submit Button -->
-            <Button Text="Create Group"
-                    BackgroundColor="#4CAF50"
-                    TextColor="White"
-                    Clicked="OnCreateGroupClicked" />
-
-            <!-- Error Message -->
-            <Label x:Name="ErrorLabel" 
-                   TextColor="Red" 
-                   IsVisible="False" 
-                   FontSize="14"
-                   HorizontalOptions="Center" />
-        </StackLayout>
-    </ScrollView>
+        <!-- Error Message -->
+        <Label x:Name="ErrorLabel" TextColor="Red" IsVisible="False" />
+    </StackLayout>
 </ContentPage>
