@@ -24,10 +24,10 @@ namespace Roomiebill.Server.DataAccessLayer
             // Check if the database is already seeded
             if (!_context.Users.Any())
             {
-                await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Inbar", Email = "inbar@bgu.ac.il", Password = "InbarPassword1!" });
-                await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Metar", Email = "Metar@bgu.ac.il", Password = "MetarPassword2@" });
-                await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Vladi", Email = "Vladi@bgu.ac.il", Password = "VladiPassword3#" });
-                await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Tal", Email = "Tal@bgu.ac.il", Password = "TalPassword4$" });
+                await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Inbar", Email = "inbar@bgu.ac.il", Password = "InbarPassword1!", FirebaseToken = "" });
+                await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Metar", Email = "Metar@bgu.ac.il", Password = "MetarPassword2@", FirebaseToken = "" });
+                await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Vladi", Email = "Vladi@bgu.ac.il", Password = "VladiPassword3#", FirebaseToken = "" });
+                await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Tal", Email = "Tal@bgu.ac.il", Password = "TalPassword4$", FirebaseToken = "" });
 
                 // Log in all data users
                 await _userService.LoginAsync(new LoginDto { Username = "Inbar", Password = "InbarPassword1!", FirebaseToken = "" });
@@ -170,17 +170,17 @@ namespace Roomiebill.Server.DataAccessLayer
                 await _userService.LogoutAsync("Tal");
             }
 
-            await _userService.LoginAsync(new LoginDto { Username = "Vladi", Password = "VladiPassword3#", FirebaseToken = "" });
+            // await _userService.LoginAsync(new LoginDto { Username = "Vladi", Password = "VladiPassword3#", FirebaseToken = "" });
 
-            // Create a new group for all data users - "Roomiebill"
-            CreateNewGroupDto newGroupDetails2 = new CreateNewGroupDto
-            {
-                AdminGroupUsername = "Inbar",
-                GroupMembersUsernamesList = new List<string> { "TalTul" },
-                GroupName = "NotificationTest537"
-            };
+            // // Create a new group for all data users - "Roomiebill"
+            // CreateNewGroupDto newGroupDetails2 = new CreateNewGroupDto
+            // {
+            //     AdminGroupUsername = "Inbar",
+            //     GroupMembersUsernamesList = new List<string> { "TalTul" },
+            //     GroupName = "NotificationTest537"
+            // };
 
-            Group group_Roomiebill2 = await _groupInviteMediatorService.CreateNewGroupSendInvitesAsync(newGroupDetails2);
+            // Group group_Roomiebill2 = await _groupInviteMediatorService.CreateNewGroupSendInvitesAsync(newGroupDetails2);
 
             // User Tal accepts the invitation
             // var inviteTal2 = _context.Invites.FirstOrDefault(i => i.Invited.Username.Equals("Tal") && i.Group.GroupName == "NotificationTest22");
