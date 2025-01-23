@@ -19,12 +19,24 @@ namespace FrontendApplication.Pages
             var email = EmailEntry.Text;
             var username = UsernameEntry.Text;
             var password = PasswordEntry.Text;
+            var confirmPassword = PasswordConfirmationEntry.Text;
+
+            if (password != confirmPassword)
+            {
+                await DisplayAlert("Error", "Passwords do not match.", "OK");
+                return;
+            }
+
+            if (!NotRobotCheckBox.IsChecked)
+            {
+                await DisplayAlert("Error", "Please confirm that you're not a bot.", "OK");
+                return;
+            }
 
             try
             {
                 // Try to register the user to the application using api call to the server.
-                var success = await _userService.RegisterUserAsync(email, username, password);
-
+                var user = await _userService.RegisterUserAsync(email, username, password);
                 await DisplayAlert("Success", "User registered successfully!", "OK");
 
                 // Navigate to LoginPage

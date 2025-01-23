@@ -2,13 +2,59 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="FrontendApplication.Pages.LoginPage"
-             Title="LoginPage">
-    <StackLayout Padding="20">
-        <Label Text="Login Page" 
-               VerticalOptions="Center" 
-               HorizontalOptions="Center" />
-        <Entry x:Name="UsernameEntry" Placeholder="Username"/>
-        <Entry x:Name="PasswordEntry" Placeholder="Password" IsPassword="True"/>
-        <Button Text="Login" Clicked="OnLoginClicked"/>
-    </StackLayout>
+             BackgroundColor="Black">
+    <ContentPage.Content>
+        <VerticalStackLayout Spacing="20" Padding="30">
+
+            <!-- Title -->
+            <Label Text="Welcome Back!"
+                   FontSize="36"
+                   HorizontalOptions="Center"
+                   TextColor="White"
+                   FontAttributes="Bold" />
+
+            <!-- Subtitle -->
+            <Label Text="Login to access your account."
+                   FontSize="16"
+                   HorizontalOptions="Center"
+                   TextColor="#A9A9A9" />
+
+            <!-- Username Entry -->
+            <VerticalStackLayout Spacing="5">
+                <Label Text="USERNAME"
+                       FontSize="14"
+                       TextColor="White" />
+                <Entry x:Name="UsernameEntry"
+                       Placeholder="Your username"
+                       BackgroundColor="#2A2A2A"
+                       TextColor="White"
+                       PlaceholderColor="#A9A9A9"
+                       HeightRequest="40" />
+            </VerticalStackLayout>
+
+            <!-- Password Entry -->
+            <VerticalStackLayout Spacing="5">
+                <Label Text="PASSWORD"
+                       FontSize="14"
+                       TextColor="White" />
+                <Entry x:Name="PasswordEntry"
+                       IsPassword="True"
+                       Placeholder="******"
+                       BackgroundColor="#2A2A2A"
+                       TextColor="White"
+                       PlaceholderColor="#A9A9A9"
+                       HeightRequest="40" />
+            </VerticalStackLayout>
+
+            <!-- Login Button -->
+            <Button Text="login"
+                    BackgroundColor="Black"
+                    TextColor="White"
+                    BorderColor="White"
+                    BorderWidth="2"
+                    HeightRequest="50"
+                    CornerRadius="25"
+                    Clicked="OnLoginClicked" />
+        </VerticalStackLayout>
+    </ContentPage.Content>
 </ContentPage>
