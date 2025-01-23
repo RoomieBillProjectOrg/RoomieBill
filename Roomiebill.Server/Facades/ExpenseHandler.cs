@@ -131,12 +131,11 @@ namespace Roomiebill.Server.Facades
         //settle all debt for a user and all other  users
         public void SettleAllDebts(int userId, int[] debtArray)
         {
-            int userIndex = _userIndexMap[userId];
-            for (int i = 0; i < _userCount; i++)
+            for (int i = 0; i < _userIndexMap.Keys.Count; i++)
             {
-                if (i != userIndex)
+                if (i != userId)
                 {
-                    SettleDebt(userIndex, i, debtArray);
+                    SettleDebt(userId, i, debtArray);
                 }
             }
         }
@@ -144,7 +143,7 @@ namespace Roomiebill.Server.Facades
         // Settle debt between two users
         public void SettleDebt(int i, int j, int[] debtArray)
         {
-            int index = GetIndex(i, j);
+            int index = GetIndex(_userIndexMap[i], _userIndexMap[j]);
             debtArray[index] = 0;
         }
 

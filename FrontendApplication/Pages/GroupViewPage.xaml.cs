@@ -175,7 +175,7 @@ public partial class GroupViewPage : ContentPage
 		if (selectedItem != null)
 		{
 			// Example action: Show an alert with the user ID
-			DisplayAlert("Item Tapped", $"User: {_currentUser.Username} tapped.", "OK");
+			DisplayAlert("Someone owns you money :)", $"{selectedItem.debtor.Username} owns you money. Lets snooze!", "OK");
 
 			// Add your logic here (e.g., navigation or additional functionality)
 		}
@@ -186,7 +186,7 @@ public partial class GroupViewPage : ContentPage
 		if (selectedItem != null)
 		{
 			// Example action: Show an alert with the user ID
-			await DisplayAlert("Item Tapped", $"You owe User : {_currentUser.Username}.", "OK");
+			await DisplayAlert("Debt", $"You owe {selectedItem.creditor.Username} {selectedItem.amount} NIS.", "OK");
 
 			// Add your logic here (e.g., navigation or additional functionality)
 			await Navigation.PushAsync(new PaymentPage(selectedItem, _group, _paymentService));

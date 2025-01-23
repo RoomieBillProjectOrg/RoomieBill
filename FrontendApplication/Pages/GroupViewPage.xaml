@@ -118,10 +118,10 @@
                                     CommandParameter="{Binding .}" />
                             </Frame.GestureRecognizers>
                             <VerticalStackLayout>
-                                <Label Text="{Binding OwedToUserName, StringFormat='You owe {0}'}"
+                                <Label Text="{Binding creditor.Username, StringFormat='You owe {0}'}"
                                     FontSize="18"
                                     TextColor="#222831" />
-                                <Label Text="{Binding Amount, StringFormat='{0:C}'}"
+                                <Label Text="{Binding amount, StringFormat='{0:C}'}"
                                     FontSize="16"
                                     TextColor="#4CAF50"
                                     FontAttributes="Bold" />
