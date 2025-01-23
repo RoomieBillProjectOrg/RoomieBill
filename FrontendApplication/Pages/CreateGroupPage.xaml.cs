@@ -7,7 +7,7 @@ namespace FrontendApplication.Pages;
 public partial class CreateGroupPage : ContentPage
 {
     private readonly UserServiceApi _userService;
-    private UserModel _user;
+    private readonly UserModel _user;
 
     public CreateGroupPage(UserServiceApi userService, UserModel user)
     {
@@ -19,25 +19,24 @@ public partial class CreateGroupPage : ContentPage
     private async void OnCreateGroupClicked(object sender, EventArgs e)
     {
         // Get user input
-        string groupName = GroupNameEntry.Text;
-        string membersInput = MembersEntry.Text;
+        string groupName = GroupNameEntry.Text?.Trim();
+        string membersInput = MembersEntry.Text?.Trim();
 
         // Validate input
         if (string.IsNullOrWhiteSpace(groupName))
         {
-            ErrorLabel.Text = "Group Name is required.";
-            ErrorLabel.IsVisible = true;
+            ShowError("Group Name is required.");
             return;
         }
 
-        // Create the DTO
+        // Prepare the DTO
         var newGroupDto = new CreateNewGroupDto
         {
             GroupName = groupName,
-            AdminGroupUsername = _user.Username, // Assuming _user has a Username property
+            AdminGroupUsername = _user.Username,
             GroupMembersUsernamesList = string.IsNullOrEmpty(membersInput)
                 ? new List<string>()
-                : membersInput.Split(',').Select(s => s.Trim()).ToList()
+                : membersInput.Split(',').Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToList()
         };
 
         try
@@ -45,18 +44,22 @@ public partial class CreateGroupPage : ContentPage
             // Call backend service to create the group
             var newGroup = await _userService.CreateNewGroupAsync(newGroupDto);
 
-            // If successful, navigate to another page or show a success message
+            // Success feedback
             await DisplayAlert("Success", $"Group '{newGroup.GroupName}' created successfully!", "OK");
 
-            // DOTO: navigate to the new group page or to the back of the pages list page ??
-            // await Navigation.PushAsync(new GroupPage(newGroup));
-
+            // Navigate to the Group Details Page (you can replace this with another page if needed)
+            await Navigation.PushAsync(new GroupViewPage(_userService, null, newGroup, _user));
         }
         catch (Exception ex)
         {
-            // If there was an error, display it
-            ErrorLabel.Text = ex.Message;
-            ErrorLabel.IsVisible = true;
+            // Show error message
+            ShowError($"Failed to create group: {ex.Message}");
         }
+    }
+
+    private void ShowError(string message)
+    {
+        ErrorLabel.Text = message;
+        ErrorLabel.IsVisible = true;
     }
 }
