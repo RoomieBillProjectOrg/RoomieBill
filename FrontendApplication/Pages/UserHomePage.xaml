@@ -1,14 +1,64 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="FrontendApplication.Pages.UserHomePage">
+             x:Class="FrontendApplication.Pages.UserHomePage"
+             Title="Home"
+             BackgroundColor="Black">
 
-    <!-- Content of the page will be set dynamically in the code-behind -->
-
+    <!-- Toolbar -->
     <ContentPage.ToolbarItems>
-        <!-- Define a ToolbarItem that will show the menu when clicked -->
         <ToolbarItem Text="•••" Command="{Binding ShowMenuCommand}" />
     </ContentPage.ToolbarItems>
-    
 
+    <ContentPage.Content>
+        <VerticalStackLayout Padding="20" Spacing="15">
+
+            <!-- Subheader -->
+            <Label Text="Manage your groups and activities below."
+                   FontSize="16"
+                   TextColor="#A9A9A9"
+                   HorizontalOptions="Center" />
+
+            <!-- Group List -->
+            <CollectionView x:Name="GroupListView"
+                            ItemsSource="{Binding Groups}" 
+                            IsVisible="False"
+                            BackgroundColor="Transparent">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BackgroundColor="#2A2A2A" 
+                               CornerRadius="10"
+                               Margin="5">
+                            <StackLayout>
+                                <Label Text="{Binding GroupName}" 
+                                       FontSize="18" 
+                                       TextColor="White"
+                                       FontAttributes="Bold" />
+                                <Label Text="{Binding GroupDescription}" 
+                                       FontSize="14" 
+                                       TextColor="#A9A9A9" />
+                                <Button Text="View Group"
+                                        BackgroundColor="Black"
+                                        TextColor="White"
+                                        BorderColor="White"
+                                        BorderWidth="1"
+                                        CommandParameter="{Binding .}"
+                                        Clicked="OnGroupButtonClicked" />
+                            </StackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- No Groups Found Message -->
+            <Label x:Name="NoGroupsMessage"
+                   Text="No groups found. Create or join one to get started!"
+                   FontSize="14"
+                   TextColor="#A9A9A9"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   IsVisible="False" />
+
+        </VerticalStackLayout>
+    </ContentPage.Content>
 </ContentPage>

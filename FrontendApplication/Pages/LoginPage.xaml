@@ -46,14 +46,6 @@
                        HeightRequest="40" />
             </VerticalStackLayout>
 
-            <!-- Checkbox -->
-            <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
-                <CheckBox x:Name="RememberMeCheckBox" />
-                <Label Text="REMEMBER ME"
-                       VerticalTextAlignment="Center"
-                       TextColor="White" />
-            </HorizontalStackLayout>
-
             <!-- Login Button -->
             <Button Text="login"
                     BackgroundColor="Black"
