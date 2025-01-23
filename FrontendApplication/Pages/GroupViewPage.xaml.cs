@@ -131,7 +131,7 @@ public partial class GroupViewPage : ContentPage
 	//add a new pop up window to add an expense
 	private async void OnAddExpenseClicked(object sender, EventArgs e)
 	{
-		var popup = new AddExpensePopup();
+		var popup = new AddExpensePopup(_group);
 		var result = await this.ShowPopupAsync(popup);
 
 		if (result is not null)
