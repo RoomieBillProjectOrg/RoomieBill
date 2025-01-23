@@ -304,7 +304,13 @@ namespace Roomiebill.Server.Facades
 
         public void AddUserToUserIndexMap(int userId)
         {
-            _userIndexMap[userId] = userId;
+            int maxId = -1;
+            foreach (int mID in _userIndexMap.Values){
+                if (mID > maxId){
+                    maxId = mID;
+                }
+            }
+            _userIndexMap[userId] = maxId + 1;
         }
     }
 }
