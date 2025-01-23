@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Refit;
 using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Facades;
@@ -47,7 +48,8 @@ namespace Roomiebill.Server.Services
             return newGroup;
         }
 
-        public async Task <List<Group>> GetUserGroupsAsync(int UserId){
+        public async Task<List<Group>> GetUserGroupsAsync(int UserId)
+        {
             // TODO: maybe add exception catch.
             List<Group> UserGroups = await _groupFacade.GetUserGroupsAsync(UserId);
             return UserGroups;
@@ -57,6 +59,28 @@ namespace Roomiebill.Server.Services
         {
             return await _groupFacade.AddExpenseAsync(expense);
         }
+        // GetDebtsForUserAsync use the groupFacade to get the group details and calculate the debts for a user.
+
+        public async Task<List<DebtDto>> GetDebtsForUserAsync(int groupId, int userId)
+        {
+            return await _groupFacade.GetDebtsForUserAsync(groupId, userId);
+        }
+        public async Task<Group> GetGroupByIdAsync(int groupId)
+        {
+            return await _groupFacade.GetGroupByIdAsync(groupId);
+        }
+
+        public async Task<List<DebtDto>> GetDebtsOwedByUserAsync(int groupId, int userId)
+        {
+         return await _groupFacade.GetDebtsOwedByUserAsync(groupId, userId);
+
+        }
+        //get group by id
+        public async Task<Group> GetGroupAsync(int id)
+        {
+            return await _groupFacade.GetGroupByIdAsync(id);
+        }
+
 
 
     }
