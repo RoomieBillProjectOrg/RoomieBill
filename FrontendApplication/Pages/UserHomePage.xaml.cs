@@ -118,7 +118,7 @@ public partial class UserHomePage : ContentPage
     // Handle group button click
     private async void OnGroupButtonClicked(GroupModel group)
     {
-        await Navigation.PushAsync(new GroupViewPage(_userService, _groupService, group));
+        await Navigation.PushAsync(new GroupViewPage(_userService, _groupService, group,User));
     }
 
     // Methods for menu actions
