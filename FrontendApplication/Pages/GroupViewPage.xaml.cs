@@ -67,16 +67,18 @@ public partial class GroupViewPage : ContentPage
 	{
 		try
 		{
-			// Clear existing data
-			ShameTable.Clear();
+			if (ShameTable.Count > 0){
+				// Clear existing data
+				ShameTable.Clear();
+			}else{
+				// Fetch debts for the current user
+				var debts = await _groupService.GetDebtsForUserAsync(_group.Id, _currentUser.Id);
 
-			// Fetch debts for the current user
-			var debts = await _groupService.GetDebtsForUserAsync(_group.Id, _currentUser.Id);
-
-			// Populate the ShameTable collection
-			foreach (var debt in debts)
-			{
-				ShameTable.Add(debt);
+				// Populate the ShameTable collection
+				foreach (var debt in debts)
+				{
+					ShameTable.Add(debt);
+				}
 			}
 		}
 		catch (Exception ex)
