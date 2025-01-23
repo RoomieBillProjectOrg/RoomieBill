@@ -208,6 +208,12 @@ namespace Roomiebill.Server.Facades
                 throw new ArgumentNullException(nameof(loginDto.Password));
             }
 
+            if (loginDto.FirebaseToken == null)
+            {
+                _logger.LogError($"Firebase token is null. Cannot login user {loginDto.Username}");
+                throw new ArgumentNullException(nameof(loginDto.FirebaseToken));
+            }
+
             // Check if the user exists by username
             var existingUser = await _applicaitonDbs.GetUserByUsernameAsync(loginDto.Username);
             if (existingUser == null)
@@ -222,6 +228,12 @@ namespace Roomiebill.Server.Facades
             {
                 _logger.LogError($"User with username: {loginDto.Username} entered incorrect password");
                 throw new Exception("Password is incorrect");
+            }
+
+            if (existingUser.FirebaseToken != loginDto.FirebaseToken)
+            {
+                existingUser.FirebaseToken = loginDto.FirebaseToken;
+                await _applicaitonDbs.UpdateUserAsync(existingUser);
             }
 
             existingUser.IsLoggedIn = true;

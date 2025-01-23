@@ -46,9 +46,6 @@ namespace FrontendApplication
             {
                 //await Shell.Current.GoToAsync(nameof(RegisterPage));
                 await Navigation.PushAsync(new RegisterPage(_userService, _groupService));
-                await CrossFirebaseCloudMessaging.Current.CheckIfValidAsync();
-                var token = await CrossFirebaseCloudMessaging.Current.GetTokenAsync();
-                Console.WriteLine($"FCM token: {token}");
             };
             layout.Children.Add(registerPageButton);
 
