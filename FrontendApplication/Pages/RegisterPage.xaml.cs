@@ -33,17 +33,17 @@ namespace FrontendApplication.Pages
                 return;
             }
 
-            var success = await _userService.RegisterUserAsync(email, username, password);
-            if (success)
+            try
             {
+                var user = await _userService.RegisterUserAsync(email, username, password);
                 await DisplayAlert("Success", "User registered successfully!", "OK");
 
                 // Navigate to LoginPage
                 await Navigation.PushAsync(new LoginPage(_userService, _groupService));
             }
-            else
+            catch (Exception ex)
             {
-                await DisplayAlert("Error", "Failed to register user.", "OK");
+                await DisplayAlert("Error", ex.Message, "OK");
             }
         }
     }
