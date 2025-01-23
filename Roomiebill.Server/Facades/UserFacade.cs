@@ -122,10 +122,10 @@ namespace Roomiebill.Server.Facades
                 throw new ArgumentNullException(nameof(updatePasswordDto.Username));
             }
 
-            if (updatePasswordDto.CurrentPassword == null)
+            if (updatePasswordDto.OldPassword == null)
             {
                 _logger.LogError($"Old password is null. Cannot update password for user {updatePasswordDto.Username}");
-                throw new ArgumentNullException(nameof(updatePasswordDto.CurrentPassword));
+                throw new ArgumentNullException(nameof(updatePasswordDto.OldPassword));
             }
 
             if (updatePasswordDto.NewPassword == null)
@@ -165,7 +165,7 @@ namespace Roomiebill.Server.Facades
             }
 
             // Verify the old password
-            var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(existingUser, existingUser.PasswordHash, updatePasswordDto.CurrentPassword);
+            var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(existingUser, existingUser.PasswordHash, updatePasswordDto.OldPassword);
             if (passwordVerificationResult != PasswordVerificationResult.Success)
             {
                 _logger.LogError("Old password is incorrect");
