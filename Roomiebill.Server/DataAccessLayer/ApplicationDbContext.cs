@@ -100,8 +100,17 @@ namespace Roomiebill.Server.DataAccessLayer
 
         public async Task UpdateGroupAsync(Group group)
         {
-            Groups.Update(group);
-            await SaveChangesAsync();
+            try
+            {
+                //Groups.Update(group);
+                await SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                // Log or display the exception details
+                Console.WriteLine($"Error updating group: {ex.Message}");
+                throw; // Re-throw the exception to propagate it
+            }
         }
 
         /* Group methods */

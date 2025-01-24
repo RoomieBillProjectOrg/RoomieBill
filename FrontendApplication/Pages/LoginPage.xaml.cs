@@ -8,12 +8,14 @@ public partial class LoginPage : ContentPage
 {
     private readonly UserServiceApi _userService;
     private readonly GroupServiceApi _groupService;
+    private readonly PaymentService _paymentService;
 
-    public LoginPage(UserServiceApi userService, GroupServiceApi groupService)
+    public LoginPage(UserServiceApi userService, GroupServiceApi groupService, PaymentService paymentService)
 	{
 		InitializeComponent();
         _userService = userService;
         _groupService = groupService;
+        _paymentService = paymentService;
     }
 
     private async void OnLoginClicked(object sender, EventArgs e)
@@ -32,7 +34,7 @@ public partial class LoginPage : ContentPage
             await DisplayAlert("Success", "User logged in successfully!", "OK");
 
             // Navigate to UserHomePage
-            await Navigation.PushAsync(new UserHomePage(_userService, _groupService, user));
+            await Navigation.PushAsync(new UserHomePage(_userService, _groupService, _paymentService, user));
         }
         catch(Exception ex)
         {
