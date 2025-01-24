@@ -70,7 +70,7 @@ namespace FrontendApplication
         private async void OnLoginClicked(object sender, EventArgs e)
         {
             //await Shell.Current.GoToAsync(nameof(LoginPage));
-            await Navigation.PushAsync(new LoginPage(_userService, _groupService));
+            await Navigation.PushAsync(new LoginPage(_userService, _groupService, _paymentService));
         }
     }
 }
