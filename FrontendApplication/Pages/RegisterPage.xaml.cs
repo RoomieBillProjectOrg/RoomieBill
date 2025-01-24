@@ -1,4 +1,6 @@
+using Firebase.Messaging;
 using FrontendApplication.Services;
+using Plugin.Firebase.CloudMessaging;
 
 namespace FrontendApplication.Pages
 {
@@ -22,6 +24,7 @@ namespace FrontendApplication.Pages
             var username = UsernameEntry.Text;
             var password = PasswordEntry.Text;
             var confirmPassword = PasswordConfirmationEntry.Text;
+            var firebaseToken = await GetUserFirebaseToken();
 
             if (password != confirmPassword)
             {
@@ -38,7 +41,8 @@ namespace FrontendApplication.Pages
             try
             {
                 // Try to register the user to the application using api call to the server.
-                var user = await _userService.RegisterUserAsync(email, username, password);
+                var success = await _userService.RegisterUserAsync(email, username, password, firebaseToken);
+
                 await DisplayAlert("Success", "User registered successfully!", "OK");
 
                 // Navigate to LoginPage
@@ -49,6 +53,12 @@ namespace FrontendApplication.Pages
                 // If the server returns error, display the error message to the user.
                 await DisplayAlert("Error", ex.Message, "OK");
             }
+        }
+
+        private async Task<string> GetUserFirebaseToken()
+        {
+            await CrossFirebaseCloudMessaging.Current.CheckIfValidAsync();
+            return await CrossFirebaseCloudMessaging.Current.GetTokenAsync();
         }
     }
 }

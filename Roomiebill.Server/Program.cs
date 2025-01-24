@@ -5,6 +5,8 @@ using Roomiebill.Server.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +36,11 @@ builder.Services.AddScoped<DatabaseSeeder>();
 builder.Services.AddScoped<IPaymentService, MockPaymentService>();
 
 var app = builder.Build();
+
+FirebaseApp.Create(new AppOptions()
+{
+    Credential = GoogleCredential.FromFile("private_key.json")
+});
 
 // Apply migrations and ensure database creation
 using (var scope = app.Services.CreateScope())
