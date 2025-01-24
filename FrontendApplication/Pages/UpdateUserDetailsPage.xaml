@@ -2,14 +2,74 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="FrontendApplication.Pages.UpdateUserDetailsPage"
-             Title="UpdateUserDetailsPage">
-    <StackLayout Padding="20">
-        <Label Text="Login Page" 
-               VerticalOptions="Center" 
-               HorizontalOptions="Center" />
-        <Entry x:Name="OldPasswordEntry" Placeholder="OldPassword"/>
-        <Entry x:Name="NewPasswordEntry" Placeholder="NewPassword" IsPassword="True"/>
-        <Entry x:Name="VeriftNewPasswordEntry" Placeholder="VeriftNewPassword" IsPassword="True"/>
-        <Button Text="Update Password" Clicked="OnUpdatePasswordClicked"/>
-    </StackLayout>
+             BackgroundColor="Black">
+    <ContentPage.Content>
+        <VerticalStackLayout Spacing="20" Padding="30">
+
+            <!-- Title -->
+            <Label Text="Update Password"
+                   FontSize="36"
+                   HorizontalOptions="Center"
+                   TextColor="White"
+                   FontAttributes="Bold" />
+
+            <!-- Subtitle -->
+            <Label Text="Ensure your account is secure by updating your password."
+                   FontSize="16"
+                   HorizontalOptions="Center"
+                   TextColor="#A9A9A9" />
+
+            <!-- Old Password Entry -->
+            <VerticalStackLayout Spacing="5">
+                <Label Text="OLD PASSWORD"
+                       FontSize="14"
+                       TextColor="White" />
+                <Entry x:Name="OldPasswordEntry"
+                       IsPassword="True"
+                       Placeholder="Enter your old password"
+                       BackgroundColor="#2A2A2A"
+                       TextColor="White"
+                       PlaceholderColor="#A9A9A9"
+                       HeightRequest="40" />
+            </VerticalStackLayout>
+
+            <!-- New Password Entry -->
+            <VerticalStackLayout Spacing="5">
+                <Label Text="NEW PASSWORD"
+                       FontSize="14"
+                       TextColor="White" />
+                <Entry x:Name="NewPasswordEntry"
+                       IsPassword="True"
+                       Placeholder="Enter your new password"
+                       BackgroundColor="#2A2A2A"
+                       TextColor="White"
+                       PlaceholderColor="#A9A9A9"
+                       HeightRequest="40" />
+            </VerticalStackLayout>
+
+            <!-- Verify New Password Entry -->
+            <VerticalStackLayout Spacing="5">
+                <Label Text="CONFIRM NEW PASSWORD"
+                       FontSize="14"
+                       TextColor="White" />
+                <Entry x:Name="VeriftNewPasswordEntry"
+                       IsPassword="True"
+                       Placeholder="Confirm your new password"
+                       BackgroundColor="#2A2A2A"
+                       TextColor="White"
+                       PlaceholderColor="#A9A9A9"
+                       HeightRequest="40" />
+            </VerticalStackLayout>
+
+            <!-- Update Password Button -->
+            <Button Text="Update Password"
+                    BackgroundColor="Black"
+                    TextColor="White"
+                    BorderColor="White"
+                    BorderWidth="2"
+                    HeightRequest="50"
+                    CornerRadius="25"
+                    Clicked="OnUpdatePasswordClicked" />
+        </VerticalStackLayout>
+    </ContentPage.Content>
 </ContentPage>

@@ -1,12 +1,47 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="FrontendApplication.MainPage">
+             x:Class="FrontendApplication.MainPage"
+             BackgroundColor="Black">
+    <ContentPage.Content>
+        <VerticalStackLayout Spacing="30" Padding="30">
 
-    <StackLayout Margin="20">
-        <Label Text="Welcome to Roomiebill!" />
-        <Button Text="Register User" />
-        <Button Text="Login User" />
-    </StackLayout>
+            <!-- Title -->
+            <Label Text="Welcome to Roomiebill!" 
+                   FontSize="36" 
+                   HorizontalTextAlignment="Center" 
+                   TextColor="White" 
+                   FontAttributes="Bold"/>
 
+            <!-- Subtitle -->
+            <Label Text="Easily manage and split your house bills and payments."
+                   FontSize="18"
+                   HorizontalTextAlignment="Center"
+                   TextColor="#A9A9A9"
+                   FontAttributes="Italic"/>
+
+            <!-- Register Button -->
+            <Button Text="Register User"
+                    BackgroundColor="Black"
+                    TextColor="White"
+                    BorderColor="White"
+                    BorderWidth="2"
+                    HeightRequest="50"
+                    CornerRadius="25"
+                    FontAttributes="Bold"
+                    Clicked="OnRegisterClicked" />
+
+            <!-- Login Button -->
+            <Button Text="Login User"
+                    BackgroundColor="White"
+                    TextColor="Black"
+                    BorderColor="Black"
+                    BorderWidth="2"
+                    HeightRequest="50"
+                    CornerRadius="25"
+                    FontAttributes="Bold"
+                    Clicked="OnLoginClicked" />
+
+        </VerticalStackLayout>
+    </ContentPage.Content>
 </ContentPage>
