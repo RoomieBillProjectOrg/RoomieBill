@@ -1,6 +1,4 @@
 using Roomiebill.Server.Models;
-using Roomiebill.Server.DataAccessLayer.Dtos;
-using System.Collections.Generic;
 using Roomiebill.Server.Exceptions;
 
 namespace Roomiebill.Server.Facades
@@ -8,26 +6,38 @@ namespace Roomiebill.Server.Facades
     public class ExpenseHandler
     {
         // private int[] debtArray; // 1D array to store debts
-        private Dictionary<int, int> _userIndexMap; //<UserId,Array index> map user id to index in the _debtMatrix to avoid not consistent user ids.
-        private int _userCount; // number of users
+        public Dictionary<int, int> _userIndexMap = new Dictionary<int, int>(); //<UserId,Array index> map user id to index in the _debtMatrix to avoid not consistent user ids.
+        
+        public int _userCount = 0; // number of users
 
-        public ExpenseHandler(List<int> userIds)
-        {
-            _userIndexMap = new Dictionary<int, int>();
-            for (int i = 0; i < _userCount; i++)
-            {
-                _userIndexMap[userIds[i]] = i;
-            }
-        }
+        public ExpenseHandler() { }
+
+        //public ExpenseHandler(List<int> userIds)
+        //{
+        //    _userIndexMap = new Dictionary<int, int>();
+        //    for (int i = 0; i < _userCount; i++)
+        //    {
+        //        _userIndexMap[userIds[i]] = i;
+        //    }
+        //}
+
         public ExpenseHandler(List<User> member)
         {
             List<int> userIds = new List<int>();
-            this._userCount = member.Count;
+
+            _userCount = member.Count;
+
             foreach (User user in member)
             {
                 userIds.Add(user.Id);
             }
-            _userIndexMap = new Dictionary<int, int>();
+
+            // Ensure userIds has the same count as _userCount
+            if (userIds.Count != _userCount)
+            {
+                throw new InvalidOperationException("The number of user IDs does not match the user count.");
+            }
+
             for (int i = 0; i < _userCount; i++)
             {
                 _userIndexMap[userIds[i]] = i;
@@ -69,7 +79,7 @@ namespace Roomiebill.Server.Facades
             int indexj = _userIndexMap[j];
             int index = GetIndex(indexi, indexj);
             int debt = debtArray[index];
-        if (indexi < indexj)
+            if (indexi < indexj)
             {
                 return debt > 0 ? debt : 0; // Positive: i owes j; Zero or negative: i owes j nothing
             }
@@ -131,12 +141,11 @@ namespace Roomiebill.Server.Facades
         //settle all debt for a user and all other  users
         public void SettleAllDebts(int userId, int[] debtArray)
         {
-            int userIndex = _userIndexMap[userId];
-            for (int i = 0; i < _userCount; i++)
+            for (int i = 0; i < _userIndexMap.Keys.Count; i++)
             {
-                if (i != userIndex)
+                if (i != userId)
                 {
-                    SettleDebt(userIndex, i, debtArray);
+                    SettleDebt(userId, i, debtArray);
                 }
             }
         }
@@ -144,7 +153,7 @@ namespace Roomiebill.Server.Facades
         // Settle debt between two users
         public void SettleDebt(int i, int j, int[] debtArray)
         {
-            int index = GetIndex(i, j);
+            int index = GetIndex(_userIndexMap[i], _userIndexMap[j]);
             debtArray[index] = 0;
         }
 
@@ -291,6 +300,17 @@ namespace Roomiebill.Server.Facades
         {
             UpdateDebtArray(payerIndex, userIndex, amount, debtArray);
             return debtArray;
+        }
+
+        public void AddUserToUserIndexMap(int userId)
+        {
+            int maxId = -1;
+            foreach (int mID in _userIndexMap.Values){
+                if (mID > maxId){
+                    maxId = mID;
+                }
+            }
+            _userIndexMap[userId] = maxId + 1;
         }
     }
 }

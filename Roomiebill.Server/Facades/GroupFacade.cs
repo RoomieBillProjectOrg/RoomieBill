@@ -263,6 +263,12 @@ namespace Roomiebill.Server.Facades
         }
         
 
+        public async Task SettleDebtAsync(decimal amount, User creditor, User debtor, int groupId){
+            Group group = await GetGroupByIdAsync(groupId);
+            group.SettleDebt(amount, creditor.Id, debtor.Id);
+            await _applicationDbs.UpdateGroupAsync(group);
+            _logger.LogInformation($"User {debtor.Username} returned his debt of {amount} NIS to {creditor.Username} successfully.");
+        }
 
         #region Help functions
 

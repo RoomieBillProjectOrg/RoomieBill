@@ -1,8 +1,7 @@
-﻿
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
 using System.Text.Json.Serialization;
-using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Facades;
 
 namespace Roomiebill.Server.Models
@@ -13,7 +12,6 @@ namespace Roomiebill.Server.Models
 
         [Required]
         [StringLength(20, ErrorMessage = "Group name cannot exceed 20 characters.")]
-
         public string GroupName { get; set; }
 
         public User Admin { get; set; }
@@ -22,28 +20,33 @@ namespace Roomiebill.Server.Models
 
         public ICollection<Expense> Expenses { get; set; } = new List<Expense>(); // Expenses of the group
 
-        [NotMapped]
-        private int[] _debtArray; // 1D array to store debts
+        [Column("DebtArray")] // Save as JSON string in the database
+        public string DebtArray
+        {
+            get => JsonSerializer.Serialize(_debtArray);
+            set => _debtArray = string.IsNullOrEmpty(value) 
+                                ? [] 
+                                : JsonSerializer.Deserialize<int[]>(value) ?? [];
+        }
 
         [JsonIgnore]
         public List<Invite> Invites { get; set; }
 
         [NotMapped]
         [JsonIgnore]
-        ExpenseHandler expenseHandler { get; set; }
+        public ExpenseHandler expenseHandler { get; set; }
+
+        [NotMapped]
+        private int[] _debtArray; // Backing field for the serialized DebtArray
 
         public Group()
         {
             // Default constructor required by EF Core
-
-            Members = new List<User>();
-            Invites = new List<Invite>();
             GroupName = "Default Name";
-            Expenses = new List<Expense>();
-            expenseHandler = new ExpenseHandler(Members);
+            InitializeCollections();
             InitializeDebtArray();
         }
-        
+
         public Group(string groupName, User groupAdmin, List<User> members)
         {
             if (string.IsNullOrWhiteSpace(groupName))
@@ -55,13 +58,21 @@ namespace Roomiebill.Server.Models
             GroupName = groupName;
             Admin = groupAdmin;
             Members = new List<User>(members); // Defensive copy
-            if(!Members.Contains(groupAdmin)){
+
+            if (!Members.Contains(groupAdmin))
+            {
                 Members.Add(groupAdmin); // Add the admin to the members list
             }
+
+            InitializeCollections();
+            InitializeDebtArray();
+        }
+
+        private void InitializeCollections()
+        {
             Invites = new List<Invite>();
             Expenses = new List<Expense>();
             expenseHandler = new ExpenseHandler(Members);
-            InitializeDebtArray();
         }
 
         private void InitializeDebtArray()
@@ -71,44 +82,40 @@ namespace Roomiebill.Server.Models
             _debtArray = new int[size];
         }
 
-        public void UpdateDebtArray()
-        {
-            // Reset the debt array
-            InitializeDebtArray();
 
-            // Update the debt array based on the current expenses
-            foreach (var expense in Expenses)
-            {
-                foreach (var split in expense.ExpenseSplits)
-                {
-                    int payerIndex = Members.ToList().FindIndex(m => m.Id == expense.PayerId);
-                    int userIndex = Members.ToList().FindIndex(m => m.Id == split.UserId);
-                    if (payerIndex != -1 && userIndex != -1 && payerIndex != userIndex)
-                    {
-                        int amount = (int)(split.Percentage * expense.Amount / 100);
-                        expenseHandler.UpdateDebtBetweenIndex(payerIndex, userIndex, amount, _debtArray);
-                    }
-                }
-            }
-        }
+        // public void UpdateDebtArray()
+        // {
+        //     // Reset the debt array
+        //     InitializeDebtArray();
+
+        //     // Update the debt array based on the current expenses
+        //     foreach (var expense in Expenses)
+        //     {
+        //         foreach (var split in expense.ExpenseSplits)
+        //         {
+        //             int payerIndex = Members.ToList().FindIndex(m => m.Id == expense.PayerId);
+        //             int userIndex = Members.ToList().FindIndex(m => m.Id == split.UserId);
+        //             if (payerIndex != -1 && userIndex != -1 && payerIndex != userIndex)
+        //             {
+        //                 int amount = (int)(split.Percentage * expense.Amount / 100);
+        //                 expenseHandler.UpdateDebtBetweenIndex(payerIndex, userIndex, amount, _debtArray);
+        //             }
+        //         }
+        //     }
+        // }
 
         public void InitializeNonPersistentProperties()
         {
             expenseHandler = new ExpenseHandler(Members);
-            UpdateDebtArray();
         }
 
-        // public void AddExpense(Expense expense)
-        // {
-        //     Expenses.Add(expense);
-        //     UpdateDebtArray();
-        // }
         public void AddExpense(Expense expense)
         {
             expenseHandler.AddExpense(expense, _debtArray);
             Expenses.Add(expense);
         }
-        private void EnlargeDebtArraySize(int newUserCount, int oldUserCount)
+
+        public void EnlargeDebtArraySize(int newUserCount, int oldUserCount)
         {
             // Copy existing data to the new array
             _debtArray = expenseHandler.EnlargeDebtArraySize(newUserCount, oldUserCount, _debtArray);
@@ -117,9 +124,12 @@ namespace Roomiebill.Server.Models
         public void AddMember(User user)
         {
             Members.Add(user);
+
             // Update the debt array size
             EnlargeDebtArraySize(Members.Count, Members.Count - 1);
 
+            // Add the user to the user index map
+            expenseHandler.AddUserToUserIndexMap(user.Id);
         }
 
         public void AddMember(List<User> newMembers)
@@ -133,7 +143,6 @@ namespace Roomiebill.Server.Models
 
         private void ReduceDebtArraySize(int newUserCount, int oldUserCount, List<int> removedUsers)
         {
-
             _debtArray = expenseHandler.ReduceDebtArraySize(newUserCount, oldUserCount, removedUsers, _debtArray);
         }
 
@@ -162,28 +171,32 @@ namespace Roomiebill.Server.Models
             // Update the debt array size
             ReduceDebtArraySize(Members.Count, Members.Count + removedMembers.Count, removedUsers);
         }
+
         //TODO: check for operation completion
-        
         public void updateExpense(Expense oldExpense, Expense newExpense)
         {
             Expense updatedExpense = expenseHandler.UpdateExpense(oldExpense, newExpense, _debtArray);
             bool flag = Expenses.Remove(oldExpense);
             Expenses.Add(updatedExpense);
         }
+
         //TODO: check for operation completion
         public void DeleteExpense(Expense expense)
         {
             expenseHandler.DeleteExpense(expense, _debtArray);
             Expenses.Remove(expense);
         }
+
         public int[] getDebtArray()
         {
             return _debtArray;
         }
+
         public int getDebtBetweenUsers(int user1Id, int user2Id)
         {
             return expenseHandler.GetDebtBetweenIndex(user1Id, user2Id, _debtArray);
         }
+
         /// <summary>
         /// calculate the debts owed to a specific user
         /// </summary>
@@ -200,18 +213,16 @@ namespace Roomiebill.Server.Models
                     if (amount > 0)
                     {
                         DebtDto debt = new DebtDto();
-                        debt.OwedByUserId = member.Id;
-                        debt.OwedToUserId = userId;
-                        debt.Amount = amount;
-                        debt.OwedByUserName = member.Username;
-                        debt.OwedToUserName = Admin.Username;
+                        debt.amount = amount;
+                        debt.creditor = getUserById(userId);
+                        debt.debtor = getUserById(member.Id);
                         debts.Add(debt);
                     }
                 }
             }
             return debts;
         }
-        internal List<DebtDto> GetDebtsOwedByUser(int userId)
+        public List<DebtDto> GetDebtsOwedByUser(int userId)
         {
             List<DebtDto> debts = new List<DebtDto>();
             foreach (User member in Members)
@@ -222,11 +233,9 @@ namespace Roomiebill.Server.Models
                     if (amount > 0)
                     {
                         DebtDto debt = new DebtDto();
-                        debt.OwedByUserId = userId;
-                        debt.OwedToUserId = member.Id;
-                        debt.Amount = amount;
-                        debt.OwedByUserName = Admin.Username;
-                        debt.OwedToUserName = member.Username;
+                        debt.amount = amount;
+                        debt.creditor = getUserById(member.Id);
+                        debt.debtor = getUserById(userId);
                         debts.Add(debt);
                     }
                 }
@@ -234,7 +243,10 @@ namespace Roomiebill.Server.Models
             return debts;
         }
        
-        
+        public void SettleDebt(decimal amount, int creditor, int debtor){
+            //TODO: Here we should think of supporting amount of payment.
+            expenseHandler.SettleDebt(creditor, debtor, _debtArray);
+        }
 
         public User GetAdmin()
         {
@@ -249,6 +261,13 @@ namespace Roomiebill.Server.Models
         public string GetGroupName()
         {
             return GroupName;
+        }
+
+        public User getUserById(int userId){
+            if(userId < 0){
+                throw new Exception("User with wrong id");
+            }
+            return Members.FirstOrDefault(m => m.Id == userId);
         }
 
         

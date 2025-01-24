@@ -150,18 +150,19 @@ namespace Roomiebill.Server.DataAccessLayer
                     }
                 };
 
-                _context.Expenses.Add(expense);
+                // Add expense to group
+                group_Roomiebill.AddExpense(expense);
                 _context.SaveChanges();
 
-                //update an expense
-                var expenseToUpdate = _context.Expenses.FirstOrDefault(e => e.Description == "Power 10-12.2024");
+                // //update an expense
+                // var expenseToUpdate = _context.Expenses.FirstOrDefault(e => e.Description == "Power 10-12.2024");
 
-                if (expenseToUpdate != null)
-                {
-                    expenseToUpdate.Amount = 200.0;
-                    _context.Expenses.Update(expenseToUpdate);
-                    _context.SaveChanges();
-                }
+                // if (expenseToUpdate != null)
+                // {
+                //     expenseToUpdate.Amount = 200.0;
+                //     _context.Expenses.Update(expenseToUpdate);
+                //     _context.SaveChanges();
+                // }
 
                 // Log out all data users
                 await _userService.LogoutAsync("Inbar");
