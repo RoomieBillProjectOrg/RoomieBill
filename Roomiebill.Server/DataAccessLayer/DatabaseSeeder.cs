@@ -24,16 +24,16 @@ namespace Roomiebill.Server.DataAccessLayer
             // Check if the database is already seeded
             if (!_context.Users.Any())
             {
-                await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Inbar", Email = "inbar@bgu.ac.il", Password = "InbarPassword1!", FirebaseToken = "" });
-                await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Metar", Email = "Metar@bgu.ac.il", Password = "MetarPassword2@", FirebaseToken = "" });
-                await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Vladi", Email = "Vladi@bgu.ac.il", Password = "VladiPassword3#", FirebaseToken = "" });
-                await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Tal", Email = "Tal@bgu.ac.il", Password = "TalPassword4$", FirebaseToken = "" });
+                await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Inbar", Email = "inbar@bgu.ac.il", Password = "InbarPassword1!", FirebaseToken = "Test" });
+                await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Metar", Email = "Metar@bgu.ac.il", Password = "MetarPassword2@", FirebaseToken = "Test" });
+                await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Vladi", Email = "Vladi@bgu.ac.il", Password = "VladiPassword3#", FirebaseToken = "Test" });
+                await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Tal", Email = "Tal@bgu.ac.il", Password = "TalPassword4$", FirebaseToken = "Test" });
 
                 // Log in all data users
-                await _userService.LoginAsync(new LoginDto { Username = "Inbar", Password = "InbarPassword1!", FirebaseToken = "" });
-                await _userService.LoginAsync(new LoginDto { Username = "Metar", Password = "MetarPassword2@", FirebaseToken = "" });
-                await _userService.LoginAsync(new LoginDto { Username = "Vladi", Password = "VladiPassword3#", FirebaseToken = "" });
-                await _userService.LoginAsync(new LoginDto { Username = "Tal", Password = "TalPassword4$", FirebaseToken = "" });
+                await _userService.LoginAsync(new LoginDto { Username = "Inbar", Password = "InbarPassword1!", FirebaseToken = "Test" });
+                await _userService.LoginAsync(new LoginDto { Username = "Metar", Password = "MetarPassword2@", FirebaseToken = "Test" });
+                await _userService.LoginAsync(new LoginDto { Username = "Vladi", Password = "VladiPassword3#", FirebaseToken = "Test" });
+                await _userService.LoginAsync(new LoginDto { Username = "Tal", Password = "TalPassword4$", FirebaseToken = "Test" });
 
                 // Create a new group for all data users - "Roomiebill"
                 CreateNewGroupDto newGroupDetails = new CreateNewGroupDto

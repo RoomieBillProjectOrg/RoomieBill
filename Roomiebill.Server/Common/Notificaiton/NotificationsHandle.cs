@@ -61,7 +61,10 @@ namespace Roomiebill.Server.Common.Notificaiton
             {
                 // Send a message to the device corresponding to the provided
                 // registration token.
-                string response = FirebaseMessaging.DefaultInstance.SendAsync(message).Result;
+                if (!token.Equals("Test"))
+                {
+                    string response = FirebaseMessaging.DefaultInstance.SendAsync(message).Result;                
+                } 
             }
             catch (Exception ex)
             {
