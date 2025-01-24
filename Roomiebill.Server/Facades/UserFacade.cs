@@ -48,6 +48,12 @@ namespace Roomiebill.Server.Facades
                 throw new ArgumentNullException(nameof(registerUserDto.Password));
             }
 
+            if (registerUserDto.FirebaseToken == null)
+            {
+                _logger.LogError($"Firebase token is null. Cannot register user with details: Username: {registerUserDto.Username}, Email: {registerUserDto.Email}");
+                throw new ArgumentNullException(nameof(registerUserDto.FirebaseToken));
+            }
+
             // Check password validate using class PasswordValidator
             var passwordValidator = new PasswordValidator();
             var result = passwordValidator.ValidatePassword(registerUserDto.Password);
@@ -83,7 +89,7 @@ namespace Roomiebill.Server.Facades
             }
 
             // Create a new user object from the DTO
-            User newUser = new User(registerUserDto.Username, registerUserDto.Email, registerUserDto.Password);
+            User newUser = new User(registerUserDto.Username, registerUserDto.Email, registerUserDto.Password, firebaseToken: registerUserDto.FirebaseToken);
 
             // Hash the password
             string passwordHash = _passwordHasher.HashPassword(newUser, registerUserDto.Password);
@@ -202,6 +208,12 @@ namespace Roomiebill.Server.Facades
                 throw new ArgumentNullException(nameof(loginDto.Password));
             }
 
+            if (loginDto.FirebaseToken == null)
+            {
+                _logger.LogError($"Firebase token is null. Cannot login user {loginDto.Username}");
+                throw new ArgumentNullException(nameof(loginDto.FirebaseToken));
+            }
+
             // Check if the user exists by username
             var existingUser = await _applicaitonDbs.GetUserByUsernameAsync(loginDto.Username);
             if (existingUser == null)
@@ -216,6 +228,12 @@ namespace Roomiebill.Server.Facades
             {
                 _logger.LogError($"User with username: {loginDto.Username} entered incorrect password");
                 throw new Exception("Password is incorrect");
+            }
+
+            if (existingUser.FirebaseToken != loginDto.FirebaseToken)
+            {
+                existingUser.FirebaseToken = loginDto.FirebaseToken;
+                await _applicaitonDbs.UpdateUserAsync(existingUser);
             }
 
             existingUser.IsLoggedIn = true;

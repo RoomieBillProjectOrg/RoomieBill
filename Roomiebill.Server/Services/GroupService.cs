@@ -42,17 +42,6 @@ namespace Roomiebill.Server.Services
                 }
             }
 
-            // Send invites to all group members, except the admin
-            // foreach (User member in members)
-            // {
-            //     if (member.Username == group.AdminGroupUsername)
-            //     {
-            //         continue;
-            //     }
-            //     // TODO: might be better to use the service method here.
-            //     await _groupFacade.InviteToGroupByUsername(group.AdminGroupUsername, member.Username, newGroup.Id);
-            // }
-
             // Add the group to the admin's groups list
             await _userFacade.AddGroupToUser(group.AdminGroupUsername, newGroup.Id);
 

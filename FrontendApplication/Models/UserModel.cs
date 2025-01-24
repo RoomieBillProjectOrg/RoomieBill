@@ -10,6 +10,7 @@
         public bool IsSystemAdmin { get; set; } = false;
         public List<InviteModel> Invites { get; set; } = [];
         public List<GroupModel> GroupsUserIsMemberAt { get; set; } = [];
+        public string FirebaseToken { get; set; }
 
         public UserModel() { }
     }
