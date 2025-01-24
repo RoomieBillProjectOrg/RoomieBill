@@ -76,6 +76,7 @@ namespace Roomiebill.Server.Services
         {
             return await _groupFacade.GetDebtsForUserAsync(groupId, userId);
         }
+
         public async Task<Group> GetGroupByIdAsync(int groupId)
         {
             return await _groupFacade.GetGroupByIdAsync(groupId);
@@ -92,6 +93,10 @@ namespace Roomiebill.Server.Services
             return await _groupFacade.GetGroupByIdAsync(id);
         }
 
+
+        public async Task SettleDebtAsync(decimal amount, User creditor, User debtor, int groupId){
+            await _groupFacade.SettleDebtAsync(amount, creditor, debtor, groupId);
+        }
 
 
     }

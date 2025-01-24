@@ -7,13 +7,15 @@ public partial class UpdateUserDetailsPage : ContentPage
 {
     private readonly UserServiceApi _userService;
     private readonly GroupServiceApi _groupService;
+    private readonly PaymentService _paymentService;
     private UserModel _user;
 
-    public UpdateUserDetailsPage(UserServiceApi userService, GroupServiceApi groupServiceApi, UserModel user)
+    public UpdateUserDetailsPage(UserServiceApi userService, GroupServiceApi groupServiceApi, PaymentService paymentService, UserModel user)
     {
         InitializeComponent();
         _userService = userService;
         _groupService = groupServiceApi;
+        _paymentService = paymentService;
         _user = user;
     }
 
@@ -45,12 +47,12 @@ public partial class UpdateUserDetailsPage : ContentPage
         try
         {
             // Attempt to update the password
-            var updatedUser = await _userService.UpdateUserPasswordAsync(updatePasswordDto);
+            UserModel updatedUser = await _userService.UpdateUserPasswordAsync(updatePasswordDto);
 
             await DisplayAlert("Success", "Password updated successfully.", "OK");
 
             // Navigate to the user's home page after success
-            await Navigation.PushAsync(new UserHomePage(_userService, _groupService, updatedUser));
+            await Navigation.PushAsync(new UserHomePage(_userService, _groupService, _paymentService, updatedUser));
         }
         catch (Exception ex)
         {

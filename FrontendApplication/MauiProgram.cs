@@ -46,6 +46,7 @@ namespace FrontendApplication
             // Register the services that use the shared HttpClient
             builder.Services.AddSingleton<UserServiceApi>();
             builder.Services.AddSingleton<GroupServiceApi>();
+            builder.Services.AddSingleton<PaymentService>();
 
 #if DEBUG
             builder.Logging.AddDebug();
