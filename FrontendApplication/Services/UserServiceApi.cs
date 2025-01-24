@@ -32,7 +32,7 @@ namespace FrontendApplication.Services
             {
                 var content = await response.Content.ReadAsStringAsync();
                 var userResponse = JsonConvert.DeserializeObject<UserModel>(content);
-                return userResponse;
+                return true;
             }
 
             // Else - there was an exception in the server and we want to fail the register attempt
