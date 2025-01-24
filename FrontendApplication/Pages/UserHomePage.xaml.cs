@@ -125,7 +125,7 @@ public partial class UserHomePage : ContentPage
 
     private async Task OnUpdateUserDetails()
     {
-        await Navigation.PushAsync(new UpdateUserDetailsPage(_userService, _groupService, User));
+        await Navigation.PushAsync(new UpdateUserDetailsPage(_userService, _groupService, _paymentService, User));
     }
 
     private async Task OnAddGroup()
