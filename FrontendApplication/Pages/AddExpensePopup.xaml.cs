@@ -29,6 +29,7 @@ public partial class AddExpensePopup : Popup
     {
         if (DividePicker.SelectedIndex == 1) // Custom division selected
         {
+            
             CustomPercentageLayout.IsVisible = true;
         }
         else
