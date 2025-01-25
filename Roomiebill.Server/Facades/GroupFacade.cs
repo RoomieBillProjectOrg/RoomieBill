@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using FirebaseAdmin.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Roomiebill.Server.Common.Enums;
@@ -106,11 +107,11 @@ namespace Roomiebill.Server.Facades
                 _logger.LogError($"Error when trying to add expense: user with id {expenseDto.PayerId} does not exist in the system.");
                 throw new Exception($"Error when trying to add expense: user with id {expenseDto.PayerId} does not exist in the system.");
             }
-            Expense newExpense = MapToEntity(expenseDto);
+            Expense newExpense = await MapToEntity(expenseDto);
             // Add expense to group
             group.AddExpense(newExpense);
 
-            await _applicationDbs.UpdateGroupAsync(group);
+            //await _applicationDbs.UpdateGroupAsync(group);
 
             return newExpense;
         }
@@ -145,7 +146,7 @@ namespace Roomiebill.Server.Facades
             }
 
             // Map the updated DTO to an entity
-            Expense updatedExpense = MapToEntity(updatedExpenseDto);
+            Expense updatedExpense = await MapToEntity(updatedExpenseDto);
 
             // Use the Group's updateExpense method
             group.updateExpense(oldExpense, updatedExpense);
@@ -265,22 +266,37 @@ namespace Roomiebill.Server.Facades
 
         #region Help functions
 
-        private Expense MapToEntity(ExpenseDto dto)
+        private async Task<Expense> MapToEntity(ExpenseDto dto)
         {
-            return new Expense
+            // Get the next available expense id from db
+            int nextId = await _applicationDbs.GetNextExpenseIdAsync();
+            Expense e = new Expense
             {
-                Id = dto.Id,
+                Id = nextId,
                 Amount = dto.Amount,
                 Description = dto.Description,
                 IsPaid = dto.IsPaid,
                 PayerId = dto.PayerId,
+                Payer = await _userFacade.GetUserByIdAsync(dto.PayerId),
                 GroupId = dto.GroupId,
-                ExpenseSplits = dto.ExpenseSplits.Select(splitDto => new ExpenseSplit
-                {
-                    UserId = splitDto.UserId,
-                    Percentage = splitDto.Percentage
-                }).ToList()
+                Group = await GetGroupByIdAsync(dto.GroupId)
             };
+            List<ExpenseSplit> expenseSplits = new List<ExpenseSplit>();
+            int nextSplitId = await _applicationDbs.GetNextExpenseSplitIdAsync();
+            foreach (ExpenseSplitDto es in dto.ExpenseSplits){
+                expenseSplits.Add(new ExpenseSplit
+                    {   
+                        Id = nextSplitId,
+                        ExpenseId = nextId,
+                        Expense = e,
+                        UserId = es.UserId,
+                        User = await _userFacade.GetUserByIdAsync(es.UserId),
+                        Percentage = es.Percentage
+                    });
+                nextSplitId++;
+            }
+            e.ExpenseSplits = expenseSplits;
+            return e;
         }
 
         #endregion
