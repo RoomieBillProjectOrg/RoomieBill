@@ -41,11 +41,16 @@ public class GroupServiceApi
         return debts ?? new List<DebtModel>(); // Return an empty list if the deserialization results in null
     }
 
-    public async Task<List<DebtModel>>  GetDebtsOwedByUserAsync(int groupId, int userId){
+    public async Task<List<DebtModel>> GetDebtsOwedByUserAsync(int groupId, int userId){
         var response = await _httpClient.GetAsync($"{_httpClient.BaseAddress}/Groups/getDebtsOwedByUser?groupId={groupId}&userId={userId}");
         response.EnsureSuccessStatusCode();
         
         var debts = await response.Content.ReadFromJsonAsync<List<DebtModel>>();
         return debts ?? new List<DebtModel>(); // Return an empty list if the deserialization results in null
+    }
+
+    public async Task addExpenseAsync(ExpenseModel expenseDto){
+        var response = await _httpClient.PostAsJsonAsync($"{_httpClient.BaseAddress}/Groups/addExpense", expenseDto);
+        response.EnsureSuccessStatusCode();
     }
 }

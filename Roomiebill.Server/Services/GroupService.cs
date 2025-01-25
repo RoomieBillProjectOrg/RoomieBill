@@ -86,7 +86,5 @@ namespace Roomiebill.Server.Services
         public async Task SettleDebtAsync(decimal amount, User creditor, User debtor, int groupId){
             await _groupFacade.SettleDebtAsync(amount, creditor, debtor, groupId);
         }
-
-
     }
 }
