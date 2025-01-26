@@ -108,10 +108,13 @@ namespace Roomiebill.Server.Facades
                 throw new Exception($"Error when trying to add expense: user with id {expenseDto.PayerId} does not exist in the system.");
             }
             Expense newExpense = await MapToEntity(expenseDto);
+            await _applicationDbs.UpdateGroupAsync(group);
+            await AddExpenseSpiltsList(newExpense, expenseDto);
+            
             // Add expense to group
             group.AddExpense(newExpense);
 
-            //await _applicationDbs.UpdateGroupAsync(group);
+            await _applicationDbs.UpdateGroupAsync(group);
 
             return newExpense;
         }
@@ -269,10 +272,9 @@ namespace Roomiebill.Server.Facades
         private async Task<Expense> MapToEntity(ExpenseDto dto)
         {
             // Get the next available expense id from db
-            int nextId = await _applicationDbs.GetNextExpenseIdAsync();
+            //int nextId = await _applicationDbs.GetNextExpenseIdAsync();
             Expense e = new Expense
             {
-                Id = nextId,
                 Amount = dto.Amount,
                 Description = dto.Description,
                 IsPaid = dto.IsPaid,
@@ -281,22 +283,26 @@ namespace Roomiebill.Server.Facades
                 GroupId = dto.GroupId,
                 Group = await GetGroupByIdAsync(dto.GroupId)
             };
+            
+            return e;
+        }
+
+        private async Task AddExpenseSpiltsList(Expense e, ExpenseDto dto)
+        {
             List<ExpenseSplit> expenseSplits = new List<ExpenseSplit>();
-            int nextSplitId = await _applicationDbs.GetNextExpenseSplitIdAsync();
+
+            //int nextSplitId = await _applicationDbs.GetNextExpenseSplitIdAsync();
             foreach (ExpenseSplitDto es in dto.ExpenseSplits){
                 expenseSplits.Add(new ExpenseSplit
                     {   
-                        Id = nextSplitId,
-                        ExpenseId = nextId,
+                        ExpenseId = e.Id,
                         Expense = e,
                         UserId = es.UserId,
                         User = await _userFacade.GetUserByIdAsync(es.UserId),
                         Percentage = es.Percentage
                     });
-                nextSplitId++;
             }
             e.ExpenseSplits = expenseSplits;
-            return e;
         }
 
         #endregion
