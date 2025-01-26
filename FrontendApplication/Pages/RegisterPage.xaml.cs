@@ -1,4 +1,3 @@
-using Firebase.Messaging;
 using FrontendApplication.Services;
 using Plugin.Firebase.CloudMessaging;
 
@@ -9,6 +8,7 @@ namespace FrontendApplication.Pages
         private readonly UserServiceApi _userService;
         private readonly GroupServiceApi _groupService;
         private readonly PaymentService _paymentService;
+        private string _verificationCode;
 
         public RegisterPage(UserServiceApi userService, GroupServiceApi groupService, PaymentService paymentService)
         {
@@ -21,10 +21,8 @@ namespace FrontendApplication.Pages
         private async void OnRegisterClicked(object sender, EventArgs e)
         {
             var email = EmailEntry.Text;
-            var username = UsernameEntry.Text;
             var password = PasswordEntry.Text;
             var confirmPassword = PasswordConfirmationEntry.Text;
-            var firebaseToken = await GetUserFirebaseToken();
 
             if (password != confirmPassword)
             {
@@ -40,18 +38,45 @@ namespace FrontendApplication.Pages
 
             try
             {
-                // Try to register the user to the application using api call to the server.
-                var success = await _userService.RegisterUserAsync(email, username, password, firebaseToken);
+                await _userService.VerifyEmailRegister(email);
 
-                await DisplayAlert("Success", "User registered successfully!", "OK");
-
-                // Navigate to LoginPage
-                await Navigation.PushAsync(new LoginPage(_userService, _groupService, _paymentService));
+                // Show verification section
+                VerificationSection.IsVisible = true;
+                await DisplayAlert("Success", "Verification code sent to your email. Please check your inbox.", "OK");
             }
             catch (Exception ex)
             {
-                // If the server returns error, display the error message to the user.
                 await DisplayAlert("Error", ex.Message, "OK");
+            }
+        }
+
+        private async void OnVerifyCodeClicked(object sender, EventArgs e)
+        {
+            var enteredCode = VerificationCodeEntry.Text;
+
+            if (enteredCode == _verificationCode)
+            {
+                try
+                {
+                    // Complete registration process
+                    var email = EmailEntry.Text;
+                    var username = UsernameEntry.Text;
+                    var password = PasswordEntry.Text;
+                    var firebaseToken = await GetUserFirebaseToken();
+
+                    var success = await _userService.RegisterUserAsync(email, username, password, firebaseToken);
+
+                    await DisplayAlert("Success", "Your account has been verified and registered successfully!", "OK");
+                    await Navigation.PushAsync(new LoginPage(_userService, _groupService, _paymentService));
+                }
+                catch (Exception ex)
+                {
+                    await DisplayAlert("Error", ex.Message, "OK");
+                }
+            }
+            else
+            {
+                await DisplayAlert("Error", "Verification code is incorrect. Please try again.", "OK");
             }
         }
 

@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,6 +60,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
 
 app.UseHttpsRedirection();
 
