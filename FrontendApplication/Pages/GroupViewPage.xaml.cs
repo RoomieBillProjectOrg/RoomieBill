@@ -127,36 +127,36 @@ public partial class GroupViewPage : ContentPage
 		var popup = new AddExpensePopup(_group, _currentUser, _groupService);
 		var result = await this.ShowPopupAsync(popup);
 
-		if (result is not null)
-		{
-			var expenseData = (dynamic)result;
-			var amount = expenseData.Amount;
-			var description = expenseData.Description;
-			var expenseSplits = new List<ExpenseSplitModel>();
-			foreach (var member in expenseData.Members)
-			{
-				expenseSplits.Add(new ExpenseSplitModel
-				{
-					UserId = member.Id,
-					Percentage = member.Percentage
-				});
-			}
+		//if (result)
+		// {
+		// 	var expenseData = (dynamic)result;
+		// 	var amount = expenseData.Amount;
+		// 	var description = expenseData.Description;
+		// 	var expenseSplits = new List<ExpenseSplitModel>();
+		// 	foreach (var member in expenseData.Members)
+		// 	{
+		// 		expenseSplits.Add(new ExpenseSplitModel
+		// 		{
+		// 			UserId = member.Id,
+		// 			Percentage = member.Percentage
+		// 		});
+		// 	}
 
-			var expenseModel = new ExpenseModel
-			{
-				PayerId = _currentUser.Id,
-				Amount = amount,
-				Description = description,
-				GroupId = _group.Id,
-				ExpenseSplits = expenseSplits
-			};
-			await DisplayAlert("Expense Added", $"Amount: {amount}\nDescription: {description}", "OK");
-			// Add logic to handle the expense (e.g., save to the database or update UI)
-		}
-		else
-		{
-			await DisplayAlert("Canceled", "No expense was added.", "OK");
-		}
+		// 	var expenseModel = new ExpenseModel
+		// 	{
+		// 		PayerId = _currentUser.Id,
+		// 		Amount = amount,
+		// 		Description = description,
+		// 		GroupId = _group.Id,
+		// 		ExpenseSplits = expenseSplits
+		// 	};
+		// 	await DisplayAlert("Expense Added", $"Amount: {amount}\nDescription: {description}", "OK");
+		// 	// Add logic to handle the expense (e.g., save to the database or update UI)
+		// }
+		// else
+		// {
+		// 	await DisplayAlert("Canceled", "No expense was added.", "OK");
+		// }
 	}
 	public Command<UserModel> OnMemberClicked => new Command<UserModel>((selectedMember) =>
 	{

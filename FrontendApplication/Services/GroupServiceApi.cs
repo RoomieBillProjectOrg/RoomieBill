@@ -1,6 +1,7 @@
 using System;
 using System.Net.Http.Json;
 using FrontendApplication.Models;
+using Newtonsoft.Json;
 
 namespace FrontendApplication.Services;
 
@@ -51,6 +52,12 @@ public class GroupServiceApi
 
     public async Task addExpenseAsync(ExpenseModel expenseDto){
         var response = await _httpClient.PostAsJsonAsync($"{_httpClient.BaseAddress}/Groups/addExpense", expenseDto);
-        response.EnsureSuccessStatusCode();
+        //response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorContent = await response.Content.ReadAsStringAsync();
+            var errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(errorContent);
+            throw new Exception(errorResponse.Message);
+        }
     }
 }
