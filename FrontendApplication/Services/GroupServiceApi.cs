@@ -24,7 +24,7 @@ public class GroupServiceApi
         return groups ?? new List<GroupModel>(); // Return an empty list if the deserialization results in null
     }
 
-//get group by id
+    //get group by id
     public async Task<GroupModel> GetGroup(int groupId)
     {   
         var response = await _httpClient.GetAsync($"{_httpClient.BaseAddress}/Groups/getGroup?id={groupId}");
@@ -50,6 +50,7 @@ public class GroupServiceApi
         return debts ?? new List<DebtModel>(); // Return an empty list if the deserialization results in null
     }
 
+
     public async Task addExpenseAsync(ExpenseModel expenseDto){
         var response = await _httpClient.PostAsJsonAsync($"{_httpClient.BaseAddress}/Groups/addExpense", expenseDto);
         //response.EnsureSuccessStatusCode();
@@ -59,5 +60,15 @@ public class GroupServiceApi
             var errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(errorContent);
             throw new Exception(errorResponse.Message);
         }
+      
+    public async Task InviteUserToGroupByUsernameAsync(InviteToGroupByUsernameDto inviteDto){
+        var response = await _httpClient.PostAsJsonAsync($"{_httpClient.BaseAddress}/Invites/inviteUserToGroupByUsername", inviteDto);
+        
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                var errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(errorContent);
+                throw new Exception(errorResponse.Message);
+            }
     }
 }
