@@ -63,6 +63,36 @@ public partial class GroupViewPage : ContentPage
 			await DisplayAlert("Error", $"Failed to load group details: {ex.Message}", "OK");
 		}
 	}
+
+	private Command OnAddRoomieClicked => new Command(async () =>
+	{
+		// Open a popup for adding a roomie
+		var popup = new AddRoomiePopup(); // Create a popup for adding roomie
+		var result = await this.ShowPopupAsync(popup);
+
+		if (result is null)
+		{
+			await DisplayAlert("Canceled", "No roomie was added.", "OK");
+			return;
+		}
+
+		if (result is not null)
+		{
+			InviteToGroupByUsernameDto invitedUser = new InviteToGroupByUsernameDto{
+				InviterUsername = _currentUser.Username,
+				InvitedUsername = (string)result,
+				GroupId = _group.Id
+			};
+
+			await _groupService.InviteUserToGroupByUsernameAsync(invitedUser);
+
+			await DisplayAlert("Success", $"{(string)result} has been invited to the group!", "OK");
+		}
+		else
+		{
+			await DisplayAlert("Canceled", "No roomie was invited.", "OK");
+		}
+	});
 	private async Task LoadShameTableAsync()
 	{
 		try

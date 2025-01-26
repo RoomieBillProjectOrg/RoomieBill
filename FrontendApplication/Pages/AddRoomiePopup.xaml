@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               x:Class="FrontendApplication.Pages.AddRoomiePopup"
+               BackgroundColor="#FFFFFF"
+               Size="300, 200">
+    <VerticalStackLayout Padding="20" Spacing="15">
+        <Label Text="Invite Roomie"
+               FontSize="22"
+               HorizontalOptions="Center"
+               FontAttributes="Bold" />
+
+        <Entry x:Name="UsernameEntry"
+               Placeholder="Enter Username"
+               BackgroundColor="#EFEFEF"
+               TextColor="Black" />
+
+        <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+            <Button Text="Invite"
+                    BackgroundColor="#00ADB5"
+                    TextColor="White"
+                    Clicked="OnInviteClicked" />
+            <Button Text="Cancel"
+                    BackgroundColor="#FF5722"
+                    TextColor="White"
+                    Clicked="OnCancelClicked" />
+        </HorizontalStackLayout>
+    </VerticalStackLayout>
+</toolkit:Popup>

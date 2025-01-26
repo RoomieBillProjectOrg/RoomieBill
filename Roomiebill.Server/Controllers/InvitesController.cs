@@ -32,5 +32,19 @@ namespace Roomiebill.Server.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
+
+        [HttpPost("inviteUserToGroupByUsername")]
+        public async Task<IActionResult> InviteToGroupByUsername([FromBody] InviteToGroupByUsernameDto inviteDetails)
+        {
+            try
+            {
+                await _inviteService.InviteToGroupByUsername(inviteDetails);
+                return Ok(new { Message = "Invite sent successfully" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
     }
 }
