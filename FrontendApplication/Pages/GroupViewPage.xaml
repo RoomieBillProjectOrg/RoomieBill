@@ -24,6 +24,16 @@
                    FontAttributes="Bold"
                    Padding="0,10,0,5" />
 
+            <!-- Add Roomie Button -->
+                <Button Text="Add Roomie"
+                        BackgroundColor="#00ADB5"
+                        TextColor="White"
+                        FontSize="18"
+                        CornerRadius="20"
+                        HorizontalOptions="Center"
+                        WidthRequest="180"
+                        Clicked="OnAddRoomieClicked" />
+                        
             <!-- Grid for Group Members -->
             <CollectionView ItemsSource="{Binding Members}"
                             HorizontalOptions="FillAndExpand">
