@@ -117,7 +117,7 @@ public partial class AddExpensePopup : Popup
             await _groupService.addExpenseAsync(expense);
             Close("Expense added successfuly!");
         }catch(Exception ex){
-            Close($"Expense add failed: {ex.Message}");
+            Close($"Error: {ex}");
         }
     });
 
@@ -125,7 +125,7 @@ public partial class AddExpensePopup : Popup
     // Command for canceling
     public Command CancelCommand => new Command(() =>
     {
-        Close(null); // Dismiss the popup without returning data
+        Close("Expense add canceled"); // Dismiss the popup without returning data
     });
 }
 
