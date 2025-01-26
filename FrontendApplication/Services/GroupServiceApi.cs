@@ -1,6 +1,7 @@
 using System;
 using System.Net.Http.Json;
 using FrontendApplication.Models;
+using Newtonsoft.Json;
 
 namespace FrontendApplication.Services;
 
@@ -23,7 +24,7 @@ public class GroupServiceApi
         return groups ?? new List<GroupModel>(); // Return an empty list if the deserialization results in null
     }
 
-//get group by id
+    //get group by id
     public async Task<GroupModel> GetGroup(int groupId)
     {   
         var response = await _httpClient.GetAsync($"{_httpClient.BaseAddress}/Groups/getGroup?id={groupId}");
@@ -47,5 +48,16 @@ public class GroupServiceApi
         
         var debts = await response.Content.ReadFromJsonAsync<List<DebtModel>>();
         return debts ?? new List<DebtModel>(); // Return an empty list if the deserialization results in null
+    }
+
+    public async Task InviteUserToGroupByUsernameAsync(InviteToGroupByUsernameDto inviteDto){
+        var response = await _httpClient.PostAsJsonAsync($"{_httpClient.BaseAddress}/Invites/inviteUserToGroupByUsername", inviteDto);
+        
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                var errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(errorContent);
+                throw new Exception(errorResponse.Message);
+            }
     }
 }
