@@ -64,7 +64,7 @@ public partial class GroupViewPage : ContentPage
 		}
 	}
 
-	private Command OnAddRoomieClicked => new Command(async () =>
+	private async void OnAddRoomieClicked(object sender, EventArgs e)
 	{
 		// Open a popup for adding a roomie
 		var popup = new AddRoomiePopup(); // Create a popup for adding roomie
@@ -84,15 +84,22 @@ public partial class GroupViewPage : ContentPage
 				GroupId = _group.Id
 			};
 
-			await _groupService.InviteUserToGroupByUsernameAsync(invitedUser);
-
-			await DisplayAlert("Success", $"{(string)result} has been invited to the group!", "OK");
+			try
+			{
+				await _groupService.InviteUserToGroupByUsernameAsync(invitedUser);
+				await DisplayAlert("Success", $"{(string)result} has been invited to the group!", "OK");
+			}
+			catch (Exception ex)
+			{
+				await DisplayAlert("Error", $"Failed to invite roomie: {ex.Message}", "OK");
+				
+			}
 		}
 		else
 		{
 			await DisplayAlert("Canceled", "No roomie was invited.", "OK");
 		}
-	});
+	}
 	private async Task LoadShameTableAsync()
 	{
 		try
