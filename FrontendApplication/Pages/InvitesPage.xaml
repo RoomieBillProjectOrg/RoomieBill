@@ -2,18 +2,38 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="FrontendApplication.Pages.InvitesPage"
-             Title="InvitesPage">
-    <StackLayout Padding="20">
-        <CollectionView ItemsSource="{Binding Invitations}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Grid ColumnDefinitions="*,Auto,Auto" Padding="10" Margin="5" BackgroundColor="LightGray">
-                        <Label Grid.Column="0" Text="{Binding Name}" VerticalOptions="Center" />
-                        <Button Grid.Column="1" Text="✓" BackgroundColor="Green" TextColor="White" Command="{Binding AcceptCommand}" CommandParameter="{Binding}" />
-                        <Button Grid.Column="2" Text="✗" BackgroundColor="Red" TextColor="White" Command="{Binding RejectCommand}" CommandParameter="{Binding}" />
-                    </Grid>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-    </StackLayout>
+             Title="Invites"
+             BackgroundColor="Black">
+
+    <ContentPage.Content>
+        <ScrollView Padding="20">
+            <StackLayout>
+                <!-- Title Section -->
+                <Label Text="Invitations" 
+                       FontSize="24"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"
+                       Margin="0,0,0,10"
+                       TextColor="White"/>
+
+                <!-- List of Invitations -->
+                <CollectionView ItemsSource="{Binding Invitations}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame Padding="10" Margin="5" BackgroundColor="White" BorderColor="LightGray" HasShadow="True">
+                                <Grid ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto" Padding="10">
+                                    <Label Grid.Column="0" Text="{Binding Group.GroupName}" VerticalOptions="Center" FontSize="18" TextColor="Black"/>
+                                    <!-- Set label text color -->
+                                    <StackLayout Orientation="Horizontal" HorizontalOptions="EndAndExpand" VerticalOptions="Center">
+                                        <Button Text="✓" BackgroundColor="Green" TextColor="White" Command="{Binding AcceptCommand}" CommandParameter="{Binding}" WidthRequest="40" HeightRequest="40"/>
+                                        <Button Text="✗" BackgroundColor="Red" TextColor="White" Command="{Binding RejectCommand}" CommandParameter="{Binding}" WidthRequest="40" HeightRequest="40" Margin="10,0,0,0"/>
+                                    </StackLayout>
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
 </ContentPage>

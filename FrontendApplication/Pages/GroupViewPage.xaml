@@ -36,6 +36,7 @@
                     Clicked="OnAddRoomieClicked" />
 
             <!-- Grid for Group Members -->
+            <!-- Group Members List -->
             <CollectionView ItemsSource="{Binding Members}"
                             HorizontalOptions="FillAndExpand">
                 <CollectionView.ItemsLayout>
@@ -67,6 +68,7 @@
                    Padding="0,20,0,5" />
 
             <!-- Grid for Shame Table -->
+            <!-- Shame Table Grid -->
             <CollectionView ItemsSource="{Binding ShameTable}"
                             HorizontalOptions="FillAndExpand">
                 <CollectionView.ItemsLayout>
@@ -91,6 +93,9 @@
                                        TextColor="#FFFFFF" />
                                 <Label Text="{Binding amount, StringFormat='{0:C}'}"
                                        FontSize="14"
+                                       TextColor="#222831" />
+                                <Label Text="{Binding amount, StringFormat='{0:C}'}"
+                                       FontSize="16"
                                        TextColor="#4CAF50"
                                        FontAttributes="Bold" />
                             </VerticalStackLayout>
@@ -112,7 +117,7 @@
                    FontAttributes="Bold"
                    Padding="0,20,0,5" />
 
-            <!-- Grid for Your Owns -->
+            <!-- Your Owns Grid -->
             <CollectionView ItemsSource="{Binding YourOwnsTable}"
                             HorizontalOptions="FillAndExpand">
                 <CollectionView.ItemsLayout>
@@ -137,6 +142,9 @@
                                        TextColor="#FFFFFF" />
                                 <Label Text="{Binding amount, StringFormat='{0:C}'}"
                                        FontSize="14"
+                                       TextColor="#222831" />
+                                <Label Text="{Binding amount, StringFormat='{0:C}'}"
+                                       FontSize="16"
                                        TextColor="#FF5722"
                                        FontAttributes="Bold" />
                             </VerticalStackLayout>
