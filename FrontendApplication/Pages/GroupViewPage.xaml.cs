@@ -143,12 +143,11 @@ public partial class GroupViewPage : ContentPage
 	{
 		DisplayAlert("Member Clicked", $"{member.Username} button clicked", "OK");
 	});
-
+	
 	private async void OnViewTransactionClicked(object sender, EventArgs e)
 	{
-		// Handle the View Transaction button click
-		await DisplayAlert("View Transaction", "View Transaction button clicked", "OK");
-		// Navigate to the transaction page or perform other actions
+		var popup = new ViewTransactionsPopup(_group, _groupService);
+		await this.ShowPopupAsync(popup);
 	}
 
 	//add a new pop up window to add an expense
@@ -198,6 +197,7 @@ public partial class GroupViewPage : ContentPage
 			await Navigation.PushAsync(new PaymentPage(selectedItem, _group, _paymentService));
 		}
 	});
+	
 
 	private async Task RefreshPageDataAsync()
 	{
