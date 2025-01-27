@@ -4,11 +4,11 @@
              xmlns:popup="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="FrontendApplication.Popups.ViewTransactionsPopup">
 
-    <Frame BackgroundColor="#E0F7FA"
-           CornerRadius="20"
+    <Frame BackgroundColor="#FFFFFF"
+           CornerRadius="25"
            Padding="20"
-           WidthRequest="350"
-           HeightRequest="500"
+           WidthRequest="380"
+           HeightRequest="600"
            VerticalOptions="Center"
            HorizontalOptions="Center"
            HasShadow="True">
@@ -16,35 +16,41 @@
         <Grid RowDefinitions="*, Auto">
             <!-- Scrollable Content -->
             <ScrollView Grid.Row="0">
-                <VerticalStackLayout Spacing="10">
+                <VerticalStackLayout Spacing="15" Padding="0,10,0,10">
                     <!-- Title -->
-                    <Label Text="Transactions"
-                           FontSize="22"
+                    <Label Text="Transaction History"
+                           FontSize="28"
                            HorizontalOptions="Center"
                            FontAttributes="Bold"
-                           TextColor="#00695C" />
+                           TextColor="#37474F"
+                           Margin="0,0,0,15" />
 
                     <!-- List of Transactions -->
                     <CollectionView ItemsSource="{Binding Transactions}">
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Vertical" ItemSpacing="15" />
+                        </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <Frame BorderColor="#00695C"
-                                       Padding="10"
-                                       Margin="5"
-                                       CornerRadius="12"
-                                       HasShadow="True"
-                                       BackgroundColor="#FFFFFF">
-                                    <VerticalStackLayout>
+                                <Frame BorderColor="#E0E0E0"
+                                       Padding="15"
+                                       Margin="0,0,0,10"
+                                       CornerRadius="20"
+                                       HasShadow="False"
+                                       BackgroundColor="#F5F5F5">
+                                    <VerticalStackLayout Spacing="5">
                                         <Label Text="{Binding Description}"
-                                               FontSize="16"
-                                               TextColor="#333" />
+                                               FontSize="18"
+                                               FontAttributes="Bold"
+                                               TextColor="#1E88E5" />
                                         <Label Text="{Binding Amount, StringFormat='Amount: {0:C}'}"
-                                               FontSize="14"
-                                               TextColor="#00695C" />
+                                               FontSize="16"
+                                               TextColor="#43A047"
+                                               FontAttributes="Bold" />
                                         <!-- Dynamically resolve Payer's name -->
                                         <Label Text="{Binding PayerName, StringFormat='Paid by: {0}'}"
                                                FontSize="14"
-                                               TextColor="#00695C" />
+                                               TextColor="#757575" />
                                     </VerticalStackLayout>
                                 </Frame>
                             </DataTemplate>
@@ -57,12 +63,15 @@
             <Button Grid.Row="1"
                     Text="CLOSE"
                     Command="{Binding CloseCommand}"
-                    BackgroundColor="#B0BEC5"
+                    BackgroundColor="#FF7043"
                     TextColor="White"
-                    CornerRadius="20"
+                    CornerRadius="30"
                     FontSize="18"
+                    FontAttributes="Bold"
                     HorizontalOptions="Center"
-                    Padding="10" />
+                    WidthRequest="200"
+                    HeightRequest="50"
+                    Margin="0,15,0,0" />
         </Grid>
     </Frame>
 </popup:Popup>
