@@ -175,13 +175,18 @@ public partial class GroupViewPage : ContentPage
 		}
 	});
 
-	public Command<DebtModel> OnShameTableItemTapped => new Command<DebtModel>((selectedItem) =>
+	public Command<DebtModel> OnShameTableItemTapped => new Command<DebtModel>(async (selectedItem) =>
 	{
 		if (selectedItem != null)
 		{
 			// Example action: Show an alert with the user ID
-			DisplayAlert("Someone owns you money :)", $"{selectedItem.debtor.Username} owns you money. Lets snooze!", "OK");
-
+			SnoozeToPayDto snoozeToPayDto = new SnoozeToPayDto{
+				snoozeToUsername = selectedItem.debtor.Username,
+				snoozeInfo = $"{selectedItem.creditor.Username} wants you to pay {selectedItem.amount}$."
+			};
+			await _groupService.SnoozeMember(snoozeToPayDto);
+			// await DisplayAlert("Someone owns you money :)", $"{selectedItem.debtor.Username} owns you money. Lets snooze!", "OK");
+			await DisplayAlert("Snoozed successfully", $"{selectedItem.debtor.Username} snoozed!", "OK");
 			// Add your logic here (e.g., navigation or additional functionality)
 		}
 	});
