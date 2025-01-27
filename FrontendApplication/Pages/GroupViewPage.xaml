@@ -158,7 +158,7 @@
                         CornerRadius="20"
                         WidthRequest="180"
                         HeightRequest="50"
-                        Command="{Binding OnViewTransactionClicked}" />
+                        Clicked="OnViewTransactionClicked" />
                 <Button Text="Add Expense"
                         BackgroundColor="#00ADB5"
                         TextColor="White"
