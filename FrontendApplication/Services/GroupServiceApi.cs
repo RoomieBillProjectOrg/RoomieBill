@@ -60,6 +60,7 @@ public class GroupServiceApi
             var errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(errorContent);
             throw new Exception(errorResponse.Message);
         }
+    }
       
     public async Task InviteUserToGroupByUsernameAsync(InviteToGroupByUsernameDto inviteDto){
         var response = await _httpClient.PostAsJsonAsync($"{_httpClient.BaseAddress}/Invites/inviteUserToGroupByUsername", inviteDto);
