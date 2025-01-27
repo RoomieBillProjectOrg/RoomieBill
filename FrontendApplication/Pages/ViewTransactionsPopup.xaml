@@ -4,7 +4,7 @@
              xmlns:popup="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="FrontendApplication.Popups.ViewTransactionsPopup">
 
-    <Frame BackgroundColor="#FFFFFF"
+    <Frame BackgroundColor="#1C1C1C"
            CornerRadius="25"
            Padding="20"
            WidthRequest="380"
@@ -16,14 +16,14 @@
         <Grid RowDefinitions="*, Auto">
             <!-- Scrollable Content -->
             <ScrollView Grid.Row="0">
-                <VerticalStackLayout Spacing="15" Padding="0,10,0,10">
+                <VerticalStackLayout Spacing="20" Padding="0,10,0,10">
                     <!-- Title -->
                     <Label Text="Transaction History"
-                           FontSize="28"
+                           FontSize="26"
                            HorizontalOptions="Center"
                            FontAttributes="Bold"
-                           TextColor="#37474F"
-                           Margin="0,0,0,15" />
+                           TextColor="#FFFFFF"
+                           Margin="0,0,0,20" />
 
                     <!-- List of Transactions -->
                     <CollectionView ItemsSource="{Binding Transactions}">
@@ -32,25 +32,24 @@
                         </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <Frame BorderColor="#E0E0E0"
+                                <Frame BorderColor="#2E2E2E"
                                        Padding="15"
                                        Margin="0,0,0,10"
-                                       CornerRadius="20"
+                                       CornerRadius="15"
                                        HasShadow="False"
-                                       BackgroundColor="#F5F5F5">
-                                    <VerticalStackLayout Spacing="5">
+                                       BackgroundColor="#2D2D2D">
+                                    <VerticalStackLayout Spacing="8">
                                         <Label Text="{Binding Description}"
                                                FontSize="18"
                                                FontAttributes="Bold"
-                                               TextColor="#1E88E5" />
+                                               TextColor="#FFFFFF" />
                                         <Label Text="{Binding Amount, StringFormat='Amount: {0:C}'}"
                                                FontSize="16"
                                                TextColor="#43A047"
                                                FontAttributes="Bold" />
-                                        <!-- Dynamically resolve Payer's name -->
                                         <Label Text="{Binding PayerName, StringFormat='Paid by: {0}'}"
                                                FontSize="14"
-                                               TextColor="#757575" />
+                                               TextColor="#A9A9A9" />
                                     </VerticalStackLayout>
                                 </Frame>
                             </DataTemplate>
@@ -63,9 +62,9 @@
             <Button Grid.Row="1"
                     Text="CLOSE"
                     Command="{Binding CloseCommand}"
-                    BackgroundColor="#FF7043"
+                    BackgroundColor="#FF5722"
                     TextColor="White"
-                    CornerRadius="30"
+                    CornerRadius="25"
                     FontSize="18"
                     FontAttributes="Bold"
                     HorizontalOptions="Center"
