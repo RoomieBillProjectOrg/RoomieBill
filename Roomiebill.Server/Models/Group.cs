@@ -37,7 +37,7 @@ namespace Roomiebill.Server.Models
         public ExpenseHandler expenseHandler { get; set; }
 
         [NotMapped]
-        private int[] _debtArray; // Backing field for the serialized DebtArray
+        private int[] _debtArray = new int[0]; // Backing field for the serialized DebtArray
 
         public Group()
         {
@@ -62,8 +62,9 @@ namespace Roomiebill.Server.Models
             if (!Members.Contains(groupAdmin))
             {
                 Members.Add(groupAdmin); // Add the admin to the members list
+                // AddMember(groupAdmin);
             }
-
+            
             InitializeCollections();
             InitializeDebtArray();
         }
