@@ -267,6 +267,17 @@ namespace Roomiebill.Server.Facades
             _logger.LogInformation($"User {debtor.Username} returned his debt of {amount} NIS to {creditor.Username} successfully.");
         }
 
+        public async Task snoozeToUsernameAsync(string username, string snoozeInfo)
+        {
+            User userToSnooze = await _userFacade.GetUserByUsernameAsync(username);
+            if (userToSnooze == null)
+            {
+                _logger.LogError($"Error when trying to snooze user: user with username {username} does not exist.");
+                throw new Exception($"User with username {username} does not exist.");
+            }
+            NotificationsHandle.SendNotificationByTokenAsync("Pay Reminder", snoozeInfo, userToSnooze.FirebaseToken);
+        }
+
         #region Help functions
 
         private async Task<Expense> MapToEntity(ExpenseDto dto)

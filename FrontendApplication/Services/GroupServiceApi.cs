@@ -81,4 +81,14 @@ public class GroupServiceApi
         var expenses = await response.Content.ReadFromJsonAsync<List<ExpenseModel>>();
         return expenses ?? new List<ExpenseModel>(); // Return an empty list if the deserialization results in null
     }
+
+    public async Task SnoozeMember(SnoozeToPayDto snoozeInfo){
+        var response = await _httpClient.PostAsJsonAsync($"{_httpClient.BaseAddress}/Groups/snoozeMemberToPay", snoozeInfo);
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorContent = await response.Content.ReadAsStringAsync();
+            var errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(errorContent);
+            throw new Exception(errorResponse.Message);
+        }
+    }
 }
