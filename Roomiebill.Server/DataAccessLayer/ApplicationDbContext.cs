@@ -102,7 +102,7 @@ namespace Roomiebill.Server.DataAccessLayer
         {
             try
             {
-                //Groups.Update(group);
+                Groups.Update(group);
                 await SaveChangesAsync();
             }
             catch (Exception ex)
@@ -197,6 +197,16 @@ namespace Roomiebill.Server.DataAccessLayer
             .Include(i => i.Invited)
             .Where(i => i.Invited.Username == username)
             .ToListAsync();
+        }
+
+        public async Task<int> GetNextExpenseIdAsync(){
+            int maxId = await Expenses.MaxAsync(e => (int?)e.Id) ?? 0;
+            return maxId + 1;
+        }
+
+        public async Task<int> GetNextExpenseSplitIdAsync(){
+            int maxId = await ExpenseSplits.MaxAsync(e => (int?)e.Id) ?? 0;
+            return maxId + 1;
         }
     }
 }

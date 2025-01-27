@@ -17,7 +17,7 @@ namespace Roomiebill.Server.Models
         public User Admin { get; set; }
 
         public List<User> Members { get; set; } = new List<User>(); // Members of the group
-
+        
         public ICollection<Expense> Expenses { get; set; } = new List<Expense>(); // Expenses of the group
 
         [Column("DebtArray")] // Save as JSON string in the database

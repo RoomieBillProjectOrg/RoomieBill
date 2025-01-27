@@ -6,7 +6,6 @@ namespace Roomiebill.Server.Models
 {
     public class ExpenseSplit
     {
-        [Key]
         public int Id { get; set; }
 
         [Required]
@@ -19,6 +18,7 @@ namespace Roomiebill.Server.Models
         [Required]
         public int UserId { get; set; } // Foreign Key to User
         [ForeignKey("UserId")]
+        [JsonIgnore]
         public User? User { get; set; } // Navigation Property
 
         [Required]

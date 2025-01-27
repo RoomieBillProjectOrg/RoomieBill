@@ -42,11 +42,7 @@ public partial class GroupViewPage : ContentPage
 	protected override async void OnAppearing()
 	{
 		base.OnAppearing();
-		await LoadGroupMembersAsync();
-		await LoadShameTableAsync();
-		await LoadYourOwnsTableAsync();
-		OnPropertyChanged(nameof(IsShameTableEmpty));
-		OnPropertyChanged(nameof(IsYourOwnsTableEmpty));
+		await RefreshPageDataAsync();
 	}
 	private async Task LoadGroupMembersAsync()
 	{
@@ -63,23 +59,57 @@ public partial class GroupViewPage : ContentPage
 			await DisplayAlert("Error", $"Failed to load group details: {ex.Message}", "OK");
 		}
 	}
+
+	private async void OnAddRoomieClicked(object sender, EventArgs e)
+	{
+		// Open a popup for adding a roomie
+		var popup = new AddRoomiePopup(); // Create a popup for adding roomie
+		var result = await this.ShowPopupAsync(popup);
+
+		if (result is null)
+		{
+			await DisplayAlert("Canceled", "No roomie was added.", "OK");
+			return;
+		}
+
+		if (result is not null)
+		{
+			InviteToGroupByUsernameDto invitedUser = new InviteToGroupByUsernameDto{
+				InviterUsername = _currentUser.Username,
+				InvitedUsername = (string)result,
+				GroupId = _group.Id
+			};
+
+			try
+			{
+				await _groupService.InviteUserToGroupByUsernameAsync(invitedUser);
+				await DisplayAlert("Success", $"{(string)result} has been invited to the group!", "OK");
+			}
+			catch (Exception ex)
+			{
+				await DisplayAlert("Error", $"Failed to invite roomie: {ex.Message}", "OK");
+				
+			}
+		}
+		else
+		{
+			await DisplayAlert("Canceled", "No roomie was invited.", "OK");
+		}
+	}
 	private async Task LoadShameTableAsync()
 	{
 		try
 		{
-			if (ShameTable.Count > 0){
-				// Clear existing data
-				ShameTable.Clear();
-			}else{
-				// Fetch debts for the current user
-				var debts = await _groupService.GetDebtsForUserAsync(_group.Id, _currentUser.Id);
+			ShameTable.Clear();
+			// Fetch debts for the current user
+			var debts = await _groupService.GetDebtsForUserAsync(_group.Id, _currentUser.Id);
 
-				// Populate the ShameTable collection
-				foreach (var debt in debts)
-				{
-					ShameTable.Add(debt);
-				}
+			// Populate the ShameTable collection
+			foreach (var debt in debts)
+			{
+				ShameTable.Add(debt);
 			}
+			
 		}
 		catch (Exception ex)
 		{
@@ -113,49 +143,22 @@ public partial class GroupViewPage : ContentPage
 	{
 		DisplayAlert("Member Clicked", $"{member.Username} button clicked", "OK");
 	});
-
+	
 	private async void OnViewTransactionClicked(object sender, EventArgs e)
 	{
-		// Handle the View Transaction button click
-		await DisplayAlert("View Transaction", "View Transaction button clicked", "OK");
-		// Navigate to the transaction page or perform other actions
+		var popup = new ViewTransactionsPopup(_group, _groupService);
+		await this.ShowPopupAsync(popup);
 	}
 
 	//add a new pop up window to add an expense
 	private async void OnAddExpenseClicked(object sender, EventArgs e)
 	{
-		var popup = new AddExpensePopup();
-		var result = await this.ShowPopupAsync(popup);
-
-		if (result is not null)
-		{
-			var expenseData = (dynamic)result;
-			var amount = expenseData.Amount;
-			var description = expenseData.Description;
-			var expenseSplits = new List<ExpenseSplitModel>();
-			foreach (var member in expenseData.Members)
-			{
-				expenseSplits.Add(new ExpenseSplitModel
-				{
-					UserId = member.Id,
-					Percentage = member.Percentage
-				});
-			}
-
-			var expenseModel = new ExpenseModel
-			{
-				PayerId = _currentUser.Id,
-				Amount = amount,
-				Description = description,
-				GroupId = _group.Id,
-				ExpenseSplits = expenseSplits
-			};
-			await DisplayAlert("Expense Added", $"Amount: {amount}\nDescription: {description}", "OK");
-			// Add logic to handle the expense (e.g., save to the database or update UI)
-		}
-		else
-		{
-			await DisplayAlert("Canceled", "No expense was added.", "OK");
+		var popup = new AddExpensePopup(_group, _currentUser, _groupService);
+		var res = await this.ShowPopupAsync(popup);
+		await DisplayAlert("Expense", (string)res, "OK");
+		if (res is string message && !message.StartsWith("Error")){
+			_group = await _groupService.GetGroup(_group.Id);
+			await RefreshPageDataAsync();
 		}
 	}
 	public Command<UserModel> OnMemberClicked => new Command<UserModel>((selectedMember) =>
@@ -194,6 +197,16 @@ public partial class GroupViewPage : ContentPage
 			await Navigation.PushAsync(new PaymentPage(selectedItem, _group, _paymentService));
 		}
 	});
+	
+
+	private async Task RefreshPageDataAsync()
+	{
+		await LoadGroupMembersAsync();
+		await LoadShameTableAsync();
+		await LoadYourOwnsTableAsync();
+		OnPropertyChanged(nameof(IsShameTableEmpty));
+		OnPropertyChanged(nameof(IsYourOwnsTableEmpty));
+	}
 
 
 }
