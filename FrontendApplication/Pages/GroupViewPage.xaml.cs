@@ -42,11 +42,7 @@ public partial class GroupViewPage : ContentPage
 	protected override async void OnAppearing()
 	{
 		base.OnAppearing();
-		await LoadGroupMembersAsync();
-		await LoadShameTableAsync();
-		await LoadYourOwnsTableAsync();
-		OnPropertyChanged(nameof(IsShameTableEmpty));
-		OnPropertyChanged(nameof(IsYourOwnsTableEmpty));
+		await RefreshPageDataAsync();
 	}
 	private async Task LoadGroupMembersAsync()
 	{
@@ -104,19 +100,16 @@ public partial class GroupViewPage : ContentPage
 	{
 		try
 		{
-			if (ShameTable.Count > 0){
-				// Clear existing data
-				ShameTable.Clear();
-			}else{
-				// Fetch debts for the current user
-				var debts = await _groupService.GetDebtsForUserAsync(_group.Id, _currentUser.Id);
+			ShameTable.Clear();
+			// Fetch debts for the current user
+			var debts = await _groupService.GetDebtsForUserAsync(_group.Id, _currentUser.Id);
 
-				// Populate the ShameTable collection
-				foreach (var debt in debts)
-				{
-					ShameTable.Add(debt);
-				}
+			// Populate the ShameTable collection
+			foreach (var debt in debts)
+			{
+				ShameTable.Add(debt);
 			}
+			
 		}
 		catch (Exception ex)
 		{
@@ -161,38 +154,12 @@ public partial class GroupViewPage : ContentPage
 	//add a new pop up window to add an expense
 	private async void OnAddExpenseClicked(object sender, EventArgs e)
 	{
-		var popup = new AddExpensePopup();
-		var result = await this.ShowPopupAsync(popup);
-
-		if (result is not null)
-		{
-			var expenseData = (dynamic)result;
-			var amount = expenseData.Amount;
-			var description = expenseData.Description;
-			var expenseSplits = new List<ExpenseSplitModel>();
-			foreach (var member in expenseData.Members)
-			{
-				expenseSplits.Add(new ExpenseSplitModel
-				{
-					UserId = member.Id,
-					Percentage = member.Percentage
-				});
-			}
-
-			var expenseModel = new ExpenseModel
-			{
-				PayerId = _currentUser.Id,
-				Amount = amount,
-				Description = description,
-				GroupId = _group.Id,
-				ExpenseSplits = expenseSplits
-			};
-			await DisplayAlert("Expense Added", $"Amount: {amount}\nDescription: {description}", "OK");
-			// Add logic to handle the expense (e.g., save to the database or update UI)
-		}
-		else
-		{
-			await DisplayAlert("Canceled", "No expense was added.", "OK");
+		var popup = new AddExpensePopup(_group, _currentUser, _groupService);
+		var res = await this.ShowPopupAsync(popup);
+		await DisplayAlert("Expense", (string)res, "OK");
+		if (res is string message && !message.StartsWith("Error")){
+			_group = await _groupService.GetGroup(_group.Id);
+			await RefreshPageDataAsync();
 		}
 	}
 	public Command<UserModel> OnMemberClicked => new Command<UserModel>((selectedMember) =>
@@ -231,6 +198,15 @@ public partial class GroupViewPage : ContentPage
 			await Navigation.PushAsync(new PaymentPage(selectedItem, _group, _paymentService));
 		}
 	});
+
+	private async Task RefreshPageDataAsync()
+	{
+		await LoadGroupMembersAsync();
+		await LoadShameTableAsync();
+		await LoadYourOwnsTableAsync();
+		OnPropertyChanged(nameof(IsShameTableEmpty));
+		OnPropertyChanged(nameof(IsYourOwnsTableEmpty));
+	}
 
 
 }

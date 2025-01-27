@@ -58,7 +58,7 @@
             <!-- The Shame Table Section -->
             <Label Text="The Shame Table"
                    FontSize="22"
-                   TextColor="#FF5722"
+                   TextColor="#4CAF50"
                    FontAttributes="Bold"
                    Padding="0,20,0,5" />
 
@@ -70,7 +70,7 @@
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Frame BorderColor="#FF5722"
+                        <Frame BorderColor="#4CAF50"
                             Padding="10"
                             Margin="5"
                             CornerRadius="12"
@@ -82,12 +82,12 @@
                                     CommandParameter="{Binding .}" />
                             </Frame.GestureRecognizers>
                             <VerticalStackLayout>
-                                <Label Text="{Binding OwedByUserName, StringFormat='{0} owes you'}"
+                                <Label Text="{Binding debtor.Username, StringFormat='{0} owes you'}"
                                     FontSize="18"
                                     TextColor="#222831" />
-                                <Label Text="{Binding Amount, StringFormat='{0:C}'}"
+                                <Label Text="{Binding amount, StringFormat='{0:C}'}"
                                     FontSize="16"
-                                    TextColor="#FF5722"
+                                    TextColor="#4CAF50"
                                     FontAttributes="Bold" />
                             </VerticalStackLayout>
                         </Frame>
@@ -104,7 +104,7 @@
             <!-- Your Owns Section -->
             <Label Text="Your Owns"
                    FontSize="22"
-                   TextColor="#4CAF50"
+                   TextColor="#FF5722"
                    FontAttributes="Bold"
                    Padding="0,20,0,5" />
 
@@ -116,7 +116,7 @@
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Frame BorderColor="#4CAF50"
+                        <Frame BorderColor="#FF5722"
                             Padding="10"
                             Margin="5"
                             CornerRadius="12"
@@ -133,7 +133,7 @@
                                     TextColor="#222831" />
                                 <Label Text="{Binding amount, StringFormat='{0:C}'}"
                                     FontSize="16"
-                                    TextColor="#4CAF50"
+                                    TextColor="#FF5722"
                                     FontAttributes="Bold" />
                             </VerticalStackLayout>
                         </Frame>
