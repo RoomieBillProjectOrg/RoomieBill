@@ -170,6 +170,12 @@ namespace Roomiebill.Server.Facades
         public async Task AddMemberToGroupAsync(User user, Group group)
         {
             // Add the user to the group
+            group = await _applicationDbs.GetGroupByIdAsync(group.Id);
+            if (group == null)
+            {
+                _logger.LogError($"Error when trying to add member: group with id {group.Id} does not exist.");
+                throw new Exception($"Group with id {group.Id} does not exist.");
+            }
             group.AddMember(user);
             await _applicationDbs.UpdateGroupAsync(group);
 
