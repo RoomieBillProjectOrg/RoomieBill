@@ -4,14 +4,14 @@
              xmlns:popup="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="FrontendApplication.Popups.AddExpensePopup">
 
-    <Frame BackgroundColor="#E0F7FA"
-       CornerRadius="20"
-       Padding="20"
-       WidthRequest="350"
-       HeightRequest="650"
-       VerticalOptions="Center"
-       HorizontalOptions="Center"
-       HasShadow="True">
+    <Frame BackgroundColor="#2A2A2A"
+           CornerRadius="20"
+           Padding="20"
+           WidthRequest="350"
+           HeightRequest="650"
+           VerticalOptions="Center"
+           HorizontalOptions="Center"
+           HasShadow="True">
 
         <Grid RowDefinitions="*, Auto">
             <!-- Scrollable Content -->
@@ -22,20 +22,20 @@
                         FontSize="22"
                         HorizontalOptions="Center"
                         FontAttributes="Bold"
-                        TextColor="#00695C" />
+                        TextColor="White" />
 
                     <!-- Amount Entry -->
                     <VerticalStackLayout>
                         <Label Text="Amount:"
                             FontSize="16"
-                            TextColor="#00695C"
+                            TextColor="White"
                             FontAttributes="Bold" />
                         <Entry x:Name="AmountEntry"
                             Placeholder="Enter amount"
                             Keyboard="Numeric"
                             FontSize="16"
-                            BackgroundColor="#FFFFFF"
-                            TextColor="#333"
+                            BackgroundColor="#3E3E3E"
+                            TextColor="White"
                             HeightRequest="40"
                             Margin="0,5,0,0" />
                     </VerticalStackLayout>
@@ -44,13 +44,13 @@
                     <VerticalStackLayout>
                         <Label Text="Description:"
                             FontSize="16"
-                            TextColor="#00695C"
+                            TextColor="White"
                             FontAttributes="Bold" />
                         <Entry x:Name="DescriptionEntry"
                             Placeholder="Enter description"
                             FontSize="16"
-                            BackgroundColor="#FFFFFF"
-                            TextColor="#333"
+                            BackgroundColor="#3E3E3E"
+                            TextColor="White"
                             HeightRequest="40"
                             Margin="0,5,0,0" />
                     </VerticalStackLayout>
@@ -59,13 +59,13 @@
                     <VerticalStackLayout>
                         <Label Text="Divide:"
                             FontSize="16"
-                            TextColor="#00695C"
+                            TextColor="White"
                             FontAttributes="Bold" />
                         <Picker x:Name="DividePicker"
                                 Title="Select division type"
                                 FontSize="16"
-                                BackgroundColor="#FFFFFF"
-                                TextColor="#333"
+                                BackgroundColor="#3E3E3E"
+                                TextColor="White"
                                 HeightRequest="40"
                                 SelectedIndexChanged="OnDividePickerChanged">
                             <Picker.Items>
@@ -79,15 +79,15 @@
                     <VerticalStackLayout x:Name="CustomPercentageLayout" IsVisible="False">
                         <Label Text="Custom Percentages:"
                             FontSize="16"
-                            TextColor="#00695C"
+                            TextColor="White"
                             FontAttributes="Bold" />
                         <CollectionView ItemsSource="{Binding Members}">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
                                     <Grid Padding="10" ColumnDefinitions="*, Auto">
-                                        <Label Text="{Binding Member.Username}" FontSize="16" TextColor="#333" />
+                                        <Label Text="{Binding Member.Username}" FontSize="16" TextColor="White" />
                                         <Entry Placeholder="%" Keyboard="Numeric" WidthRequest="50"
-                                            Text="{Binding CustomPercentage}" BackgroundColor="#FFFFFF" />
+                                            Text="{Binding CustomPercentage}" BackgroundColor="#3E3E3E" TextColor="White"/>
                                     </Grid>
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
