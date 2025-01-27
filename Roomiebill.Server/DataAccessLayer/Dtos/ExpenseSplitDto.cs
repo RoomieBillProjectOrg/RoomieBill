@@ -4,7 +4,6 @@ namespace Roomiebill.Server.DataAccessLayer.Dtos
 {
     public class ExpenseSplitDto
     {
-        [Key]
         public int Id { get; set; } // Unique identifier for the split
 
         [Required]
