@@ -1,3 +1,4 @@
+using FrontendApplication.Models;
 using FrontendApplication.Services;
 using Plugin.Firebase.CloudMessaging;
 
@@ -8,7 +9,7 @@ namespace FrontendApplication.Pages
         private readonly UserServiceApi _userService;
         private readonly GroupServiceApi _groupService;
         private readonly PaymentService _paymentService;
-        private string _verificationCode;
+        private VerifiyCodeModel _verificationCode;
 
         public RegisterPage(UserServiceApi userService, GroupServiceApi groupService, PaymentService paymentService)
         {
@@ -38,7 +39,7 @@ namespace FrontendApplication.Pages
 
             try
             {
-                string _verificationCode = await _userService.VerifyEmailRegister(email);
+                VerifiyCodeModel _verificationCode = await _userService.VerifyEmailRegister(email);
 
                 // Show verification section
                 VerificationSection.IsVisible = true;
@@ -54,7 +55,7 @@ namespace FrontendApplication.Pages
         {
             var enteredCode = VerificationCodeEntry.Text;
 
-            if (enteredCode == _verificationCode)
+            if (enteredCode == _verificationCode.VerifyCode)
             {
                 try
                 {

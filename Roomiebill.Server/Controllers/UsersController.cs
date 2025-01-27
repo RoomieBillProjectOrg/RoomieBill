@@ -37,7 +37,7 @@ namespace Roomiebill.Server.Controllers
         {
             try
             {
-                var verifyCode = await RegisterVerify.SendVerificationEmail(email);
+                VerifiyCodeModel verifyCode = await RegisterVerify.SendVerificationEmail(email);
 
                 return Ok(verifyCode);
             }

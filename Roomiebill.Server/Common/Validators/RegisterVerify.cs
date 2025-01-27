@@ -1,11 +1,12 @@
 using MailKit.Net.Smtp;
 using MimeKit;
+using Roomiebill.Server.DataAccessLayer.Dtos;
 
 namespace Roomiebill.Server.Common.Validators
 {
     public class RegisterVerify
     {
-        public static async Task<string> SendVerificationEmail(string recipientEmail)
+        public static async Task<VerifiyCodeModel> SendVerificationEmail(string recipientEmail)
         {
             var verificationCode = GenerateVerificationCode();
             var emailMessage = new MimeMessage();
@@ -25,7 +26,7 @@ namespace Roomiebill.Server.Common.Validators
                 await client.DisconnectAsync(true);
             }
 
-            return verificationCode;
+            return new VerifiyCodeModel { VerifyCode = verificationCode };
         }
 
         public static string GenerateVerificationCode()

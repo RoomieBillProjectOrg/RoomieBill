@@ -161,7 +161,7 @@ namespace FrontendApplication.Services
             }
         }
 
-        public async Task<string> VerifyEmailRegister(string email)
+        public async Task<VerifiyCodeModel> VerifyEmailRegister(string email)
         {
             // Connect to the server and attempt to accept the invite
             var response = await _httpClient.GetAsync($"{_httpClient.BaseAddress}/Users/verifyEmailRegister?email={email}");
@@ -169,7 +169,7 @@ namespace FrontendApplication.Services
             // If IsSuccessStatusCode is true, then the group was successfully created
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadAsStringAsync();
+                return await response.Content.ReadFromJsonAsync<VerifiyCodeModel>();
             }
             else
             {
