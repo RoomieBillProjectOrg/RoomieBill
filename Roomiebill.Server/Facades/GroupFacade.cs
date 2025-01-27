@@ -305,6 +305,11 @@ namespace Roomiebill.Server.Facades
             e.ExpenseSplits = expenseSplits;
         }
 
+        internal async Task<List<Expense>> GetExpensesForGroupAsync(int groupId){
+            Group group = await GetGroupByIdAsync(groupId);
+            return (List<Expense>)group.Expenses;
+        }
+
         #endregion
     }
 }

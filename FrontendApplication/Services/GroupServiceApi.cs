@@ -72,4 +72,13 @@ public class GroupServiceApi
                 throw new Exception(errorResponse.Message);
             }
     }
+
+    //GetExpensesForGroupAsync
+    public async Task<List<ExpenseModel>> GetExpensesForGroupAsync(int groupId){
+        var response = await _httpClient.GetAsync($"{_httpClient.BaseAddress}/Groups/getExpensesForGroup?groupId={groupId}");
+        response.EnsureSuccessStatusCode();
+        
+        var expenses = await response.Content.ReadFromJsonAsync<List<ExpenseModel>>();
+        return expenses ?? new List<ExpenseModel>(); // Return an empty list if the deserialization results in null
+    }
 }
