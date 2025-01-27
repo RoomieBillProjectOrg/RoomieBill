@@ -1,21 +1,52 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="FrontendApplication.Pages.CreateGroupPage">
+             x:Class="FrontendApplication.Pages.CreateGroupPage"
+             BackgroundColor="Black">
+    <!-- Set background color to black -->
 
     <StackLayout Padding="20">
         <!-- Group Name -->
-        <Label Text="Group Name" />
-        <Entry x:Name="GroupNameEntry" Placeholder="Enter group name" />
+        <Label Text="Group Name" 
+               TextColor="White" 
+               FontSize="20"
+               Margin="0,0,0,10"/>
+        <!-- Adjusted for consistent style -->
+
+        <Entry x:Name="GroupNameEntry" 
+               Placeholder="Enter group name" 
+               TextColor="White" 
+               PlaceholderColor="LightGray" 
+               BackgroundColor="Gray" 
+               Margin="0,0,0,20" />
+        <!-- Styled entry -->
 
         <!-- Group Members -->
-        <Label Text="Group Members (comma separated)" />
-        <Entry x:Name="MembersEntry" Placeholder="Enter member usernames" />
+        <Label Text="Group Members (comma separated)" 
+               TextColor="White" 
+               FontSize="20"
+               Margin="0,0,0,10"/>
+        <!-- Adjusted for consistent style -->
+
+        <Entry x:Name="MembersEntry" 
+               Placeholder="Enter member usernames" 
+               TextColor="White" 
+               PlaceholderColor="LightGray" 
+               BackgroundColor="Gray" 
+               Margin="0,0,0,20"/>
+        <!-- Styled entry -->
 
         <!-- Submit Button -->
-        <Button Text="Create Group" Clicked="OnCreateGroupClicked" />
+        <Button Text="Create Group" 
+                BackgroundColor="Green" 
+                TextColor="White" 
+                Clicked="OnCreateGroupClicked" 
+                Margin="0,0,0,20"/>
 
         <!-- Error Message -->
-        <Label x:Name="ErrorLabel" TextColor="Red" IsVisible="False" />
+        <Label x:Name="ErrorLabel" 
+               TextColor="Red" 
+               IsVisible="False"
+               HorizontalOptions="Center"/>
     </StackLayout>
 </ContentPage>
