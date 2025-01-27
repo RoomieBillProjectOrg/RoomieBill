@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<popup:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:popup="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="FrontendApplication.Popups.ViewTransactionsPopup">
+
+    <Frame BackgroundColor="#1C1C1C"
+           CornerRadius="25"
+           Padding="20"
+           WidthRequest="380"
+           HeightRequest="600"
+           VerticalOptions="Center"
+           HorizontalOptions="Center"
+           HasShadow="True">
+
+        <Grid RowDefinitions="*, Auto">
+            <!-- Scrollable Content -->
+            <ScrollView Grid.Row="0">
+                <VerticalStackLayout Spacing="20" Padding="0,10,0,10">
+                    <!-- Title -->
+                    <Label Text="Transaction History"
+                           FontSize="26"
+                           HorizontalOptions="Center"
+                           FontAttributes="Bold"
+                           TextColor="#FFFFFF"
+                           Margin="0,0,0,20" />
+
+                    <!-- List of Transactions -->
+                    <CollectionView ItemsSource="{Binding Transactions}">
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Vertical" ItemSpacing="15" />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Frame BorderColor="#2E2E2E"
+                                       Padding="15"
+                                       Margin="0,0,0,10"
+                                       CornerRadius="15"
+                                       HasShadow="False"
+                                       BackgroundColor="#2D2D2D">
+                                    <VerticalStackLayout Spacing="8">
+                                        <Label Text="{Binding Description}"
+                                               FontSize="18"
+                                               FontAttributes="Bold"
+                                               TextColor="#FFFFFF" />
+                                        <Label Text="{Binding Amount, StringFormat='Amount: {0:C}'}"
+                                               FontSize="16"
+                                               TextColor="#43A047"
+                                               FontAttributes="Bold" />
+                                        <Label Text="{Binding PayerName, StringFormat='Paid by: {0}'}"
+                                               FontSize="14"
+                                               TextColor="#A9A9A9" />
+                                    </VerticalStackLayout>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </ScrollView>
+
+            <!-- Close Button at the Bottom -->
+            <Button Grid.Row="1"
+                    Text="CLOSE"
+                    Command="{Binding CloseCommand}"
+                    BackgroundColor="#FF5722"
+                    TextColor="White"
+                    CornerRadius="25"
+                    FontSize="18"
+                    FontAttributes="Bold"
+                    HorizontalOptions="Center"
+                    WidthRequest="200"
+                    HeightRequest="50"
+                    Margin="0,15,0,0" />
+        </Grid>
+    </Frame>
+</popup:Popup>

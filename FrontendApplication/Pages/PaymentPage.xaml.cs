@@ -34,6 +34,7 @@ public partial class PaymentPage : ContentPage
 			await Navigation.PopAsync();
 		}catch(Exception ex){
 			await DisplayAlert("Error", ex.Message, "OK");
+			await Navigation.PopAsync();
 		}
 	}
 }

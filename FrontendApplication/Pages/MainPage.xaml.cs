@@ -17,6 +17,12 @@ namespace FrontendApplication
             _paymentService = paymentService;
         }
 
+        private async void OnRegisterClicked(object sender, EventArgs e)
+        {
+           
+            await Navigation.PushAsync(new RegisterPage(_userService, _groupService, _paymentService));          
+        }
+
         private async void OnLoginClicked(object sender, EventArgs e)
         {
             await Navigation.PushAsync(new LoginPage(_userService, _groupService, _paymentService));
