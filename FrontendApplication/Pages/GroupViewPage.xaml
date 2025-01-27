@@ -3,7 +3,7 @@
              xmlns:local="clr-namespace:FrontendApplication.Pages"
              x:Class="FrontendApplication.Pages.GroupViewPage"
              Title="Group View Page"
-             BackgroundColor="#2A2A2A">
+             BackgroundColor="#1C1C1C">
 
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="20">
@@ -12,7 +12,7 @@
             <Label Text="My Home"
                    FontSize="28"
                    HorizontalOptions="Center"
-                   TextColor="White"
+                   TextColor="#FFFFFF"
                    FontAttributes="Bold"
                    Margin="0,20,0,10" />
 
@@ -35,6 +35,7 @@
                     HeightRequest="50"
                     Clicked="OnAddRoomieClicked" />
 
+            <!-- Grid for Group Members -->
             <!-- Group Members List -->
             <CollectionView ItemsSource="{Binding Members}"
                             HorizontalOptions="FillAndExpand">
@@ -43,15 +44,18 @@
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Button Text="{Binding Username}"
-                                BackgroundColor="#00ADB5"
-                                TextColor="White"
-                                FontSize="18"
-                                CornerRadius="15"
-                                Command="{Binding Source={RelativeSource AncestorType={x:Type local:GroupViewPage}}, Path=OnMemberClicked}"
-                                CommandParameter="{Binding .}"
-                                Padding="10"
-                                Margin="5" />
+                        <Frame BorderColor="#2E2E2E"
+                               BackgroundColor="#333333"
+                               Padding="10"
+                               Margin="5"
+                               CornerRadius="15"
+                               HasShadow="False">
+                            <Label Text="{Binding Username}"
+                                   FontSize="16"
+                                   TextColor="#FFFFFF"
+                                   HorizontalTextAlignment="Center"
+                                   VerticalTextAlignment="Center" />
+                        </Frame>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
@@ -63,6 +67,7 @@
                    FontAttributes="Bold"
                    Padding="0,20,0,5" />
 
+            <!-- Grid for Shame Table -->
             <!-- Shame Table Grid -->
             <CollectionView ItemsSource="{Binding ShameTable}"
                             HorizontalOptions="FillAndExpand">
@@ -72,11 +77,11 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Frame BorderColor="#4CAF50"
-                               Padding="15"
+                               Padding="10"
                                Margin="5"
                                CornerRadius="12"
                                HasShadow="True"
-                               BackgroundColor="#FFF9F9">
+                               BackgroundColor="#2D2D2D">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer
                                     Command="{Binding Source={RelativeSource AncestorType={x:Type local:GroupViewPage}}, Path=OnShameTableItemTapped}"
@@ -84,7 +89,10 @@
                             </Frame.GestureRecognizers>
                             <VerticalStackLayout>
                                 <Label Text="{Binding debtor.Username, StringFormat='{0} owes you'}"
-                                       FontSize="18"
+                                       FontSize="16"
+                                       TextColor="#FFFFFF" />
+                                <Label Text="{Binding amount, StringFormat='{0:C}'}"
+                                       FontSize="14"
                                        TextColor="#222831" />
                                 <Label Text="{Binding amount, StringFormat='{0:C}'}"
                                        FontSize="16"
@@ -97,7 +105,7 @@
             </CollectionView>
 
             <Label Text="🎉 Congratulations, you’re the friend's ATM 🏧😂"
-                   FontSize="16"
+                   FontSize="14"
                    TextColor="#B0BEC5"
                    HorizontalOptions="Center"
                    IsVisible="{Binding IsShameTableEmpty}" />
@@ -118,11 +126,11 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Frame BorderColor="#FF5722"
-                               Padding="15"
+                               Padding="10"
                                Margin="5"
                                CornerRadius="12"
                                HasShadow="True"
-                               BackgroundColor="#F9FFF9">
+                               BackgroundColor="#2D2D2D">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer
                                     Command="{Binding Source={RelativeSource AncestorType={x:Type local:GroupViewPage}}, Path=OnYourOwnsItemTapped}"
@@ -130,7 +138,10 @@
                             </Frame.GestureRecognizers>
                             <VerticalStackLayout>
                                 <Label Text="{Binding creditor.Username, StringFormat='You owe {0}'}"
-                                       FontSize="18"
+                                       FontSize="16"
+                                       TextColor="#FFFFFF" />
+                                <Label Text="{Binding amount, StringFormat='{0:C}'}"
+                                       FontSize="14"
                                        TextColor="#222831" />
                                 <Label Text="{Binding amount, StringFormat='{0:C}'}"
                                        FontSize="16"
@@ -143,7 +154,7 @@
             </CollectionView>
 
             <Label Text="👏 Debt-free and living large! 💸😎"
-                   FontSize="16"
+                   FontSize="14"
                    TextColor="#B0BEC5"
                    HorizontalOptions="Center"
                    IsVisible="{Binding IsYourOwnsTableEmpty}" />
@@ -159,13 +170,14 @@
                         CornerRadius="20"
                         WidthRequest="180"
                         HeightRequest="50"
-                        Command="{Binding OnViewTransactionClicked}" />
+                        Clicked="OnViewTransactionClicked" />
                 <Button Text="Add Expense"
-                        BackgroundColor="#00ADB5"
+                        BackgroundColor="#FF5722"
                         TextColor="White"
-                        Margin="10"
-                        CornerRadius="10"
                         FontSize="18"
+                        CornerRadius="20"
+                        WidthRequest="180"
+                        HeightRequest="50"
                         Clicked="OnAddExpenseClicked" />
             </HorizontalStackLayout>
 

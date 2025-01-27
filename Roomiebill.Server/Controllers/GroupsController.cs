@@ -101,6 +101,20 @@ namespace Roomiebill.Server.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
+        //getExpensesForGroup
+        [HttpGet("getExpensesForGroup")]
+        public async Task<IActionResult> GetExpensesForGroup([FromQuery] int groupId)
+        {
+            try
+            {
+                var transactions = await _groupService.GetExpensesForGroupAsync(groupId);
+                return Ok(transactions);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
     }
 
 }
