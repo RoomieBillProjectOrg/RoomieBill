@@ -5,7 +5,7 @@ namespace Roomiebill.Server.Common.Validators
 {
     public class RegisterVerify
     {
-        public static async Task SendVerificationEmail(string recipientEmail)
+        public static async Task<string> SendVerificationEmail(string recipientEmail)
         {
             var verificationCode = GenerateVerificationCode();
             var emailMessage = new MimeMessage();
@@ -24,6 +24,8 @@ namespace Roomiebill.Server.Common.Validators
                 await client.SendAsync(emailMessage);
                 await client.DisconnectAsync(true);
             }
+
+            return verificationCode;
         }
 
         public static string GenerateVerificationCode()
