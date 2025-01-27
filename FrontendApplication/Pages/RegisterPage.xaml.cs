@@ -38,7 +38,7 @@ namespace FrontendApplication.Pages
 
             try
             {
-                await _userService.VerifyEmailRegister(email);
+                string _verificationCode = await _userService.VerifyEmailRegister(email);
 
                 // Show verification section
                 VerificationSection.IsVisible = true;

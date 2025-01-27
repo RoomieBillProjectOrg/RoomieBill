@@ -161,20 +161,22 @@ namespace FrontendApplication.Services
             }
         }
 
-        public async Task VerifyEmailRegister(string email)
+        public async Task<string> VerifyEmailRegister(string email)
         {
             // Connect to the server and attempt to accept the invite
-            var response = await _httpClient.PostAsJsonAsync($"{_httpClient.BaseAddress}/Users/verifyEmailRegister", email);
-
-            // If there was an exception in the server and we want to fail the invite acceptance attempt
-            // and return the exception message to the user.
-            if (!response.IsSuccessStatusCode)
+            var response = await _httpClient.GetAsync($"{_httpClient.BaseAddress}/Users/verifyEmailRegister?email={email}");
+            
+            // If IsSuccessStatusCode is true, then the group was successfully created
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadAsStringAsync();
+            }
+            else
             {
                 var errorContent = await response.Content.ReadAsStringAsync();
                 var errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(errorContent);
                 throw new Exception(errorResponse.Message);
-            }
+            }         
         }
-
     }
 }

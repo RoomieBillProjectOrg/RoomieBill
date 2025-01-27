@@ -32,14 +32,14 @@ namespace Roomiebill.Server.Controllers
             }
         }
 
-        [HttpPost("verifyEmailRegister")]
-        public async Task<IActionResult> VerifyEmailRegister([FromBody] string email)
+        [HttpGet("verifyEmailRegister")]
+        public async Task<IActionResult> VerifyEmailRegister([FromQuery] string email)
         {
             try
             {
-                await RegisterVerify.SendVerificationEmail(email);
+                var verifyCode = await RegisterVerify.SendVerificationEmail(email);
 
-                return Ok(new { Message = "User registered successfully" });
+                return Ok(verifyCode);
             }
             catch (Exception ex)
             {
