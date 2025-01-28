@@ -24,7 +24,18 @@
                    FontAttributes="Bold"
                    Padding="0,10,0,5" />
 
+            <!-- Add Roomie Button -->
+                <Button Text="Add Roomie"
+                        BackgroundColor="#00ADB5"
+                        TextColor="White"
+                        FontSize="18"
+                        CornerRadius="20"
+                        HorizontalOptions="Center"
+                        WidthRequest="180"
+                        Clicked="OnAddRoomieClicked" />
+                        
             <!-- Grid for Group Members -->
+            <!-- Group Members List -->
             <CollectionView ItemsSource="{Binding Members}"
                             HorizontalOptions="FillAndExpand">
                 <CollectionView.ItemsLayout>
@@ -48,11 +59,12 @@
             <!-- The Shame Table Section -->
             <Label Text="The Shame Table"
                    FontSize="22"
-                   TextColor="#FF5722"
+                   TextColor="#4CAF50"
                    FontAttributes="Bold"
                    Padding="0,20,0,5" />
 
-                <!-- Grid for Shame Table -->
+            <!-- Grid for Shame Table -->
+            <!-- Shame Table Grid -->
             <CollectionView ItemsSource="{Binding ShameTable}"
                             HorizontalOptions="FillAndExpand">
                 <CollectionView.ItemsLayout>
@@ -60,7 +72,7 @@
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Frame BorderColor="#FF5722"
+                        <Frame BorderColor="#4CAF50"
                             Padding="10"
                             Margin="5"
                             CornerRadius="12"
@@ -72,13 +84,16 @@
                                     CommandParameter="{Binding .}" />
                             </Frame.GestureRecognizers>
                             <VerticalStackLayout>
-                                <Label Text="{Binding OwedByUserName, StringFormat='{0} owes you'}"
+                                <Label Text="{Binding debtor.Username, StringFormat='{0} owes you'}"
                                     FontSize="18"
                                     TextColor="#222831" />
-                                <Label Text="{Binding Amount, StringFormat='{0:C}'}"
-                                    FontSize="16"
-                                    TextColor="#FF5722"
-                                    FontAttributes="Bold" />
+                                <Label Text="{Binding amount, StringFormat='{0:C}'}"
+                                       FontSize="14"
+                                       TextColor="#222831" />
+                                <Label Text="{Binding amount, StringFormat='{0:C}'}"
+                                       FontSize="16"
+                                       TextColor="#4CAF50"
+                                       FontAttributes="Bold" />
                             </VerticalStackLayout>
                         </Frame>
                     </DataTemplate>
@@ -94,11 +109,11 @@
             <!-- Your Owns Section -->
             <Label Text="Your Owns"
                    FontSize="22"
-                   TextColor="#4CAF50"
+                   TextColor="#FF5722"
                    FontAttributes="Bold"
                    Padding="0,20,0,5" />
 
-            <!-- Grid for Your Owns -->
+            <!-- Your Owns Grid -->
             <CollectionView ItemsSource="{Binding YourOwnsTable}"
                             HorizontalOptions="FillAndExpand">
                 <CollectionView.ItemsLayout>
@@ -106,7 +121,7 @@
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Frame BorderColor="#4CAF50"
+                        <Frame BorderColor="#FF5722"
                             Padding="10"
                             Margin="5"
                             CornerRadius="12"
@@ -118,13 +133,16 @@
                                     CommandParameter="{Binding .}" />
                             </Frame.GestureRecognizers>
                             <VerticalStackLayout>
-                                <Label Text="{Binding OwedToUserName, StringFormat='You owe {0}'}"
+                                <Label Text="{Binding creditor.Username, StringFormat='You owe {0}'}"
                                     FontSize="18"
                                     TextColor="#222831" />
-                                <Label Text="{Binding Amount, StringFormat='{0:C}'}"
-                                    FontSize="16"
-                                    TextColor="#4CAF50"
-                                    FontAttributes="Bold" />
+                                <Label Text="{Binding amount, StringFormat='{0:C}'}"
+                                       FontSize="14"
+                                       TextColor="#222831" />
+                                <Label Text="{Binding amount, StringFormat='{0:C}'}"
+                                       FontSize="16"
+                                       TextColor="#FF5722"
+                                       FontAttributes="Bold" />
                             </VerticalStackLayout>
                         </Frame>
                     </DataTemplate>
@@ -148,7 +166,7 @@
                         CornerRadius="20"
                         WidthRequest="180"
                         HeightRequest="50"
-                        Command="{Binding OnViewTransactionClicked}" />
+                        Clicked="OnViewTransactionClicked" />
                 <Button Text="Add Expense"
                         BackgroundColor="#00ADB5"
                         TextColor="White"

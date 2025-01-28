@@ -108,6 +108,11 @@ namespace Roomiebill.Server.Migrations
                     b.Property<int>("AdminId")
                         .HasColumnType("int");
 
+                    b.Property<string>("DebtArray")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("DebtArray");
+
                     b.Property<string>("GroupName")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -163,6 +168,10 @@ namespace Roomiebill.Server.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirebaseToken")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

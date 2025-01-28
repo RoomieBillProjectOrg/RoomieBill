@@ -42,17 +42,6 @@ namespace Roomiebill.Server.Services
                 }
             }
 
-            // Send invites to all group members, except the admin
-            // foreach (User member in members)
-            // {
-            //     if (member.Username == group.AdminGroupUsername)
-            //     {
-            //         continue;
-            //     }
-            //     // TODO: might be better to use the service method here.
-            //     await _groupFacade.InviteToGroupByUsername(group.AdminGroupUsername, member.Username, newGroup.Id);
-            // }
-
             // Add the group to the admin's groups list
             await _userFacade.AddGroupToUser(group.AdminGroupUsername, newGroup.Id);
 
@@ -76,6 +65,7 @@ namespace Roomiebill.Server.Services
         {
             return await _groupFacade.GetDebtsForUserAsync(groupId, userId);
         }
+
         public async Task<Group> GetGroupByIdAsync(int groupId)
         {
             return await _groupFacade.GetGroupByIdAsync(groupId);
@@ -93,6 +83,16 @@ namespace Roomiebill.Server.Services
         }
 
 
-
+        public async Task SettleDebtAsync(decimal amount, User creditor, User debtor, int groupId){
+            await _groupFacade.SettleDebtAsync(amount, creditor, debtor, groupId);
+        }
+        public async Task<List<Expense>> GetExpensesForGroupAsync(int groupId)
+        {
+            return await _groupFacade.GetExpensesForGroupAsync(groupId);
+        }
+        public async Task SnoozeMemberToPayAsync(SnoozeToPayDto snoozeInfo)
+        {
+            await _groupFacade.snoozeToUsernameAsync(snoozeInfo.snoozeToUsername, snoozeInfo.snoozeInfo);
+        }
     }
 }

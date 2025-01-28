@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Firebase.Messaging;
 using FrontendApplication.Models;
 using FrontendApplication.Services;
 using Roomiebill.FrontendApplication.Models;
@@ -34,7 +35,7 @@ namespace FrontendApplication.Pages
                     };
 
                     var nameLabel = new Label { VerticalOptions = LayoutOptions.Center };
-                    nameLabel.SetBinding(Label.TextProperty, "Id");
+                    nameLabel.SetBinding(Label.TextProperty, "Group.GroupName");
 
                     var acceptButton = new Button
                     {
@@ -94,6 +95,7 @@ namespace FrontendApplication.Pages
                 AnswerInviteByUserDto answer = new AnswerInviteByUserDto(invite.Id, invite.Invited.Username, true);
                 await _userService.AnswerInviteAsync(answer);
                 _invitations.Remove(invite);
+                FirebaseMessaging.Instance.SubscribeToTopic($"Group_{invite.Group.Id}");
                 await DisplayAlert("Accepted", $"You accepted an invite from {invite.Inviter.Username}", "OK");
             }
         }

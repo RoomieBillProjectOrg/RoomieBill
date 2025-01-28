@@ -49,5 +49,10 @@ namespace Roomiebill.Server.Services
         {
             return await _userFacade.GetUserInvitesAsync(username);
         }
+
+        public async Task<User> GetUserByIdAsync(int userId)
+        {
+            return await _userFacade.GetUserByIdAsync(userId);
+        }
     }
 }

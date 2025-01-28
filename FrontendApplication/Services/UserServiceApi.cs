@@ -14,13 +14,14 @@ namespace FrontendApplication.Services
             _httpClient = httpClientFactory.CreateClient("DefaultClient");
         }
 
-        public async Task<UserModel> RegisterUserAsync(string email, string username, string password)
+        public async Task<bool> RegisterUserAsync(string email, string username, string password, string firebaseToken)
         {
             RegisterUserDto user = new RegisterUserDto()
             {
                 username = username,
                 password = password,
-                email = email
+                email = email,
+                firebaseToken = firebaseToken
             };
 
             // Connect to the server and attempt to register new user
@@ -31,7 +32,7 @@ namespace FrontendApplication.Services
             {
                 var content = await response.Content.ReadAsStringAsync();
                 var userResponse = JsonConvert.DeserializeObject<UserModel>(content);
-                return userResponse;
+                return true;
             }
 
             // Else - there was an exception in the server and we want to fail the register attempt
@@ -41,12 +42,13 @@ namespace FrontendApplication.Services
             throw new Exception(errorResponse.Message);
         }
 
-        public async Task<UserModel> LoginUserAsync(string username, string password)
+        public async Task<UserModel> LoginUserAsync(string username, string password, string firebaseToken)
         {
             LoginDto user = new LoginDto()
             {
                 username = username,
-                password = password
+                password = password,
+                firebaseToken = firebaseToken
             };
 
             // Connect to the server and attempt to login the user
@@ -157,6 +159,24 @@ namespace FrontendApplication.Services
                 var errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(errorContent);
                 throw new Exception(errorResponse.Message);
             }
+        }
+
+        public async Task<VerifiyCodeModel> VerifyEmailRegister(string email)
+        {
+            // Connect to the server and attempt to accept the invite
+            var response = await _httpClient.GetAsync($"{_httpClient.BaseAddress}/Users/verifyEmailRegister?email={email}");
+            
+            // If IsSuccessStatusCode is true, then the group was successfully created
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<VerifiyCodeModel>();
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                var errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(errorContent);
+                throw new Exception(errorResponse.Message);
+            }         
         }
     }
 }

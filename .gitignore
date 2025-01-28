@@ -45,3 +45,5 @@ artifacts/
 .DS_Store
 
 private_key.json
+
+.fake

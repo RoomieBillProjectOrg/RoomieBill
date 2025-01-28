@@ -1,11 +1,60 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="FrontendApplication.Pages.PaymentPage">
-    <VerticalStackLayout Padding="20" Spacing="15">
+             x:Class="FrontendApplication.Pages.PaymentPage"
+             BackgroundColor="#121212">
 
-       <Label x:Name="UserDebt" FontSize="24" HorizontalOptions="Center" />
-       <Button Text="Pay" Clicked="OnPayClicked" HorizontalOptions="Center" />
-   </VerticalStackLayout>
+    <ContentPage.Content>
+        <VerticalStackLayout Padding="30" Spacing="20">
 
+            <!-- Page Title -->
+            <Label Text="Payment Details"
+                   FontSize="36"
+                   HorizontalOptions="Center"
+                   TextColor="White"
+                   FontAttributes="Bold" />
+
+            <!-- User Debt Information -->
+            <Frame BackgroundColor="#1F1F1F"
+                   Padding="20"
+                   CornerRadius="20"
+                   HasShadow="True"
+                   BorderColor="#BB86FC">
+                <VerticalStackLayout>
+                    <Label Text="Amount Due"
+                           FontSize="18"
+                           TextColor="#BB86FC"
+                           HorizontalOptions="Center" />
+                    <Label x:Name="UserDebt"
+                           FontSize="24"
+                           TextColor="White"
+                           HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Payment Details Section -->
+            <StackLayout Spacing="15">
+                <!-- Pay Now Button -->
+                <Button Text="Pay Now"
+                        BackgroundColor="#03DAC5"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        CornerRadius="25"
+                        HeightRequest="50"
+                        Clicked="OnPayClicked" />
+
+                <!-- Cancel Button -->
+                <Button Text="Cancel"
+                        BackgroundColor="Transparent"
+                        TextColor="#FF4081"
+                        FontAttributes="Bold"
+                        BorderColor="#FF4081"
+                        BorderWidth="2"
+                        CornerRadius="25"
+                        HeightRequest="50"
+                        Clicked="OnCancelClicked" />
+            </StackLayout>
+
+        </VerticalStackLayout>
+    </ContentPage.Content>
 </ContentPage>
