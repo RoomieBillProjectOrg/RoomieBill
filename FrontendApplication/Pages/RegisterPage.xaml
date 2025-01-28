@@ -5,14 +5,14 @@
              BackgroundColor="Black">
     <ContentPage.Content>
         <VerticalStackLayout Spacing="20" Padding="30">
-            
+
             <!-- Title -->
             <Label Text="Create new Account" 
                    FontSize="36" 
                    HorizontalOptions="Center" 
                    TextColor="White" 
                    FontAttributes="Bold"/>
-            
+
             <!-- Subtitle -->
             <Label Text="Already Registered? Log in here."
                    FontSize="16"
@@ -83,7 +83,7 @@
             </HorizontalStackLayout>
 
             <!-- Register Button -->
-            <Button Text="sign up"
+            <Button Text="Sign Up"
                     BackgroundColor="Black"
                     TextColor="White"
                     BorderColor="White"
@@ -91,6 +91,28 @@
                     HeightRequest="50"
                     CornerRadius="25"
                     Clicked="OnRegisterClicked" />
+
+            <!-- Verification Code Entry -->
+            <VerticalStackLayout x:Name="VerificationSection" IsVisible="False" Spacing="5">
+                <Label Text="VERIFICATION CODE"
+                       FontSize="14" 
+                       TextColor="White" />
+                <Entry x:Name="VerificationCodeEntry"
+                       Placeholder="Enter the code sent to your email"
+                       Keyboard="Numeric"
+                       BackgroundColor="#2A2A2A"
+                       TextColor="White"
+                       PlaceholderColor="#A9A9A9"
+                       HeightRequest="40" />
+                <Button Text="Verify Code"
+                        BackgroundColor="Black"
+                        TextColor="White"
+                        BorderColor="White"
+                        BorderWidth="2"
+                        HeightRequest="50"
+                        CornerRadius="25"
+                        Clicked="OnVerifyCodeClicked" />
+            </VerticalStackLayout>
         </VerticalStackLayout>
     </ContentPage.Content>
 </ContentPage>

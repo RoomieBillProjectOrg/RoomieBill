@@ -160,5 +160,23 @@ namespace FrontendApplication.Services
                 throw new Exception(errorResponse.Message);
             }
         }
+
+        public async Task<VerifiyCodeModel> VerifyEmailRegister(string email)
+        {
+            // Connect to the server and attempt to accept the invite
+            var response = await _httpClient.GetAsync($"{_httpClient.BaseAddress}/Users/verifyEmailRegister?email={email}");
+            
+            // If IsSuccessStatusCode is true, then the group was successfully created
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<VerifiyCodeModel>();
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                var errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(errorContent);
+                throw new Exception(errorResponse.Message);
+            }         
+        }
     }
 }
