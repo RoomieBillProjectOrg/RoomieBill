@@ -115,6 +115,21 @@ namespace Roomiebill.Server.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
+
+        [HttpPost("snoozeMemberToPay")]
+        public async Task<IActionResult> SnoozeMemberToPay([FromBody] SnoozeToPayDto snoozeInfo)
+        {
+            try
+            {
+                await _groupService.SnoozeMemberToPayAsync(snoozeInfo);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
     }
 
 }

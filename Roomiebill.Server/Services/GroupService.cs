@@ -90,5 +90,9 @@ namespace Roomiebill.Server.Services
         {
             return await _groupFacade.GetExpensesForGroupAsync(groupId);
         }
+        public async Task SnoozeMemberToPayAsync(SnoozeToPayDto snoozeInfo)
+        {
+            await _groupFacade.snoozeToUsernameAsync(snoozeInfo.snoozeToUsername, snoozeInfo.snoozeInfo);
+        }
     }
 }
