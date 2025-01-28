@@ -1,5 +1,8 @@
+using System.Threading.Tasks;
+using FirebaseAdmin.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Roomiebill.Server.Common.Enums;
+using Roomiebill.Server.Common.Notificaiton;
 using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Models;
@@ -71,17 +74,6 @@ namespace Roomiebill.Server.Facades
             return group;
         }
 
-        /// <summary>
-        /// This method checks if an invite for a user already exists in a group.
-        /// </summary>
-        /// <param name="invited"></param>
-        /// <param name="group"></param>
-        /// <returns></returns>
-        private bool IsInviteForUserExistInGroup(User invited, Group group)
-        {
-            return group.Invites.Any(i => i.Invited == invited);
-        }
-
         public bool IsUserInGroup(User user, Group group)
         {
             return group.Members.Contains(user) || group.Admin == user;
@@ -115,7 +107,10 @@ namespace Roomiebill.Server.Facades
                 _logger.LogError($"Error when trying to add expense: user with id {expenseDto.PayerId} does not exist in the system.");
                 throw new Exception($"Error when trying to add expense: user with id {expenseDto.PayerId} does not exist in the system.");
             }
-            Expense newExpense = MapToEntity(expenseDto);
+            Expense newExpense = await MapToEntity(expenseDto);
+            await _applicationDbs.UpdateGroupAsync(group);
+            await AddExpenseSpiltsList(newExpense, expenseDto);
+            
             // Add expense to group
             group.AddExpense(newExpense);
 
@@ -154,7 +149,7 @@ namespace Roomiebill.Server.Facades
             }
 
             // Map the updated DTO to an entity
-            Expense updatedExpense = MapToEntity(updatedExpenseDto);
+            Expense updatedExpense = await MapToEntity(updatedExpenseDto);
 
             // Use the Group's updateExpense method
             group.updateExpense(oldExpense, updatedExpense);
@@ -175,12 +170,20 @@ namespace Roomiebill.Server.Facades
         public async Task AddMemberToGroupAsync(User user, Group group)
         {
             // Add the user to the group
+            group = await _applicationDbs.GetGroupByIdAsync(group.Id);
+            if (group == null)
+            {
+                _logger.LogError($"Error when trying to add member: group with id {group.Id} does not exist.");
+                throw new Exception($"Group with id {group.Id} does not exist.");
+            }
             group.AddMember(user);
             await _applicationDbs.UpdateGroupAsync(group);
 
             // Add the group to the user
             user.AddGroup(group);
             await _applicationDbs.UpdateUserAsync(user);
+            
+            NotificationsHandle.SendNotificationByTopicAsync("Group Notification", $"{user.Username} joined the group.", $"Group_{group.Id}");
 
             _logger.LogInformation($"User with id {user.Id} added to group successfully.");
         }
@@ -263,25 +266,65 @@ namespace Roomiebill.Server.Facades
         }
         
 
+        public async Task SettleDebtAsync(decimal amount, User creditor, User debtor, int groupId){
+            Group group = await GetGroupByIdAsync(groupId);
+            group.SettleDebt(amount, creditor.Id, debtor.Id);
+            await _applicationDbs.UpdateGroupAsync(group);
+            _logger.LogInformation($"User {debtor.Username} returned his debt of {amount} NIS to {creditor.Username} successfully.");
+        }
+
+        public async Task snoozeToUsernameAsync(string username, string snoozeInfo)
+        {
+            User userToSnooze = await _userFacade.GetUserByUsernameAsync(username);
+            if (userToSnooze == null)
+            {
+                _logger.LogError($"Error when trying to snooze user: user with username {username} does not exist.");
+                throw new Exception($"User with username {username} does not exist.");
+            }
+            NotificationsHandle.SendNotificationByTokenAsync("Pay Reminder", snoozeInfo, userToSnooze.FirebaseToken);
+        }
 
         #region Help functions
 
-        private Expense MapToEntity(ExpenseDto dto)
+        private async Task<Expense> MapToEntity(ExpenseDto dto)
         {
-            return new Expense
+            // Get the next available expense id from db
+            //int nextId = await _applicationDbs.GetNextExpenseIdAsync();
+            Expense e = new Expense
             {
-                Id = dto.Id,
                 Amount = dto.Amount,
                 Description = dto.Description,
                 IsPaid = dto.IsPaid,
                 PayerId = dto.PayerId,
+                Payer = await _userFacade.GetUserByIdAsync(dto.PayerId),
                 GroupId = dto.GroupId,
-                ExpenseSplits = dto.ExpenseSplits.Select(splitDto => new ExpenseSplit
-                {
-                    UserId = splitDto.UserId,
-                    Percentage = splitDto.Percentage
-                }).ToList()
+                Group = await GetGroupByIdAsync(dto.GroupId)
             };
+            
+            return e;
+        }
+
+        private async Task AddExpenseSpiltsList(Expense e, ExpenseDto dto)
+        {
+            List<ExpenseSplit> expenseSplits = new List<ExpenseSplit>();
+
+            //int nextSplitId = await _applicationDbs.GetNextExpenseSplitIdAsync();
+            foreach (ExpenseSplitDto es in dto.ExpenseSplits){
+                expenseSplits.Add(new ExpenseSplit
+                    {   
+                        ExpenseId = e.Id,
+                        Expense = e,
+                        UserId = es.UserId,
+                        User = await _userFacade.GetUserByIdAsync(es.UserId),
+                        Percentage = es.Percentage
+                    });
+            }
+            e.ExpenseSplits = expenseSplits;
+        }
+
+        internal async Task<List<Expense>> GetExpensesForGroupAsync(int groupId){
+            Group group = await GetGroupByIdAsync(groupId);
+            return (List<Expense>)group.Expenses;
         }
 
         #endregion

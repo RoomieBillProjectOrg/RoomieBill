@@ -12,5 +12,11 @@
 
         // Empty constructor
         public GroupModel() { }
+         // Method to find a user by their ID and return their username
+        public string GetUsernameById(int userId)
+        {
+            var user = Members.FirstOrDefault(m => m.Id == userId);
+            return user?.Username ?? "Unknown";
+        }
     }
 }

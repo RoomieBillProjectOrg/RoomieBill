@@ -5,12 +5,15 @@ using Roomiebill.Server.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuck
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -31,8 +34,14 @@ builder.Services.AddScoped<InviteService>();
 builder.Services.AddScoped<GroupInviteMediatorService>();
 builder.Services.AddScoped<BillingService>();
 builder.Services.AddScoped<DatabaseSeeder>();
+builder.Services.AddScoped<IPaymentService, MockPaymentService>();
 
 var app = builder.Build();
+
+FirebaseApp.Create(new AppOptions()
+{
+    Credential = GoogleCredential.FromFile("private_key.json")
+});
 
 // Apply migrations and ensure database creation
 using (var scope = app.Services.CreateScope())
@@ -51,6 +60,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
 
 app.UseHttpsRedirection();
 

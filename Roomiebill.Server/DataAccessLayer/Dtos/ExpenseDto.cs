@@ -6,7 +6,6 @@ namespace Roomiebill.Server.DataAccessLayer.Dtos
 {
     public class ExpenseDto
     {
-        [Key]
         public int Id { get; set; }
 
         [Required]
@@ -18,14 +17,13 @@ namespace Roomiebill.Server.DataAccessLayer.Dtos
         public string Description { get; set; } = string.Empty;
 
         public bool IsPaid { get; set; }
-
-        [ForeignKey("Payer")]
         public int PayerId { get; set; }
+
+        [Required]
+        public int GroupId { get; set; }
 
         [Required]
         public List<ExpenseSplitDto> ExpenseSplits { get; set; } = new List<ExpenseSplitDto>();
         
-        [Required]
-        public int GroupId { get; set; }
     }
 }
