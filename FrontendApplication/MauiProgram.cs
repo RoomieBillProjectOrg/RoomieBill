@@ -50,8 +50,7 @@ namespace FrontendApplication
 
 #if DEBUG
             builder.Logging.AddDebug();
-#endif
-
+#endif          
             return builder.Build();
         }
 

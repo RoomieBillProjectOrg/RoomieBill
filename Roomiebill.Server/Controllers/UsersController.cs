@@ -2,6 +2,7 @@
 using Roomiebill.Server.Models;
 using Roomiebill.Server.Services;
 using Roomiebill.Server.DataAccessLayer.Dtos;
+using Roomiebill.Server.Common.Validators;
 
 namespace Roomiebill.Server.Controllers
 {
@@ -24,6 +25,21 @@ namespace Roomiebill.Server.Controllers
                 await _userService.RegisterUserAsync(user);
 
                 return Ok(new { Message = "User registered successfully" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("verifyEmailRegister")]
+        public async Task<IActionResult> VerifyEmailRegister([FromQuery] string email)
+        {
+            try
+            {
+                VerifiyCodeModel verifyCode = await RegisterVerify.SendVerificationEmail(email);
+
+                return Ok(verifyCode);
             }
             catch (Exception ex)
             {
