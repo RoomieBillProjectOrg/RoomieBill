@@ -112,7 +112,7 @@ namespace Roomiebill.Server.Facades
                 {
                     continue;
                 }
-                int amount = (int)(expense.Amount * (split.Percentage / 100.0));
+                int amount = (int)Math.Ceiling(expense.Amount * (split.Percentage / 100.0));
                 UpdateDebtArray(payerIndex, userIndex, amount, debtArray);
             }
             return expense;
