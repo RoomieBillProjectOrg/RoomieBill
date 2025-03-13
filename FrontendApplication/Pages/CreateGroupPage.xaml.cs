@@ -49,8 +49,8 @@ public partial class CreateGroupPage : ContentPage
             // If successful, navigate to another page or show a success message
             await DisplayAlert("Success", $"Group '{newGroup.GroupName}' created successfully!", "OK");
 
-            // DOTO: navigate to the new group page or to the back of the pages list page ??
-            // await Navigation.PushAsync(new GroupPage(newGroup));
+            // Nevigate back to home page
+            await Navigation.PopAsync();
 
         }
         catch (Exception ex)
