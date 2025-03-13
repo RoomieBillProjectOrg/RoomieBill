@@ -31,10 +31,24 @@ public partial class LoginPage : ContentPage
             // Try to login the user using api call to the server.
             user = await _userService.LoginUserAsync(username, password, firebaseToken);
 
-            await DisplayAlert("Success", "User logged in successfully!", "OK");
+            // Check if user’s password is older than 3 months
+            if(user.LastPasswordChangedDate < DateTime.UtcNow.AddMonths(-3))
+            {
+                await DisplayAlert("Password Expired",
+                    "Your password has not been updated in the last 3 months. Please update your password.",
+                    "OK"
+                );
 
-            // Navigate to UserHomePage
-            await Navigation.PushAsync(new UserHomePage(_userService, _groupService, _paymentService, user));
+                // 3. Navigate to UpdateUserDetailsPage (instead of the home page).
+                await Navigation.PushAsync(new UpdateUserDetailsPage(_userService, _groupService, _paymentService, user));
+            }
+            else
+            {
+                await DisplayAlert("Success", "User logged in successfully!", "OK");
+
+                // Navigate to UserHomePage
+                await Navigation.PushAsync(new UserHomePage(_userService, _groupService, _paymentService, user));
+            }
         }
         catch(Exception ex)
         {

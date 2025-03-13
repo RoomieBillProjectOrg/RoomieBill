@@ -29,7 +29,6 @@ namespace Roomiebill.Server.Facades
         /// <exception cref="Exception"></exception>
         public async Task<User> RegisterUserAsync(RegisterUserDto registerUserDto)
         {
-            
             if (registerUserDto.Username == null)
             {
                 _logger.LogError($"Username is null. Cannot register user with details: Username: {registerUserDto.Username}, Email: {registerUserDto.Email}");
@@ -177,6 +176,9 @@ namespace Roomiebill.Server.Facades
 
             // Update the user object with the hashed password
             existingUser.PasswordHash = passwordHash;
+
+            // Update the last password changed date
+            existingUser.LastPasswordChangedDate = DateTime.Now;
 
             await _applicaitonDbs.UpdateUserAsync(existingUser);
             _logger.LogInformation($"User {updatePasswordDto.Username} password updated successfully");
