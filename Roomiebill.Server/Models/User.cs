@@ -11,13 +11,14 @@ namespace Roomiebill.Server.Models
         public string PasswordHash { get; set; }  // Store the hashed password
         public bool IsLoggedIn { get; set; } = false;
         public bool IsSystemAdmin { get; set; } = false;
-        
+        public string FirebaseToken { get; set; }
+        public DateTime PasswordChangedDate { get; set; }
+
         [JsonIgnore]
         public List<Invite> Invites { get; set; } = [];
         
         [JsonIgnore]
         public List<Group> GroupsUserIsMemberAt { get; set; } = [];
-        public string FirebaseToken { get; set; }        
 
         public User() { }
 
@@ -28,9 +29,10 @@ namespace Roomiebill.Server.Models
             PasswordHash = passwordHash;
             IsSystemAdmin = isSystemAdmin;
             IsLoggedIn = isLoggedIn;
+            FirebaseToken = firebaseToken;
+            PasswordChangedDate = DateTime.Now;
             Invites = new List<Invite>();
             GroupsUserIsMemberAt = new List<Group>();
-            FirebaseToken = firebaseToken;
         }
 
         public void AddInvite(Invite invite)
@@ -46,11 +48,6 @@ namespace Roomiebill.Server.Models
         public void RemoveGroup(Group group)
         {
             GroupsUserIsMemberAt.Remove(group);
-        }
-
-        public List<Group> GetGroups()
-        {
-            return GroupsUserIsMemberAt;
         }
     }
 }
