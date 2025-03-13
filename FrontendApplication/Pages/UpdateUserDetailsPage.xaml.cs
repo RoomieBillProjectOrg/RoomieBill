@@ -36,6 +36,15 @@ public partial class UpdateUserDetailsPage : ContentPage
             return;
         }
 
+        // Check if the new password is the same as the old one.
+        if (newPassword == oldPassword)
+        {
+            await DisplayAlert("Error", "New password cannot be the same as the old password.", "OK");
+            NewPasswordEntry.Text = string.Empty;
+            VeriftNewPasswordEntry.Text = string.Empty;
+            return;
+        }
+
         var updatePasswordDto = new UpdatePasswordDto
         {
             Username = _user.Username,
