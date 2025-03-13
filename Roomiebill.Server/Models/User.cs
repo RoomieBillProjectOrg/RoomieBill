@@ -12,7 +12,7 @@ namespace Roomiebill.Server.Models
         public bool IsLoggedIn { get; set; } = false;
         public bool IsSystemAdmin { get; set; } = false;
         public string FirebaseToken { get; set; }
-        public DateTime PasswordChangedDate { get; set; }
+        public DateTime LastPasswordChangedDate { get; set; }
 
         [JsonIgnore]
         public List<Invite> Invites { get; set; } = [];
@@ -30,7 +30,7 @@ namespace Roomiebill.Server.Models
             IsSystemAdmin = isSystemAdmin;
             IsLoggedIn = isLoggedIn;
             FirebaseToken = firebaseToken;
-            PasswordChangedDate = DateTime.Now;
+            LastPasswordChangedDate = DateTime.Now;
             Invites = new List<Invite>();
             GroupsUserIsMemberAt = new List<Group>();
         }
