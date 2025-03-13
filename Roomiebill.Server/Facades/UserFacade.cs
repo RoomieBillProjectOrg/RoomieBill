@@ -177,6 +177,9 @@ namespace Roomiebill.Server.Facades
             // Update the user object with the hashed password
             existingUser.PasswordHash = passwordHash;
 
+            // Update the last password changed date
+            existingUser.PasswordChangedDate = DateTime.Now;
+
             await _applicaitonDbs.UpdateUserAsync(existingUser);
             _logger.LogInformation($"User {updatePasswordDto.Username} password updated successfully");
 
