@@ -131,28 +131,28 @@ namespace ServerTests
             await Assert.ThrowsAsync<Exception>(() => _inviteFacade.InviteToGroupByUsername(inviterUsername, invitedUsername, group.Id));
         }
 
-        // [Fact]
-        // public async Task TestInviteToGroupByUsername_WhenAllExistAndInviterInGroupAndInvitedIsnt_ThenSendInvite()
-        // {
-        //     // Arrange
-        //     string inviterUsername = "inviter";
-        //     string invitedUsername = "invited";
-            
-        //     User inviter = new User(inviterUsername, "Metar@bgu.ac.il",  "MetarPassword2@");
-        //     User invited = new User(invitedUsername, "Metar2@bgu.ac.il",  "MetarPassword2@");
-        //     Group group = new Group();
-        //     group.AddMember(inviter);
-        //     _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(inviterUsername))!.ReturnsAsync(inviter);
-        //     _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(invitedUsername))!.ReturnsAsync(invited);
-        //     _applicationDbs.Setup(x => x.GetGroupByIdAsync(group.Id))!.ReturnsAsync(group);
-        //     _groupFacadeMock.Setup(x => x.IsUserInGroup(inviter, group))!.Returns(true);
+        //[Fact]
+        //public async Task TestInviteToGroupByUsername_WhenAllExistAndInviterInGroupAndInvitedIsnt_ThenSendInvite()
+        //{
+        //    // Arrange
+        //    string inviterUsername = "inviter";
+        //    string invitedUsername = "invited";
 
-        //     // Act 
-        //     await _inviteFacade.InviteToGroupByUsername(inviterUsername, invitedUsername, group.Id);
+        //    User inviter = new User(inviterUsername, "Metar@bgu.ac.il", "MetarPassword2@", firebaseToken: "token");
+        //    User invited = new User(invitedUsername, "Metar2@bgu.ac.il", "MetarPassword2@", firebaseToken: "token");
+        //    Group group = new Group();
+        //    group.AddMember(inviter);
+        //    _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(inviterUsername))!.ReturnsAsync(inviter);
+        //    _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(invitedUsername))!.ReturnsAsync(invited);
+        //    _applicationDbs.Setup(x => x.GetGroupByIdAsync(group.Id))!.ReturnsAsync(group);
+        //    _groupFacadeMock.Setup(x => x.IsUserInGroup(inviter, group))!.Returns(true);
 
-        //     // Assert
-        //     Assert.NotEmpty(group.Invites);
-        // }
+        //    // Act 
+        //    await _inviteFacade.InviteToGroupByUsername(inviterUsername, invitedUsername, group.Id);
+
+        //    // Assert
+        //    Assert.NotEmpty(group.Invites);
+        //}
 
         #endregion
 

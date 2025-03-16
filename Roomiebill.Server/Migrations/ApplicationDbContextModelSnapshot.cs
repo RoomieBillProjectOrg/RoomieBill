@@ -34,7 +34,7 @@ namespace Roomiebill.Server.Migrations
 
                     b.HasIndex("MembersId");
 
-                    b.ToTable("GroupUser");
+                    b.ToTable("GroupUser", (string)null);
                 });
 
             modelBuilder.Entity("Roomiebill.Server.Models.Expense", b =>
@@ -68,7 +68,7 @@ namespace Roomiebill.Server.Migrations
 
                     b.HasIndex("PayerId");
 
-                    b.ToTable("Expenses");
+                    b.ToTable("Expenses", (string)null);
                 });
 
             modelBuilder.Entity("Roomiebill.Server.Models.ExpenseSplit", b =>
@@ -94,7 +94,7 @@ namespace Roomiebill.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ExpenseSplits");
+                    b.ToTable("ExpenseSplits", (string)null);
                 });
 
             modelBuilder.Entity("Roomiebill.Server.Models.Group", b =>
@@ -122,7 +122,7 @@ namespace Roomiebill.Server.Migrations
 
                     b.HasIndex("AdminId");
 
-                    b.ToTable("Groups");
+                    b.ToTable("Groups", (string)null);
                 });
 
             modelBuilder.Entity("Roomiebill.Server.Models.Invite", b =>
@@ -156,7 +156,7 @@ namespace Roomiebill.Server.Migrations
 
                     b.HasIndex("InviterId");
 
-                    b.ToTable("Invites");
+                    b.ToTable("Invites", (string)null);
                 });
 
             modelBuilder.Entity("Roomiebill.Server.Models.User", b =>
@@ -191,7 +191,7 @@ namespace Roomiebill.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("GroupUser", b =>
