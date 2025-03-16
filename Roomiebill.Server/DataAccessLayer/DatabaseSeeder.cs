@@ -39,7 +39,7 @@ namespace Roomiebill.Server.DataAccessLayer
                 CreateNewGroupDto newGroupDetails = new CreateNewGroupDto
                 {
                     AdminGroupUsername = "Inbar",
-                    GroupMembersUsernamesList = new List<string> { "Metar", "Vladi", "Tal" },
+                    GroupMembersEmailsList = new List<string> { "Metar@bgu.ac.il", "Vladi@bgu.ac.il", "Tal@bgu.ac.il" },
                     GroupName = "Roomiebill"
                 };
 
@@ -103,7 +103,7 @@ namespace Roomiebill.Server.DataAccessLayer
                 CreateNewGroupDto newGroupDetails_TestInvites = new CreateNewGroupDto
                 {
                     AdminGroupUsername = "Inbar",
-                    GroupMembersUsernamesList = new List<string> { "Metar", "Vladi", "Tal" },
+                    GroupMembersEmailsList = new List<string> { "Metar", "Vladi", "Tal" },
                     GroupName = "Test Invites"
                 };
 

@@ -20,7 +20,7 @@ namespace Roomiebill.Server.Common.Notificaiton
             var message = new Message()
             {
                 Topic = topic,
-                Notification = new Notification()
+                Notification = new FirebaseAdmin.Messaging.Notification()
                 {
                     Title = title,
                     Body = body
@@ -50,7 +50,7 @@ namespace Roomiebill.Server.Common.Notificaiton
             var message = new Message()
             {
                 Token = token,
-                Notification = new Notification()
+                Notification = new FirebaseAdmin.Messaging.Notification()
                 {
                     Title = title,
                     Body = body

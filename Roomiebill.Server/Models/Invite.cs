@@ -8,6 +8,7 @@ namespace Roomiebill.Server.Models
         public int Id { get; set; }
         public User Inviter { get; set; }
         public User Invited { get; set; }
+        public string Email { get; set; }
         public Group Group { get; set; }
         public Status Status { get; set; }
         public DateTime Date { get; set; }

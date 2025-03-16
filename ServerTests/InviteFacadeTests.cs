@@ -37,7 +37,7 @@ namespace ServerTests
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(inviterUsername))!.ReturnsAsync((User?)null);
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => _inviteFacade.InviteToGroupByUsername(inviterUsername, invitedUsername, groupId));
+            await Assert.ThrowsAsync<Exception>(() => _inviteFacade.InviteToGroupByEmail(inviterUsername, "email", groupId));
         }
 
         [Fact]
@@ -53,7 +53,7 @@ namespace ServerTests
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(invitedUsername))!.ReturnsAsync((User?)null);
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => _inviteFacade.InviteToGroupByUsername(inviterUsername, invitedUsername, groupId));
+            await Assert.ThrowsAsync<Exception>(() => _inviteFacade.InviteToGroupByEmail(inviterUsername, inviter.Email, groupId));
         }
 
         [Fact]
@@ -70,7 +70,7 @@ namespace ServerTests
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(invitedUsername))!.ReturnsAsync(invited);
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => _inviteFacade.InviteToGroupByUsername(inviterUsername, invitedUsername, groupId));
+            await Assert.ThrowsAsync<Exception>(() => _inviteFacade.InviteToGroupByEmail(inviterUsername, invited.Email, groupId));
         }
 
         [Fact]
@@ -90,7 +90,7 @@ namespace ServerTests
             _applicationDbs.Setup(x => x.GetGroupByIdAsync(group.Id))!.ReturnsAsync(group);
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => _inviteFacade.InviteToGroupByUsername(inviterUsername, invitedUsername, group.Id));
+            await Assert.ThrowsAsync<Exception>(() => _inviteFacade.InviteToGroupByEmail(inviterUsername, invited.Email, group.Id));
         }
 
         [Fact]
@@ -108,7 +108,7 @@ namespace ServerTests
             _applicationDbs.Setup(x => x.GetGroupByIdAsync(group.Id))!.ReturnsAsync(group);
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => _inviteFacade.InviteToGroupByUsername(inviterUsername, invitedUsername, group.Id));
+            await Assert.ThrowsAsync<Exception>(() => _inviteFacade.InviteToGroupByEmail(inviterUsername, invited.Email, group.Id));
         }
 
         [Fact]
@@ -128,7 +128,7 @@ namespace ServerTests
             _applicationDbs.Setup(x => x.GetGroupByIdAsync(group.Id))!.ReturnsAsync(group);
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => _inviteFacade.InviteToGroupByUsername(inviterUsername, invitedUsername, group.Id));
+            await Assert.ThrowsAsync<Exception>(() => _inviteFacade.InviteToGroupByEmail(inviterUsername, invited.Email, group.Id));
         }
 
         //[Fact]
