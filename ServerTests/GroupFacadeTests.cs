@@ -170,7 +170,7 @@ namespace ServerTests
             // Arrange
             var groupId = 1;
             var payerId = 1;
-            var expenseId = 101;
+            var expenseId = 0;
             var originalExpenseDto = new ExpenseDto
             {
                 Id = expenseId,
@@ -275,7 +275,10 @@ namespace ServerTests
             var groupId = 1;
             var userToAdd = new User("newMember", "newMember@bgu.ac.il", "hashedPassword") { Id = 2 };
             var admin = new User("admin", "admin@bgu.ac.il", "hashedPassword") { Id = 1 };
-            var group = new Group("Test Group", admin, new List<User> { });
+            var group = new Group("Test Group", admin, new List<User> { })
+            {
+                Id = groupId
+            };
 
             _groupDbMock.Setup(x => x.GetGroupByIdAsync(groupId)).ReturnsAsync(group);
             _groupDbMock.Setup(x => x.UpdateGroupAsync(group)).Returns(Task.CompletedTask);
@@ -298,7 +301,10 @@ namespace ServerTests
             _groupDbMock.Setup(x => x.GetGroupByIdAsync(groupId)).ReturnsAsync((Group?)null);
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<Exception>(() => _groupFacade.AddMemberToGroupAsync(userToAdd, new Group()));
+            var exception = await Assert.ThrowsAsync<Exception>(() => _groupFacade.AddMemberToGroupAsync(userToAdd, new Group()
+            {
+                Id = groupId
+            }));
             Assert.Equal($"Group with id {groupId} does not exist.", exception.Message);
         }
 
@@ -309,7 +315,10 @@ namespace ServerTests
             var groupId = 1;
             var existingUser = new User("existingMember", "existing@bgu.ac.il", "hashedPassword") { Id = 2 };
             var admin = new User("admin", "admin@bgu.ac.il", "hashedPassword") { Id = 1 };
-            var group = new Group("Test Group", admin, new List<User> { existingUser });
+            var group = new Group("Test Group", admin, new List<User> { existingUser })
+            {
+                Id = groupId
+            };
 
             _groupDbMock.Setup(x => x.GetGroupByIdAsync(groupId)).ReturnsAsync(group);
             _groupDbMock.Setup(x => x.UpdateGroupAsync(group)).Returns(Task.CompletedTask);
