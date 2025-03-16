@@ -22,6 +22,18 @@ public partial class LoginPage : ContentPage
     {
         var username = UsernameEntry.Text;
         var password = PasswordEntry.Text;
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            await DisplayAlert("Validation Error", "Username cannot be empty.", "OK");
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            await DisplayAlert("Validation Error", "Password cannot be empty.", "OK");
+            return;
+        }
+
         var firebaseToken = await GetUserFirebaseToken();
 
         UserModel user = null;
@@ -31,7 +43,7 @@ public partial class LoginPage : ContentPage
             // Try to login the user using api call to the server.
             user = await _userService.LoginUserAsync(username, password, firebaseToken);
 
-            // Check if user’s password is older than 3 months
+            // Check if userï¿½s password is older than 3 months
             if(user.LastPasswordChangedDate < DateTime.UtcNow.AddMonths(-3))
             {
                 await DisplayAlert("Password Expired",
