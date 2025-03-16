@@ -182,7 +182,7 @@ public partial class GroupViewPage : ContentPage
 			// Example action: Show an alert with the user ID
 			SnoozeToPayDto snoozeToPayDto = new SnoozeToPayDto{
 				snoozeToUsername = selectedItem.debtor.Username,
-				snoozeInfo = $"{selectedItem.creditor.Username} wants you to pay {selectedItem.amount}$."
+				snoozeInfo = $"{selectedItem.creditor.Username} wants you to pay {selectedItem.amount} NIS."
 			};
 			await _groupService.SnoozeMember(snoozeToPayDto);
 			// await DisplayAlert("Someone owns you money :)", $"{selectedItem.debtor.Username} owns you money. Lets snooze!", "OK");

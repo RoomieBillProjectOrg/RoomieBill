@@ -86,7 +86,7 @@
                                 <Label Text="{Binding debtor.Username, StringFormat='{0} owes you'}"
                                        FontSize="18"
                                        TextColor="#FFFFFF" />
-                                <Label Text="{Binding amount, StringFormat='{0:C}'}"
+                                <Label Text="{Binding amount, StringFormat='{0:N2} NIS'}"
                                        FontSize="16"
                                        TextColor="#4CAF50"
                                        FontAttributes="Bold" />
@@ -132,10 +132,10 @@
                                 <Label Text="{Binding creditor.Username, StringFormat='You owe {0}'}"
                                        FontSize="18"
                                        TextColor="#FFFFFF" />
-                                <Label Text="{Binding amount, StringFormat='{0:C}'}"
+                                <Label Text="{Binding amount, StringFormat='{0:N2} NIS'}"
                                        FontSize="14"
                                        TextColor="#FFFFFF" />
-                                <Label Text="{Binding amount, StringFormat='{0:C}'}"
+                                <Label Text="{Binding amount, StringFormat='{0:N2} NIS'}"
                                        FontSize="16"
                                        TextColor="#FF5722"
                                        FontAttributes="Bold" />
