@@ -5,7 +5,6 @@ using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Facades;
 using Roomiebill.Server.Models;
-using Roomiebill.Server.Common.Enums;
 
 namespace ServerTests;
 
@@ -35,7 +34,8 @@ public class UserFacadeTests
         {
             Username = "testuser",
             Email = "test@bgu.ac.il",
-            Password = "ValidPassword123!"
+            Password = "ValidPassword123!",
+            FirebaseToken = "firebaseToken"
         };
         _passwordHasherMock.Setup(ph => ph.HashPassword(It.IsAny<User>(), registerDto.Password))
             .Returns("hashedpassword");
@@ -60,7 +60,8 @@ public class UserFacadeTests
         {
             Username = null,
             Email = "test@bgu.ac.il",
-            Password = "ValidPassword123!"
+            Password = "ValidPassword123!",
+            FirebaseToken = "firebaseToken"
         };
 
         // Act & Assert
@@ -75,7 +76,8 @@ public class UserFacadeTests
         {
             Username = "testuser",
             Email = null,
-            Password = "ValidPassword123!"
+            Password = "ValidPassword123!",
+            FirebaseToken = "firebaseToken"
         };
 
         // Act & Assert
@@ -90,7 +92,8 @@ public class UserFacadeTests
         {
             Username = "testuser",
             Email = "test@bgu.ac.il",
-            Password = null
+            Password = null,
+            FirebaseToken = "firebaseToken"
         };
 
         // Act & Assert
@@ -105,7 +108,8 @@ public class UserFacadeTests
         {
             Username = "testuser",
             Email = "test@bgu.ac.il",
-            Password = "short"
+            Password = "short",
+            FirebaseToken = "firebaseToken"
         };
 
         // Act & Assert
@@ -120,7 +124,8 @@ public class UserFacadeTests
         {
             Username = "testuser",
             Email = "invalid-email",
-            Password = "ValidPassword123!"
+            Password = "ValidPassword123!",
+            FirebaseToken = "firebaseToken"
         };
 
         // Act & Assert
@@ -135,7 +140,8 @@ public class UserFacadeTests
         {
             Username = "existinguser",
             Email = "test@bgu.ac.il",
-            Password = "ValidPassword123!"
+            Password = "ValidPassword123!",
+            FirebaseToken = "firebaseToken"
         };
 
         // Mock that the username already exists
@@ -153,7 +159,8 @@ public class UserFacadeTests
         {
             Username = "testuser",
             Email = "existing@bgu.ac.il",
-            Password = "ValidPassword123!"
+            Password = "ValidPassword123!",
+            FirebaseToken = "firebaseToken"
         };
 
         // Mock that the email already exists
@@ -316,7 +323,8 @@ public class UserFacadeTests
         var loginDto = new LoginDto
         {
             Username = "testuser",
-            Password = "ValidPassword123!"
+            Password = "ValidPassword123!",
+            FirebaseToken = "firebaseToken"
         };
         var user = new User
         {
@@ -343,7 +351,8 @@ public class UserFacadeTests
         var loginDto = new LoginDto
         {
             Username = "nonexistentuser",
-            Password = "ValidPassword123!"
+            Password = "ValidPassword123!",
+            FirebaseToken = "firebaseToken"
         };
         _usersDbMock.Setup(db => db.GetUserByUsernameAsync(loginDto.Username)).ReturnsAsync((User)null);
 
@@ -358,7 +367,8 @@ public class UserFacadeTests
         var loginDto = new LoginDto
         {
             Username = "testuser",
-            Password = "InvalidPassword123!"
+            Password = "InvalidPassword123!",
+            FirebaseToken = "firebaseToken"
         };
         var user = new User
         {
