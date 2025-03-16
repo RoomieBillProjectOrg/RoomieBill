@@ -5,21 +5,11 @@ namespace Roomiebill.Server.Facades
 {
     public class ExpenseHandler
     {
-        // private int[] debtArray; // 1D array to store debts
         public Dictionary<int, int> _userIndexMap = new Dictionary<int, int>(); //<UserId,Array index> map user id to index in the _debtMatrix to avoid not consistent user ids.
         
         public int _userCount = 0; // number of users
 
         public ExpenseHandler() { }
-
-        //public ExpenseHandler(List<int> userIds)
-        //{
-        //    _userIndexMap = new Dictionary<int, int>();
-        //    for (int i = 0; i < _userCount; i++)
-        //    {
-        //        _userIndexMap[userIds[i]] = i;
-        //    }
-        //}
 
         public ExpenseHandler(List<User> member)
         {
@@ -45,7 +35,7 @@ namespace Roomiebill.Server.Facades
         }
 
         // Get the index of the cell in the debtArray given 2 ids of users
-        private int GetIndex(int i, int j)
+        public int GetIndex(int i, int j)
         {
             if (i > j) (i, j) = (j, i); // i should be less than j
             return i * (_userCount - 1) - i * (i + 1) / 2 + (j - 1);
@@ -129,10 +119,7 @@ namespace Roomiebill.Server.Facades
                     if (i != j)
                     {
                         int debt = GetDebtBetween(i, j, debtArray);
-                        // if (debt > 0)
-                        // {
                         debts.Add((i, j), debt);
-                        // }
                     }
                 }
             }
@@ -141,6 +128,11 @@ namespace Roomiebill.Server.Facades
         //settle all debt for a user and all other  users
         public void SettleAllDebts(int userId, int[] debtArray)
         {
+            if (!_userIndexMap.ContainsKey(userId))
+            {
+                throw new KeyNotFoundException($"User ID {userId} not found in the user index map.");
+            }
+
             for (int i = 0; i < _userIndexMap.Keys.Count; i++)
             {
                 if (i != userId)
@@ -153,6 +145,11 @@ namespace Roomiebill.Server.Facades
         // Settle debt between two users
         public void SettleDebt(int i, int j, int[] debtArray)
         {
+            if (!_userIndexMap.ContainsKey(i) || !_userIndexMap.ContainsKey(j))
+            {
+                throw new KeyNotFoundException($"User ID {i} or {j} not found in the user index map.");
+            }
+
             int index = GetIndex(_userIndexMap[i], _userIndexMap[j]);
             debtArray[index] = 0;
         }
@@ -182,6 +179,11 @@ namespace Roomiebill.Server.Facades
         // Get total debt for a specific user (the sum all users have to pay to the user)
         public double GetTotalDebtOwedToUser(int userId, int[] debtArray)
         {
+            if (!_userIndexMap.ContainsKey(userId))
+            {
+                throw new KeyNotFoundException($"User ID {userId} not found in the user index map.");
+            }
+
             int userIndex = _userIndexMap[userId];
             double totalDebt = 0;
             for (int i = 0; i < _userCount; i++)
@@ -198,6 +200,11 @@ namespace Roomiebill.Server.Facades
         // Get total debt a specific user owes to all other users
         public double GetTotalDebtUserOwes(int userId, int[] debtArray)
         {
+            if (!_userIndexMap.ContainsKey(userId))
+            {
+                throw new KeyNotFoundException($"User ID {userId} not found in the user index map.");
+            }
+
             int userIndex = _userIndexMap[userId];
             double totalDebt = 0;
             for (int i = 0; i < _userCount; i++)
@@ -228,7 +235,6 @@ namespace Roomiebill.Server.Facades
             return newDebtArray;
         }
         //TODO: add throw not settle debt exception
-
 
         public int[] ReduceDebtArraySize(int newUserCount, int oldUserCount, List<int> removedUsers, int[] debtArray)
         {
