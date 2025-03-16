@@ -4,6 +4,7 @@ using CommunityToolkit.Maui.Views;
 using FrontendApplication.Models;
 using FrontendApplication.Popups;
 using FrontendApplication.Services;
+using FrontendApplication.Models;
 namespace FrontendApplication.Pages;
 
 public partial class GroupViewPage : ContentPage
@@ -74,21 +75,20 @@ public partial class GroupViewPage : ContentPage
 
 		if (result is not null)
 		{
-			InviteToGroupByUsernameDto invitedUser = new InviteToGroupByUsernameDto{
+			InviteToGroupByEmailDto invitedUser = new InviteToGroupByEmailDto{
 				InviterUsername = _currentUser.Username,
-				InvitedUsername = (string)result,
+				Email = (string)result,
 				GroupId = _group.Id
 			};
 
 			try
 			{
-				await _groupService.InviteUserToGroupByUsernameAsync(invitedUser);
+				await _groupService.InviteUserToGroupByEmailAsync(invitedUser);
 				await DisplayAlert("Success", $"{(string)result} has been invited to the group!", "OK");
 			}
 			catch (Exception ex)
 			{
 				await DisplayAlert("Error", $"Failed to invite roomie: {ex.Message}", "OK");
-				
 			}
 		}
 		else

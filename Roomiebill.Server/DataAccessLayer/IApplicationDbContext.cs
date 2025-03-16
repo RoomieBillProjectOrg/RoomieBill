@@ -1,11 +1,11 @@
-﻿using System.Linq.Expressions;
+﻿﻿using System.Linq.Expressions;
 using Roomiebill.Server.Models;
 
 namespace Roomiebill.Server.DataAccessLayer
 {
     public interface IApplicationDbContext
     {
-        public User? GetUserByEmail(string email);
+        public Task<User?> GetUserByEmailAsync(string email);
 
         public Task<User?> GetUserByUsernameAsync(string username);
 

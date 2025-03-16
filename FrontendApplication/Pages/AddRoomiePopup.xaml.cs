@@ -11,16 +11,16 @@ namespace FrontendApplication.Pages
 
         private void OnInviteClicked(object sender, EventArgs e)
         {
-            var invitedUsername = UsernameEntry.Text?.Trim();
+            var email = EmailEntry.Text?.Trim();
 
-            if (string.IsNullOrWhiteSpace(invitedUsername))
+            if (string.IsNullOrWhiteSpace(email))
             {
-                Application.Current.MainPage.DisplayAlert("Error", "Username cannot be empty.", "OK");
+                Application.Current.MainPage.DisplayAlert("Error", "Email cannot be empty.", "OK");
                 return;
             }
 
-            // Return the invited username as a result
-            Close(invitedUsername);
+            // Return the email as a result
+            Close(email);
         }
 
         private void OnCancelClicked(object sender, EventArgs e)

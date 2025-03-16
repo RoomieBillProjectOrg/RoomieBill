@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Roomiebill.Server.Common.Notification;
 using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Facades;
@@ -19,13 +20,13 @@ namespace Roomiebill.Server.Services
             _userFacade = userService._userFacade;
         }
 
-        public async Task InviteToGroupByUsername(InviteToGroupByUsernameDto inviteDetails)
+        public async Task InviteToGroupByEmail(InviteToGroupByEmailDto inviteDetails)
         {
             if (!await _userFacade.IsUserLoggedInAsync(inviteDetails.InviterUsername))
             {
                 throw new Exception($"User with username {inviteDetails.InviterUsername} is not logged in.");
-            } 
-            await _inviteFacade.InviteToGroupByUsername(inviteDetails.InviterUsername, inviteDetails.InvitedUsername, inviteDetails.GroupId);
+            }
+            await _inviteFacade.InviteToGroupByEmail(inviteDetails.InviterUsername, inviteDetails.Email, inviteDetails.GroupId);
         }
 
         public async Task InviteToGroupByUsernamesList(CreateNewGroupDto group, int groupId)
@@ -34,11 +35,11 @@ namespace Roomiebill.Server.Services
             {
                 throw new Exception($"User with username {group.AdminGroupUsername} is not logged in.");
             }
-            if (group.GroupMembersUsernamesList == null)
+            if (group.GroupMembersEmailsList == null)
             {
                 throw new Exception("Group members list is empty.");
             }
-            await _inviteFacade.InviteToGroupByUsernamesList(group.AdminGroupUsername, group.GroupMembersUsernamesList, groupId);
+            await _inviteFacade.InviteToGroupByEmailsList(group.AdminGroupUsername, group.GroupMembersEmailsList, groupId);
         }
 
         public async Task AnswerInviteByUser(AnswerInviteByUserDto answerDetails)

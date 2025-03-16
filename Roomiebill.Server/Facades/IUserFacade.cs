@@ -1,4 +1,4 @@
-﻿using Roomiebill.Server.DataAccessLayer.Dtos;
+﻿﻿using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Models;
 
 namespace Roomiebill.Server.Facades
@@ -11,6 +11,7 @@ namespace Roomiebill.Server.Facades
         Task<bool> IsUserAdminAsync(string username);
         Task<bool> IsUserLoggedInAsync(string username);
         Task<User?> GetUserByUsernameAsync(string username);
+        Task<User?> GetUserByEmailAsync(string email);
         Task<User?> GetUserByIdAsync(int payerId);
     }
 }
