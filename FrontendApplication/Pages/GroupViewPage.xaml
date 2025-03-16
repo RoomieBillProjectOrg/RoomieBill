@@ -155,7 +155,7 @@
             <HorizontalStackLayout Spacing="15"
                                    Padding="10,20,10,0"
                                    HorizontalOptions="Center">
-                <Button Text="View Transactions"
+                <Button Text="View History Transactions"
                         BackgroundColor="#1E88E5"
                         TextColor="#FFFFFF"
                         FontSize="18"
