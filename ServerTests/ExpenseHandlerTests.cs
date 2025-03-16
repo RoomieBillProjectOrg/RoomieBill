@@ -53,7 +53,7 @@ namespace ServerTests
             debtArray[0] = -50;
 
             // Act
-            var debt = expenseHandler.GetDebtBetween(0, 1, debtArray);
+            var debt = expenseHandler.GetDebtBetween(1, 0, debtArray);
 
             // Assert
             Assert.Equal(50, debt);
@@ -65,15 +65,15 @@ namespace ServerTests
             // Arrange
             var users = new List<User>
             {
-                new User { Id = 1 },
-                new User { Id = 2 }
+                new User { Id = 0 },
+                new User { Id = 1 }
             };
             var expenseHandler = new ExpenseHandler(users);
             var debtArray = new int[1];
             debtArray[0] = -50;
 
             // Act
-            expenseHandler.SettleDebt(0, 1, debtArray);
+            expenseHandler.SettleDebt(1, 0, debtArray);
 
             // Assert
             Assert.Equal(0, debtArray[0]);
@@ -116,8 +116,8 @@ namespace ServerTests
             expenseHandler.UpdateExpense(oldExpense, newExpense, debtArray);
 
             // Assert
-            Assert.Equal(-100, debtArray[expenseHandler.GetIndex(0, 1)]);
-            Assert.Equal(-100, debtArray[expenseHandler.GetIndex(0, 2)]);
+            Assert.Equal(-50, debtArray[expenseHandler.GetIndex(0, 1)]);
+            Assert.Equal(-50, debtArray[expenseHandler.GetIndex(0, 2)]);
         }
 
         [Fact]
@@ -139,8 +139,8 @@ namespace ServerTests
             var debts = expenseHandler.GetAllDebts(debtArray);
 
             // Assert
-            Assert.Equal(50, debts[(0, 1)]);
-            Assert.Equal(30, debts[(0, 2)]);
+            Assert.Equal(50, debts[(1, 0)]);
+            Assert.Equal(30, debts[(2, 0)]);
         }
 
         [Fact]
@@ -149,9 +149,9 @@ namespace ServerTests
             // Arrange
             var users = new List<User>
             {
+                new User { Id = 0 },
                 new User { Id = 1 },
-                new User { Id = 2 },
-                new User { Id = 3 }
+                new User { Id = 2 }
             };
             var expenseHandler = new ExpenseHandler(users);
             var debtArray = new int[3];
@@ -194,8 +194,8 @@ namespace ServerTests
             expenseHandler.DeleteExpense(expense, debtArray);
 
             // Assert
-            Assert.Equal(0, debtArray[expenseHandler.GetIndex(0, 1)]);
-            Assert.Equal(0, debtArray[expenseHandler.GetIndex(0, 2)]);
+            Assert.Equal(0, debtArray[expenseHandler.GetIndex(1, 0)]);
+            Assert.Equal(0, debtArray[expenseHandler.GetIndex(2, 0)]);
         }
 
         [Fact]
@@ -204,14 +204,14 @@ namespace ServerTests
             // Arrange
             var users = new List<User>
             {
+                new User { Id = 0 },
                 new User { Id = 1 },
-                new User { Id = 2 },
-                new User { Id = 3 }
+                new User { Id = 2 }
             };
             var expenseHandler = new ExpenseHandler(users);
             var debtArray = new int[3];
-            debtArray[expenseHandler.GetIndex(0, 1)] = -50;
-            debtArray[expenseHandler.GetIndex(0, 2)] = -30;
+            debtArray[expenseHandler.GetIndex(1, 0)] = -50;
+            debtArray[expenseHandler.GetIndex(2, 0)] = -30;
 
             // Act
             var totalDebt = expenseHandler.GetTotalDebtOwedToUser(0, debtArray);
@@ -226,9 +226,9 @@ namespace ServerTests
             // Arrange
             var users = new List<User>
             {
+                new User { Id = 0 },
                 new User { Id = 1 },
-                new User { Id = 2 },
-                new User { Id = 3 }
+                new User { Id = 2 }
             };
             var expenseHandler = new ExpenseHandler(users);
             var debtArray = new int[3];
