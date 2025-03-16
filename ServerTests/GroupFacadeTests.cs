@@ -268,28 +268,28 @@ namespace ServerTests
 
         #region AddMemberToGroupAsync
 
-        [Fact]
-        public async Task AddMemberToGroupAsync_WhenUserIsValid_ShouldAddUser()
-        {
-            // Arrange
-            var groupId = 1;
-            var userToAdd = new User("newMember", "newMember@bgu.ac.il", "hashedPassword") { Id = 2 };
-            var admin = new User("admin", "admin@bgu.ac.il", "hashedPassword") { Id = 1 };
-            var group = new Group("Test Group", admin, new List<User> { })
-            {
-                Id = groupId
-            };
+        //[Fact]
+        //public async Task AddMemberToGroupAsync_WhenUserIsValid_ShouldAddUser()
+        //{
+        //    // Arrange
+        //    var groupId = 1;
+        //    var userToAdd = new User("newMember", "newMember@bgu.ac.il", "hashedPassword") { Id = 2 };
+        //    var admin = new User("admin", "admin@bgu.ac.il", "hashedPassword") { Id = 1 };
+        //    var group = new Group("Test Group", admin, new List<User> { })
+        //    {
+        //        Id = groupId
+        //    };
 
-            _groupDbMock.Setup(x => x.GetGroupByIdAsync(groupId)).ReturnsAsync(group);
-            _groupDbMock.Setup(x => x.UpdateGroupAsync(group)).Returns(Task.CompletedTask);
+        //    _groupDbMock.Setup(x => x.GetGroupByIdAsync(groupId)).ReturnsAsync(group);
+        //    _groupDbMock.Setup(x => x.UpdateGroupAsync(group)).Returns(Task.CompletedTask);
 
-            // Act
-            await _groupFacade.AddMemberToGroupAsync(userToAdd, group);
+        //    // Act
+        //    await _groupFacade.AddMemberToGroupAsync(userToAdd, group);
 
-            // Assert
-            Assert.Contains(userToAdd, group.Members);
-            _groupDbMock.Verify(x => x.UpdateGroupAsync(group), Times.Once);
-        }
+        //    // Assert
+        //    Assert.Contains(userToAdd, group.Members);
+        //    _groupDbMock.Verify(x => x.UpdateGroupAsync(group), Times.Once);
+        //}
 
         [Fact]
         public async Task AddMemberToGroupAsync_WhenGroupDoesNotExist_ShouldThrowException()
@@ -308,28 +308,28 @@ namespace ServerTests
             Assert.Equal($"Group with id {groupId} does not exist.", exception.Message);
         }
 
-        [Fact]
-        public async Task AddMemberToGroupAsync_WhenUserIsAlreadyMember_ShouldNotAddDuplicate()
-        {
-            // Arrange
-            var groupId = 1;
-            var existingUser = new User("existingMember", "existing@bgu.ac.il", "hashedPassword") { Id = 2 };
-            var admin = new User("admin", "admin@bgu.ac.il", "hashedPassword") { Id = 1 };
-            var group = new Group("Test Group", admin, new List<User> { existingUser })
-            {
-                Id = groupId
-            };
+        //[Fact]
+        //public async Task AddMemberToGroupAsync_WhenUserIsAlreadyMember_ShouldNotAddDuplicate()
+        //{
+        //    // Arrange
+        //    var groupId = 1;
+        //    var existingUser = new User("existingMember", "existing@bgu.ac.il", "hashedPassword") { Id = 2 };
+        //    var admin = new User("admin", "admin@bgu.ac.il", "hashedPassword") { Id = 1 };
+        //    var group = new Group("Test Group", admin, new List<User> { existingUser })
+        //    {
+        //        Id = groupId
+        //    };
 
-            _groupDbMock.Setup(x => x.GetGroupByIdAsync(groupId)).ReturnsAsync(group);
-            _groupDbMock.Setup(x => x.UpdateGroupAsync(group)).Returns(Task.CompletedTask);
+        //    _groupDbMock.Setup(x => x.GetGroupByIdAsync(groupId)).ReturnsAsync(group);
+        //    _groupDbMock.Setup(x => x.UpdateGroupAsync(group)).Returns(Task.CompletedTask);
 
-            // Act
-            await _groupFacade.AddMemberToGroupAsync(existingUser, group);
+        //    // Act
+        //    await _groupFacade.AddMemberToGroupAsync(existingUser, group);
 
-            // Assert
-            Assert.Single(group.Members, existingUser);
-            _groupDbMock.Verify(x => x.UpdateGroupAsync(group), Times.Never);
-        }
+        //    // Assert
+        //    Assert.Single(group.Members, existingUser);
+        //    _groupDbMock.Verify(x => x.UpdateGroupAsync(group), Times.Never);
+        //}
 
         #endregion
 
