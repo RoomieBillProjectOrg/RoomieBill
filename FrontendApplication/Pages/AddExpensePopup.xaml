@@ -24,6 +24,21 @@
                         FontAttributes="Bold"
                         TextColor="White" />
 
+                    <!-- Description Entry -->
+                    <VerticalStackLayout>
+                        <Label Text="Description:"
+                            FontSize="16"
+                            TextColor="White"
+                            FontAttributes="Bold" />
+                        <Entry x:Name="DescriptionEntry"
+                            Placeholder="Enter description"
+                            FontSize="16"
+                            BackgroundColor="#3E3E3E"
+                            TextColor="White"
+                            HeightRequest="40"
+                            Margin="0,5,0,0" />
+                    </VerticalStackLayout>
+
                     <!-- Amount Entry -->
                     <VerticalStackLayout>
                         <Label Text="Amount:"
@@ -33,21 +48,6 @@
                         <Entry x:Name="AmountEntry"
                             Placeholder="Enter amount"
                             Keyboard="Numeric"
-                            FontSize="16"
-                            BackgroundColor="#3E3E3E"
-                            TextColor="White"
-                            HeightRequest="40"
-                            Margin="0,5,0,0" />
-                    </VerticalStackLayout>
-
-                    <!-- Description Entry -->
-                    <VerticalStackLayout>
-                        <Label Text="Description:"
-                            FontSize="16"
-                            TextColor="White"
-                            FontAttributes="Bold" />
-                        <Entry x:Name="DescriptionEntry"
-                            Placeholder="Enter description"
                             FontSize="16"
                             BackgroundColor="#3E3E3E"
                             TextColor="White"
