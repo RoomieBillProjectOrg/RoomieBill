@@ -151,6 +151,9 @@ namespace Roomiebill.Server.Facades
             // Map the updated DTO to an entity
             Expense updatedExpense = await MapToEntity(updatedExpenseDto);
 
+            // Add the expense splits to the updated expense
+            await AddExpenseSpiltsList(updatedExpense, updatedExpenseDto);
+
             // Use the Group's updateExpense method
             group.updateExpense(oldExpense, updatedExpense);
 
@@ -167,14 +170,14 @@ namespace Roomiebill.Server.Facades
         /// <param name="user"></param>
         /// <param name="group"></param>
         /// <returns></returns>
-        public async Task AddMemberToGroupAsync(User user, Group group)
+        public async Task AddMemberToGroupAsync(User user, Group groupToLook)
         {
             // Add the user to the group
-            group = await _applicationDbs.GetGroupByIdAsync(group.Id);
+            Group group = await _applicationDbs.GetGroupByIdAsync(groupToLook.Id);
             if (group == null)
             {
-                _logger.LogError($"Error when trying to add member: group with id {group.Id} does not exist.");
-                throw new Exception($"Group with id {group.Id} does not exist.");
+                _logger.LogError($"Error when trying to add member: group with id {groupToLook.Id} does not exist.");
+                throw new Exception($"Group with id {groupToLook.Id} does not exist.");
             }
             group.AddMember(user);
             await _applicationDbs.UpdateGroupAsync(group);
