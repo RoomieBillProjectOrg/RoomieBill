@@ -9,7 +9,7 @@ using Roomiebill.Server.Models;
 
 namespace Roomiebill.Server.Facades
 {
-    public class InviteFacade
+    public class InviteFacade : IInviteFacade
     {
         private readonly IApplicationDbContext _applicationDbs;
         private ILogger<InviteFacade> _logger;
