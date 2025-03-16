@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Roomiebill.Server.DataAccessLayer;
 
@@ -11,9 +12,11 @@ using Roomiebill.Server.DataAccessLayer;
 namespace Roomiebill.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250316131306_AddVersionInbar")]
+    partial class AddVersionInbar
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,7 +37,7 @@ namespace Roomiebill.Server.Migrations
 
                     b.HasIndex("MembersId");
 
-                    b.ToTable("GroupUser", (string)null);
+                    b.ToTable("GroupUser");
                 });
 
             modelBuilder.Entity("Roomiebill.Server.Models.Expense", b =>
@@ -68,7 +71,7 @@ namespace Roomiebill.Server.Migrations
 
                     b.HasIndex("PayerId");
 
-                    b.ToTable("Expenses", (string)null);
+                    b.ToTable("Expenses");
                 });
 
             modelBuilder.Entity("Roomiebill.Server.Models.ExpenseSplit", b =>
@@ -94,7 +97,7 @@ namespace Roomiebill.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ExpenseSplits", (string)null);
+                    b.ToTable("ExpenseSplits");
                 });
 
             modelBuilder.Entity("Roomiebill.Server.Models.Group", b =>
@@ -122,7 +125,7 @@ namespace Roomiebill.Server.Migrations
 
                     b.HasIndex("AdminId");
 
-                    b.ToTable("Groups", (string)null);
+                    b.ToTable("Groups");
                 });
 
             modelBuilder.Entity("Roomiebill.Server.Models.Invite", b =>
@@ -156,7 +159,7 @@ namespace Roomiebill.Server.Migrations
 
                     b.HasIndex("InviterId");
 
-                    b.ToTable("Invites", (string)null);
+                    b.ToTable("Invites");
                 });
 
             modelBuilder.Entity("Roomiebill.Server.Models.User", b =>
@@ -194,7 +197,7 @@ namespace Roomiebill.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("GroupUser", b =>
