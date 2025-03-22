@@ -93,10 +93,8 @@ namespace Roomiebill.Server.Facades
 
             await AddInviteToGroup(group, invite);
 
-            NotificationsHandle.SendNotificationByTokenAsync("You have been invited to a group", $"You have been invited to a group with id {groupId}.", invited.FirebaseToken);
-
             // Send email notification
-            await SendEmailNotificationAsync(invited, emailTo, group);
+            await SendEmailNotificationAsync(inviter_username, emailTo, group);
 
             _logger.LogInformation($"User with email {emailTo} has been invited to group with id {groupId}.");
         }
@@ -222,10 +220,10 @@ namespace Roomiebill.Server.Facades
             _logger.LogInformation($"Invite with id {inviteId} has been answered.");
         }
 
-        private async Task SendEmailNotificationAsync(User invited, string email, Group group)
+        private async Task SendEmailNotificationAsync(string inviter_username, string email, Group group)
         {
             string subject = "You have been invited to a new group";
-            string body = $"You have been invited to a new group {group.GroupName} by {invited.Username}.";
+            string body = $"You have been invited to a new group {group.GroupName} by {inviter_username}.";
             await EmailNotificationHandler.SendEmailAsync(email, subject, body);
         }
 
