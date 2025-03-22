@@ -24,7 +24,7 @@ namespace Roomiebill.Server.DataAccessLayer
             // Check if the database is already seeded
             if (!_context.Users.Any())
             {
-                await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Inbar", Email = "inbar@bgu.ac.il", Password = "InbarPassword1!", FirebaseToken = "Test" });
+                await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Inbar", Email = "Inbar@bgu.ac.il", Password = "InbarPassword1!", FirebaseToken = "Test" });
                 await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Metar", Email = "Metar@bgu.ac.il", Password = "MetarPassword2@", FirebaseToken = "Test" });
                 await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Vladi", Email = "Vladi@bgu.ac.il", Password = "VladiPassword3#", FirebaseToken = "Test" });
                 await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Tal", Email = "Tal@bgu.ac.il", Password = "TalPassword4$", FirebaseToken = "Test" });
@@ -39,7 +39,7 @@ namespace Roomiebill.Server.DataAccessLayer
                 CreateNewGroupDto newGroupDetails = new CreateNewGroupDto
                 {
                     AdminGroupUsername = "Inbar",
-                    GroupMembersUsernamesList = new List<string> { "Metar", "Vladi", "Tal" },
+                    GroupMembersEmailsList = new List<string> { "Metar@bgu.ac.il", "Vladi@bgu.ac.il", "Tal@bgu.ac.il" },
                     GroupName = "Roomiebill"
                 };
 
@@ -103,7 +103,7 @@ namespace Roomiebill.Server.DataAccessLayer
                 CreateNewGroupDto newGroupDetails_TestInvites = new CreateNewGroupDto
                 {
                     AdminGroupUsername = "Inbar",
-                    GroupMembersUsernamesList = new List<string> { "Metar", "Vladi", "Tal" },
+                    GroupMembersEmailsList = new List<string> { "Metar@bgu.ac.il", "Vladi@bgu.ac.il", "Tal@bgu.ac.il" },
                     GroupName = "Test Invites"
                 };
 

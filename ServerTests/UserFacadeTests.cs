@@ -164,7 +164,7 @@ public class UserFacadeTests
         };
 
         // Mock that the email already exists
-        _usersDbMock.Setup(db => db.GetUserByEmail(registerDto.Email)).Returns(new User());
+        _usersDbMock.Setup(db => db.GetUserByEmailAsync(registerDto.Email)).ReturnsAsync(new User());
 
         // Act & Assert
         await Assert.ThrowsAsync<Exception>(() => _userFacade.RegisterUserAsync(registerDto));

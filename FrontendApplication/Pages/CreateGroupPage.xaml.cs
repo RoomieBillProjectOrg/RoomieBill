@@ -36,7 +36,7 @@ public partial class CreateGroupPage : ContentPage
         {
             GroupName = groupName,
             AdminGroupUsername = _user.Username, // Assuming _user has a Username property
-            GroupMembersUsernamesList = string.IsNullOrEmpty(membersInput)
+            GroupMembersEmailsList = string.IsNullOrEmpty(membersInput)
                 ? new List<string>()
                 : membersInput.Split(',').Select(s => s.Trim()).ToList()
         };

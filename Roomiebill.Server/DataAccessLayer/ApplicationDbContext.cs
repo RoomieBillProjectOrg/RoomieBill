@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿﻿using Microsoft.EntityFrameworkCore;
 using Roomiebill.Server.Facades;
 using Roomiebill.Server.Models;
 
@@ -71,7 +71,7 @@ namespace Roomiebill.Server.DataAccessLayer
                 .OnDelete(DeleteBehavior.Restrict); // Optional: Prevent cascading delete
         }
         /* User methods */
-        public User? GetUserByEmail(string email)
+        public async Task<User?> GetUserByEmailAsync(string email)
         {
             return Users.FirstOrDefault(u => u.Email == email);
         }

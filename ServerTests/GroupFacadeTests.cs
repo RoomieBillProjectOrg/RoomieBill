@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+﻿﻿using Microsoft.Extensions.Logging;
 using Moq;
 using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.DataAccessLayer.Dtos;
@@ -33,7 +33,7 @@ namespace ServerTests
             {
                 GroupName = "Test Group",
                 AdminGroupUsername = "admin",
-                GroupMembersUsernamesList = new List<string> { "member1", "member2" }
+                GroupMembersEmailsList = new List<string> { "member1", "member2" }
             };
 
             User admin = new User("admin", "admin@bgu.ac.il", "adminPassword!1");
@@ -62,7 +62,7 @@ namespace ServerTests
             {
                 GroupName = "Test Group",
                 AdminGroupUsername = "admin",
-                GroupMembersUsernamesList = new List<string> { "member1", "member2" }
+                GroupMembersEmailsList = new List<string> { "member1", "member2" }
             };
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync("admin"))!.ReturnsAsync((User?)null);
 
@@ -78,7 +78,7 @@ namespace ServerTests
             {
                 GroupName = "Test Group",
                 AdminGroupUsername = "admin",
-                GroupMembersUsernamesList = new List<string>()
+                GroupMembersEmailsList = new List<string>()
             };
 
             User admin = new User("admin", "admin@bgu.ac.il", "adminPassword!1");
