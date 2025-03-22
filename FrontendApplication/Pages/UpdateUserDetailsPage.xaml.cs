@@ -68,4 +68,10 @@ public partial class UpdateUserDetailsPage : ContentPage
             await DisplayAlert("Error", ex.Message, "OK");
         }
     }
+
+    private async void OnHomePageButtonClicked(object sender, EventArgs e)
+    {
+        // Navigate to UserHomePage
+        await Navigation.PushAsync(new UserHomePage(_userService, _groupService, _paymentService, _user));
+    }
 }

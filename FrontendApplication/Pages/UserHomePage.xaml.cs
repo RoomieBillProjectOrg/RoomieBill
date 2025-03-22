@@ -131,11 +131,11 @@ public partial class UserHomePage : ContentPage
 
     private async Task OnAddGroup()
     {
-        await Navigation.PushAsync(new CreateGroupPage(_userService, User));
+        await Navigation.PushAsync(new CreateGroupPage(_userService, _groupService, _paymentService, User));
     }
 
     private async Task OnInvites()
     {
-        await Navigation.PushAsync(new InvitesPage(_userService, User.Username));
+        await Navigation.PushAsync(new InvitesPage(_userService, _groupService, _paymentService, User));
     }
 }

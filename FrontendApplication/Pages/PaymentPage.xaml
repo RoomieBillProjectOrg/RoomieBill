@@ -4,6 +4,10 @@
              x:Class="FrontendApplication.Pages.PaymentPage"
              BackgroundColor="#121212">
 
+    <ContentPage.ToolbarItems>
+        <ToolbarItem IconImageSource="home_icon.png" Text="Home" Order="Primary" Priority="0" Clicked="OnHomePageButtonClicked" />
+    </ContentPage.ToolbarItems>
+
     <ContentPage.Content>
         <VerticalStackLayout Padding="30" Spacing="20">
 
