@@ -61,9 +61,9 @@ public class GroupServiceApi
             throw new Exception(errorResponse.Message);
         }
     }
-      
-    public async Task InviteUserToGroupByUsernameAsync(InviteToGroupByUsernameDto inviteDto){
-        var response = await _httpClient.PostAsJsonAsync($"{_httpClient.BaseAddress}/Invites/inviteUserToGroupByUsername", inviteDto);
+
+    public async Task InviteUserToGroupByEmailAsync(InviteToGroupByEmailDto inviteDto){
+        var response = await _httpClient.PostAsJsonAsync($"{_httpClient.BaseAddress}/Invites/inviteUserToGroupByEmail", inviteDto);
         
         if (!response.IsSuccessStatusCode)
             {

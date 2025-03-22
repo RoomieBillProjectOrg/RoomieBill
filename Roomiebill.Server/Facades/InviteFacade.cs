@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Roomiebill.Server.Common.Enums;
 using Roomiebill.Server.Common.Notificaiton;
 using Roomiebill.Server.DataAccessLayer;
+using Roomiebill.Server.Common.Notification;
 using Roomiebill.Server.Models;
 
 namespace Roomiebill.Server.Facades
@@ -28,13 +29,13 @@ namespace Roomiebill.Server.Facades
         /// This method invites a user to a group by their username. If the inviter, invited or group do not exist in the system, an exception is thrown.
         /// </summary>
         /// <param name="inviter_username"></param>
-        /// <param name="invited_username"></param>
+        /// <param name="email"></param>
         /// <param name="groupId"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task InviteToGroupByUsername(string inviter_username, string invited_username, int groupId)
+        public async Task InviteToGroupByEmail(string inviter_username, string emailTo, int groupId)
         {
-            _logger.LogInformation($"Inviting user with username {invited_username} to group with id {groupId}.");
+            _logger.LogInformation($"Inviting user with email {emailTo} to group with id {groupId}.");
 
             User? inviter = await _userFacade.GetUserByUsernameAsync(inviter_username);
 
@@ -44,12 +45,12 @@ namespace Roomiebill.Server.Facades
                 throw new Exception($"Error when trying to invite user to group: inviter with username {inviter_username} does not exist in the system.");
             }
 
-            User? invited = await _userFacade.GetUserByUsernameAsync(invited_username);
+            User? invited = await _userFacade.GetUserByEmailAsync(emailTo);
 
             if (invited == null)
             {
-                _logger.LogError($"Error when trying to invite user to group: invited with username {invited_username} does not exist in the system.");
-                throw new Exception($"Error when trying to invite user to group: invited with username {invited_username} does not exist in the system.");
+                _logger.LogError($"Error when trying to invite user to group: invited with email {emailTo} does not exist in the system.");
+                throw new Exception($"Error when trying to invite user to group: invited with email {emailTo} does not exist in the system.");
             }
 
             Group? group = await _applicationDbs.GetGroupByIdAsync(groupId);
@@ -62,38 +63,47 @@ namespace Roomiebill.Server.Facades
 
             if (IsInviteForUserExistInGroup(invited, group))
             {
-                _logger.LogError($"Error when trying to invite user to group: user with username {invited_username} is already invited to group with id {groupId}.");
-                throw new Exception($"Error when trying to invite user to group: user with username {invited_username} is already invited to group with id {groupId}.");
+                _logger.LogError($"Error when trying to invite user to group: user with email {emailTo} is already invited to group with id {groupId}.");
+                throw new Exception($"Error when trying to invite user to group: user with email {emailTo} is already invited to group with id {groupId}.");
             }
 
             if (!_groupFacade.IsUserInGroup(inviter, group))
             {
-                _logger.LogError($"Error when trying to invite user to group: user with username {inviter_username} is not a member of group with id {groupId}.");
-                throw new Exception($"Error when trying to invite user to group: user with username {inviter_username} is not a member of group with id {groupId}.");
+                _logger.LogError($"Error when trying to invite user to group: user with email {emailTo} is not a member of group with id {groupId}.");
+                throw new Exception($"Error when trying to invite user to group: user with email {emailTo} is not a member of group with id {groupId}.");
             }
 
             if (_groupFacade.IsUserInGroup(invited, group))
             {
-                _logger.LogError($"Error when trying to invite user to group: user with username {invited_username} is already a member of group with id {groupId}.");
-                throw new Exception($"Error when trying to invite user to group: user with username {invited_username} is already a member of group with id {groupId}.");
+                _logger.LogError($"Error when trying to invite user to group: user with email {emailTo} is already a member of group with id {groupId}.");
+                throw new Exception($"Error when trying to invite user to group: user with email {emailTo} is already a member of group with id {groupId}.");
             }
 
-            Invite invite = new Invite(inviter, invited, group);
+            Invite invite = new Invite
+            {
+                Inviter = inviter,
+                Email = emailTo,
+                Group = group,
+                Status = Status.Pending,
+                Date = DateTime.Now
+            };
+
 
             await AddInviteToinvited(invited, invite);
 
             await AddInviteToGroup(group, invite);
 
-            NotificationsHandle.SendNotificationByTokenAsync("You have been invited to a group", $"You have been invited to a group with id {groupId}.", invited.FirebaseToken);
+            // Send email notification
+            await SendEmailNotificationAsync(inviter_username, emailTo, group);
 
-            _logger.LogInformation($"User with username {invited_username} has been invited to group with id {groupId}.");
+            _logger.LogInformation($"User with email {emailTo} has been invited to group with id {groupId}.");
         }
 
-        public async Task InviteToGroupByUsernamesList(string inviter_username, List<string> invited_usernames, int groupId)
+        public async Task InviteToGroupByEmailsList(string inviter_username, List<string> invited_emails, int groupId)
         {
-            foreach (string invited_username in invited_usernames)
+            foreach (string invited_email in invited_emails)
             {
-                await InviteToGroupByUsername(inviter_username, invited_username, groupId);
+                await InviteToGroupByEmail(inviter_username, invited_email, groupId);
             }
         }
 
@@ -208,6 +218,13 @@ namespace Roomiebill.Server.Facades
             }
 
             _logger.LogInformation($"Invite with id {inviteId} has been answered.");
+        }
+
+        private async Task SendEmailNotificationAsync(string inviter_username, string email, Group group)
+        {
+            string subject = "You have been invited to a new group";
+            string body = $"You have been invited to a new group {group.GroupName} by username {inviter_username}.";
+            await EmailNotificationHandler.SendEmailAsync(email, subject, body);
         }
 
         #endregion

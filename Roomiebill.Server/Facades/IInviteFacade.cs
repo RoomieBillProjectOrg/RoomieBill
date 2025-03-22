@@ -6,9 +6,9 @@ namespace Roomiebill.Server.Facades
 {
     public interface IInviteFacade
     {
-        Task InviteToGroupByUsername(string inviter_username, string invited_username, int groupId);
+        Task InviteToGroupByEmail(string inviter_username, string email, int groupId);
 
-        Task InviteToGroupByUsernamesList(string inviter_username, List<string> invited_usernames, int groupId);
+        Task InviteToGroupByEmailsList(string inviter_username, List<string> invited_usernames, int groupId);
 
         Task AnswerInviteByUser(int inviteId, bool isAccepted);
     }

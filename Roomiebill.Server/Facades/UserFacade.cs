@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿﻿using Microsoft.AspNetCore.Identity;
 using Roomiebill.Server.Common.Validators;
 using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.DataAccessLayer.Dtos;
@@ -80,7 +80,7 @@ namespace Roomiebill.Server.Facades
             }
 
             // Check if the user already exists by email
-            existingUser = _applicaitonDbs.GetUserByEmail(registerUserDto.Email);
+            existingUser = await _applicaitonDbs.GetUserByEmailAsync(registerUserDto.Email);
             if (existingUser != null)
             {
                 _logger.LogError($"User with this email = {registerUserDto.Email} already exists");
@@ -370,6 +370,12 @@ namespace Roomiebill.Server.Facades
         {
             return await _applicaitonDbs.GetUserByUsernameAsync(username);
         }
+
+        public async Task<User?> GetUserByEmailAsync(string email)
+        {
+            return await _applicaitonDbs.GetUserByEmailAsync(email);
+        }
+
 
         #endregion 
     }

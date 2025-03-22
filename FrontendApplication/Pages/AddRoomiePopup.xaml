@@ -22,9 +22,9 @@
                 HorizontalOptions="Center"
                 TextColor="White" />
 
-            <!-- Username Entry -->
-            <Entry x:Name="UsernameEntry"
-                Placeholder="Enter Username"
+            <!-- Email Entry -->
+            <Entry x:Name="EmailEntry"
+                Placeholder="Enter Email"
                 BackgroundColor="#EFEFEF"
                 TextColor="Black"
                 HeightRequest="40"

@@ -5,6 +5,6 @@
         public required string GroupName { get; set; }
         public required string AdminGroupUsername { get; set; }
 
-        public List<string>? GroupMembersUsernamesList { get; set; }
+        public List<string>? GroupMembersEmailsList { get; set; }
     }
 }

@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.Services;
 using Roomiebill.Server.Models;
+using Roomiebill.Server.Common.Notification;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
@@ -70,5 +71,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
-

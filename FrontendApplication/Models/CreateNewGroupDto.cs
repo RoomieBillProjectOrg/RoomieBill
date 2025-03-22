@@ -5,7 +5,7 @@
         public required string GroupName { get; set; }
         public required string AdminGroupUsername { get; set; }
 
-        public List<string> GroupMembersUsernamesList { get; set; } = new List<string>();
+        public List<string> GroupMembersEmailsList { get; set; } = new List<string>();
 
         // Empty constructor for deserialization
         public CreateNewGroupDto() { }
