@@ -223,7 +223,7 @@ namespace Roomiebill.Server.Facades
         private async Task SendEmailNotificationAsync(string inviter_username, string email, Group group)
         {
             string subject = "You have been invited to a new group";
-            string body = $"You have been invited to a new group {group.GroupName} by {inviter_username}.";
+            string body = $"You have been invited to a new group {group.GroupName} by username {inviter_username}.";
             await EmailNotificationHandler.SendEmailAsync(email, subject, body);
         }
 
