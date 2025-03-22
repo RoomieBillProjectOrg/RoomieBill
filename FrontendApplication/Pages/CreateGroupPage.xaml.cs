@@ -8,12 +8,16 @@ namespace FrontendApplication.Pages;
 public partial class CreateGroupPage : ContentPage
 {
     private readonly UserServiceApi _userService;
+    private readonly GroupServiceApi _groupService;
+    private readonly PaymentService _paymentService;
     private UserModel _user;
 
-    public CreateGroupPage(UserServiceApi userService, UserModel user)
+    public CreateGroupPage(UserServiceApi userService, GroupServiceApi groupServiceApi, PaymentService paymentService, UserModel user)
     {
         InitializeComponent();
         _userService = userService;
+        _groupService = groupServiceApi;
+        _paymentService = paymentService;
         _user = user;
     }
 
@@ -59,5 +63,10 @@ public partial class CreateGroupPage : ContentPage
             ErrorLabel.Text = ex.Message;
             ErrorLabel.IsVisible = true;
         }
+    }
+
+    private async void OnHomePageButtonClicked(object sender, EventArgs e)
+    {
+        await Navigation.PushAsync(new UserHomePage(_userService, _groupService, _paymentService, _user));
     }
 }

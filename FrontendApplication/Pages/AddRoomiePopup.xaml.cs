@@ -1,13 +1,24 @@
 using CommunityToolkit.Maui.Views;
+using FrontendApplication.Models;
+using FrontendApplication.Services;
 
 namespace FrontendApplication.Pages
 {
     public partial class AddRoomiePopup : Popup
     {
-        public AddRoomiePopup()
+        private readonly UserServiceApi _userService;
+        private readonly GroupServiceApi _groupService;
+        private readonly PaymentService _paymentService;
+        private readonly UserModel _user;
+        
+        public AddRoomiePopup(UserServiceApi userServiceApi, GroupServiceApi groupServiceApi, PaymentService paymentService, UserModel user)
         {
+            _userService = userServiceApi;
+            _groupService = groupServiceApi;
+            _paymentService = paymentService;
+            _user = user;
             InitializeComponent();
-        }
+    }
 
         private void OnInviteClicked(object sender, EventArgs e)
         {
