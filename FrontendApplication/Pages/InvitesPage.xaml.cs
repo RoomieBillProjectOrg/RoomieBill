@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Firebase.Crashlytics.Internal.Model;
 using Firebase.Messaging;
 using FrontendApplication.Models;
 using FrontendApplication.Services;
@@ -13,12 +14,20 @@ namespace FrontendApplication.Pages
     public partial class InvitesPage : ContentPage
     {
         private readonly UserServiceApi _userService;
+        private readonly GroupServiceApi _groupService;
+        private readonly PaymentService _paymentService;
+        private readonly UserModel _user;
         private ObservableCollection<InviteModel> _invitations;
 
-        public InvitesPage(UserServiceApi userService, string username)
+        public InvitesPage(UserServiceApi userService, GroupServiceApi groupService, PaymentService paymentService, UserModel user)
         {
             InitializeComponent();
+
             _userService = userService;
+            _groupService = groupService;
+            _paymentService = paymentService;
+            _user = user;
+
             _invitations = new ObservableCollection<InviteModel>();
 
             var collectionView = new CollectionView
@@ -68,7 +77,7 @@ namespace FrontendApplication.Pages
 
             Content = new StackLayout { Children = { collectionView } };
 
-            LoadInvites(username);
+            LoadInvites(user.Username);
         }
 
         private async void LoadInvites(string username)
@@ -109,6 +118,12 @@ namespace FrontendApplication.Pages
                 _invitations.Remove(invite);
                 await DisplayAlert("Rejected", $"You rejected an invite from {invite.Inviter.Username}", "OK");
             }
+        }
+
+        private async void OnHomePageButtonClicked(object sender, EventArgs e)
+        {
+            // Navigate to UserHomePage
+            await Navigation.PushAsync(new UserHomePage(_userService, _groupService, _paymentService, _user));
         }
     }
 

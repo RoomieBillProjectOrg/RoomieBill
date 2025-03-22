@@ -3,6 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="FrontendApplication.Pages.CreateGroupPage"
              BackgroundColor="Black">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem IconImageSource="home_icon.png" Text="Home" Order="Primary" Priority="0" Clicked="OnHomePageButtonClicked" />
+    </ContentPage.ToolbarItems>
     <!-- Set background color to black -->
 
     <StackLayout Padding="20">

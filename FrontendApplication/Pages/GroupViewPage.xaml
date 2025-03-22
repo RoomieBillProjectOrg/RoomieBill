@@ -6,6 +6,10 @@
              Title="Group View Page"
              BackgroundColor="#121212"> <!-- Dark background -->
 
+    <ContentPage.ToolbarItems>
+        <ToolbarItem IconImageSource="home_icon.png" Text="Home" Order="Primary" Priority="0" Clicked="OnHomePageButtonClicked" />
+    </ContentPage.ToolbarItems>
+
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="20">
 

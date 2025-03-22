@@ -5,16 +5,24 @@ namespace FrontendApplication.Pages;
 
 public partial class PaymentPage : ContentPage
 {
+    private readonly UserServiceApi _userService;
+    private readonly GroupServiceApi _groupService;
+    private readonly PaymentService _paymentService;
+    private UserModel _user;
+
     public DebtModel _debt { get; }
     public GroupModel _groupOfUsers { get; }
-    private readonly PaymentService _paymentService;
 
-    public PaymentPage(DebtModel debt, GroupModel groupOfUsers, PaymentService paymentService)
+    public PaymentPage(DebtModel debt, GroupModel groupOfUsers, UserServiceApi userService, GroupServiceApi groupService, PaymentService paymentService, UserModel user)
     {
         InitializeComponent();
-        _paymentService = paymentService;
+
         _debt = debt;
         _groupOfUsers = groupOfUsers;
+        _userService = userService;
+        _groupService = groupService;
+        _paymentService = paymentService;
+        _user = user;
 
         // Dynamically display debt details
         UserDebt.Text = $"You owe {_debt.amount:N2} NIS to {_debt.creditor.Username}";
@@ -64,5 +72,11 @@ public partial class PaymentPage : ContentPage
         {
             await Navigation.PopAsync();
         }
+    }
+
+    private async void OnHomePageButtonClicked(object sender, EventArgs e)
+    {
+        // Navigate to UserHomePage
+        await Navigation.PushAsync(new UserHomePage(_userService, _groupService, _paymentService, _user));
     }
 }

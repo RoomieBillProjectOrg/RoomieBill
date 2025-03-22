@@ -5,6 +5,10 @@
              Title="Invites"
              BackgroundColor="Black">
 
+    <ContentPage.ToolbarItems>
+        <ToolbarItem IconImageSource="home_icon.png" Text="Home" Order="Primary" Priority="0" Clicked="OnHomePageButtonClicked" />
+    </ContentPage.ToolbarItems>
+
     <ContentPage.Content>
         <ScrollView Padding="20">
             <StackLayout>
