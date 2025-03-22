@@ -200,7 +200,7 @@ public partial class GroupViewPage : ContentPage
             await DisplayAlert("Debt", $"You owe {selectedItem.creditor.Username} {selectedItem.amount} NIS.", "OK");
 
             // Add your logic here (e.g., navigation or additional functionality)
-            await Navigation.PushAsync(new PaymentPage(selectedItem, _group, _paymentService));
+            await Navigation.PushAsync(new PaymentPage(selectedItem, _group, _userService, _groupService, _paymentService, _currentUser));
         }
     });
 
