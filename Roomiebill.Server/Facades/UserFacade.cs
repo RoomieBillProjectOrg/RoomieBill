@@ -22,12 +22,38 @@ namespace Roomiebill.Server.Facades
         /// <summary>
         /// Register a new user with the given details.
         /// The new user will be added to the database with default values as no system admin and not logged in.
+        /// This function called after the user details are verified.
         /// </summary>
         /// <param name="registerUserDto"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="Exception"></exception>
         public async Task<User> RegisterUserAsync(RegisterUserDto registerUserDto)
+        {
+            // Create a new user object from the DTO
+            User newUser = new User(registerUserDto.Username, registerUserDto.Email, registerUserDto.Password, firebaseToken: registerUserDto.FirebaseToken);
+
+            // Hash the password
+            string passwordHash = _passwordHasher.HashPassword(newUser, registerUserDto.Password);
+
+            // Update the user object with the hashed password
+            newUser.PasswordHash = passwordHash;
+
+            _applicaitonDbs.AddUser(newUser);
+
+            _logger.LogInformation($"User registered successfully with details: Username: {registerUserDto.Username}, Email: {registerUserDto.Email}");
+
+            return newUser;
+        }
+
+        /// <summary>
+        /// This function verifies the user details and returns a verification code.
+        /// </summary>
+        /// <param name="registerUserDto"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="Exception"></exception>
+        public async Task VerifyRegisterUserDetailsAsync(RegisterUserDto registerUserDto)
         {
             if (registerUserDto.Username == null)
             {
@@ -86,21 +112,6 @@ namespace Roomiebill.Server.Facades
                 _logger.LogError($"User with this email = {registerUserDto.Email} already exists");
                 throw new Exception("User with this email already exists");
             }
-
-            // Create a new user object from the DTO
-            User newUser = new User(registerUserDto.Username, registerUserDto.Email, registerUserDto.Password, firebaseToken: registerUserDto.FirebaseToken);
-
-            // Hash the password
-            string passwordHash = _passwordHasher.HashPassword(newUser, registerUserDto.Password);
-
-            // Update the user object with the hashed password
-            newUser.PasswordHash = passwordHash;
-
-            _applicaitonDbs.AddUser(newUser);
-
-            _logger.LogInformation($"User registered successfully with details: Username: {registerUserDto.Username}, Email: {registerUserDto.Email}");
-
-            return newUser;
         }
 
         /// <summary>

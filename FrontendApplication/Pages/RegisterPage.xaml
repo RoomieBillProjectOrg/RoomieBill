@@ -14,12 +14,6 @@
                    TextColor="White" 
                    FontAttributes="Bold"/>
 
-            <!-- Subtitle -->
-            <Label Text="Already Registered? Log in here."
-                   FontSize="16"
-                   HorizontalOptions="Center"
-                   TextColor="White" />
-
             <!-- Name Entry -->
             <VerticalStackLayout Spacing="5">
                 <Label Text="NAME" 
@@ -51,21 +45,21 @@
             <VerticalStackLayout Spacing="5">
                 <Label Text="PASSWORD" 
                        FontSize="14" 
-                       TextColor="LightSlateGray" />
+                       TextColor="White" />
                 <Label Text="* At least 8 chars." 
-                       FontSize="10" 
+                       FontSize="12" 
                        TextColor="LightSlateGray" />
                 <Label Text="* At least one number." 
-                       FontSize="10" 
+                       FontSize="12" 
                        TextColor="LightSlateGray" />
                 <Label Text="* At least one upper letter." 
-                       FontSize="10" 
+                       FontSize="12" 
                        TextColor="LightSlateGray" />
                 <Label Text="* At least one lower letter." 
-                       FontSize="10" 
+                       FontSize="12" 
                        TextColor="LightSlateGray" />
                 <Label Text="* At least one special char." 
-                       FontSize="10" 
+                       FontSize="12" 
                        TextColor="White" />
                 <Entry x:Name="PasswordEntry" 
                        IsPassword="True"
@@ -108,27 +102,6 @@
                     CornerRadius="25"
                     Clicked="OnRegisterClicked" />
 
-            <!-- Verification Code Entry -->
-            <VerticalStackLayout x:Name="VerificationSection" IsVisible="False" Spacing="5">
-                <Label Text="VERIFICATION CODE"
-                       FontSize="14" 
-                       TextColor="White" />
-                <Entry x:Name="VerificationCodeEntry"
-                       Placeholder="Enter the code sent to your email"
-                       Keyboard="Numeric"
-                       BackgroundColor="#2A2A2A"
-                       TextColor="White"
-                       PlaceholderColor="#A9A9A9"
-                       HeightRequest="40" />
-                <Button Text="Verify Code"
-                        BackgroundColor="Black"
-                        TextColor="White"
-                        BorderColor="White"
-                        BorderWidth="2"
-                        HeightRequest="50"
-                        CornerRadius="25"
-                        Clicked="OnVerifyCodeClicked" />
-            </VerticalStackLayout>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>
