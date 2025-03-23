@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="FrontendApplication.Pages.RegisterPage"
              BackgroundColor="Black">
-    <ContentPage.Content>
+
+    <ScrollView>
         <VerticalStackLayout Spacing="20" Padding="30">
 
             <!-- Title -->
@@ -50,19 +51,19 @@
             <VerticalStackLayout Spacing="5">
                 <Label Text="PASSWORD" 
                        FontSize="14" 
-                       TextColor="White" />
+                       TextColor="LightSlateGray" />
                 <Label Text="* At least 8 chars." 
                        FontSize="10" 
-                       TextColor="White" />
+                       TextColor="LightSlateGray" />
                 <Label Text="* At least one number." 
                        FontSize="10" 
-                       TextColor="White" />
+                       TextColor="LightSlateGray" />
                 <Label Text="* At least one upper letter." 
                        FontSize="10" 
-                       TextColor="White" />
+                       TextColor="LightSlateGray" />
                 <Label Text="* At least one lower letter." 
                        FontSize="10" 
-                       TextColor="White" />
+                       TextColor="LightSlateGray" />
                 <Label Text="* At least one special char." 
                        FontSize="10" 
                        TextColor="White" />
@@ -129,5 +130,5 @@
                         Clicked="OnVerifyCodeClicked" />
             </VerticalStackLayout>
         </VerticalStackLayout>
-    </ContentPage.Content>
+    </ScrollView>
 </ContentPage>

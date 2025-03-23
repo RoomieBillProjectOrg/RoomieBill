@@ -1,7 +1,17 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\FrontendApplication",
+    "\\FrontendApplication\\Services",
+    "\\Roomiebill.Server",
+    "\\Roomiebill.Server\\Common",
+    "\\Roomiebill.Server\\Common\\Notificaiton",
+    "\\Roomiebill.Server\\Common\\Validators",
+    "\\Roomiebill.Server\\Controllers",
+    "\\Roomiebill.Server\\DataAccessLayer",
+    "\\Roomiebill.Server\\DataAccessLayer\\Dtos",
+    "\\Roomiebill.Server\\Services"
   ],
-  "SelectedNode": "\\RoomieBill.sln",
+  "SelectedNode": "\\Roomiebill.Server\\Facades\\InviteFacade.cs",
   "PreviewInSolutionExplorer": false
 }
