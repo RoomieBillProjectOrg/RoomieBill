@@ -56,8 +56,6 @@ public partial class LoginPage : ContentPage
             }
             else
             {
-                await DisplayAlert("Success", "User logged in successfully!", "OK");
-
                 // Navigate to UserHomePage
                 await Navigation.PushAsync(new UserHomePage(_userService, _groupService, _paymentService, user));
             }
