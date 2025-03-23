@@ -24,7 +24,7 @@ public class UserFacadeTests
         _userFacade = new UserFacade(_usersDbMock.Object, _passwordHasherMock.Object, _loggerMock.Object);
     }
 
-    #region RegisterUserAsync
+    #region RegisterUserAsync & VerifyRegisterUserDetailsAsync
 
     [Fact]
     public async Task TestRegisterUserAsync_WhenSuccessfulRegistration_ThenReturnsNewUser()
@@ -65,7 +65,7 @@ public class UserFacadeTests
         };
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => _userFacade.RegisterUserAsync(registerDto));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => _userFacade.VerifyRegisterUserDetailsAsync(registerDto));
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public class UserFacadeTests
         };
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => _userFacade.RegisterUserAsync(registerDto));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => _userFacade.VerifyRegisterUserDetailsAsync(registerDto));
     }
 
     [Fact]
@@ -97,7 +97,7 @@ public class UserFacadeTests
         };
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => _userFacade.RegisterUserAsync(registerDto));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => _userFacade.VerifyRegisterUserDetailsAsync(registerDto));
     }
 
     [Fact]
@@ -113,7 +113,7 @@ public class UserFacadeTests
         };
 
         // Act & Assert
-        await Assert.ThrowsAsync<Exception>(() => _userFacade.RegisterUserAsync(registerDto));
+        await Assert.ThrowsAsync<Exception>(() => _userFacade.VerifyRegisterUserDetailsAsync(registerDto));
     }
 
     [Fact]
@@ -129,7 +129,7 @@ public class UserFacadeTests
         };
 
         // Act & Assert
-        await Assert.ThrowsAsync<Exception>(() => _userFacade.RegisterUserAsync(registerDto));
+        await Assert.ThrowsAsync<Exception>(() => _userFacade.VerifyRegisterUserDetailsAsync(registerDto));
     }
 
     [Fact]
@@ -148,7 +148,7 @@ public class UserFacadeTests
         _usersDbMock.Setup(db => db.GetUserByUsernameAsync(registerDto.Username)).ReturnsAsync(new User());
 
         // Act & Assert
-        await Assert.ThrowsAsync<Exception>(() => _userFacade.RegisterUserAsync(registerDto));
+        await Assert.ThrowsAsync<Exception>(() => _userFacade.VerifyRegisterUserDetailsAsync(registerDto));
     }
 
     [Fact]
@@ -167,7 +167,7 @@ public class UserFacadeTests
         _usersDbMock.Setup(db => db.GetUserByEmailAsync(registerDto.Email)).ReturnsAsync(new User());
 
         // Act & Assert
-        await Assert.ThrowsAsync<Exception>(() => _userFacade.RegisterUserAsync(registerDto));
+        await Assert.ThrowsAsync<Exception>(() => _userFacade.VerifyRegisterUserDetailsAsync(registerDto));
     }
 
     #endregion

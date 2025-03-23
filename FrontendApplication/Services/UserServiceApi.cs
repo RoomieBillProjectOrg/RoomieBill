@@ -14,16 +14,8 @@ namespace FrontendApplication.Services
             _httpClient = httpClientFactory.CreateClient("DefaultClient");
         }
 
-        public async Task<bool> RegisterUserAsync(string email, string username, string password, string firebaseToken)
+        public async Task<bool> RegisterUserAsync(RegisterUserDto user)
         {
-            RegisterUserDto user = new RegisterUserDto()
-            {
-                username = username,
-                password = password,
-                email = email,
-                firebaseToken = firebaseToken
-            };
-
             // Connect to the server and attempt to register new user
             var response = await _httpClient.PostAsJsonAsync($"{_httpClient.BaseAddress}/Users/register", user);
 
@@ -128,8 +120,6 @@ namespace FrontendApplication.Services
             // Connect to the server and attempt to get the user invites
             var response = await _httpClient.GetAsync($"{_httpClient.BaseAddress}/Users/getUserInvites?username={username}");
 
-
-
             // If IsSuccessStatusCode is true, then the group was successfully created
             if (response.IsSuccessStatusCode)
             {
@@ -161,11 +151,11 @@ namespace FrontendApplication.Services
             }
         }
 
-        public async Task<VerifiyCodeModel> VerifyEmailRegister(string email)
+        public async Task<VerifiyCodeModel> VerifyUserRegisterDetails(RegisterUserDto user)
         {
-            // Connect to the server and attempt to accept the invite
-            var response = await _httpClient.GetAsync($"{_httpClient.BaseAddress}/Users/verifyEmailRegister?email={email}");
-            
+            // Connect to the server and attempt to accept the invite, after verifying the user details
+            var response = await _httpClient.PostAsJsonAsync($"{_httpClient.BaseAddress}/Users/verifyUserRegisterDetails", user);
+
             // If IsSuccessStatusCode is true, then the group was successfully created
             if (response.IsSuccessStatusCode)
             {
