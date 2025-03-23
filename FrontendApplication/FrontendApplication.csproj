@@ -33,7 +33,7 @@
 
 	<ItemGroup>
 		<!-- App Icon -->
-		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg"/>
+		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" />
 
 		<!-- Splash Screen -->
 		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
@@ -66,6 +66,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Pages\RegisterVerifyEmailPopup.xaml.cs">
+	    <DependentUpon>RegisterVerifyEmailPopup.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Pages\CreateGroupPage.xaml.cs">
 	    <DependentUpon>CreateGroupPage.xaml</DependentUpon>
 	  </Compile>
@@ -75,6 +78,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Pages\RegisterVerifyEmailPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\CreateGroupPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
