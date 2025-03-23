@@ -14,12 +14,6 @@
                    TextColor="White" 
                    FontAttributes="Bold"/>
 
-            <!-- Subtitle -->
-            <Label Text="Already Registered? Log in here."
-                   FontSize="16"
-                   HorizontalOptions="Center"
-                   TextColor="White" />
-
             <!-- Name Entry -->
             <VerticalStackLayout Spacing="5">
                 <Label Text="NAME" 
