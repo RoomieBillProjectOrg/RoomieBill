@@ -3,6 +3,7 @@ using Roomiebill.Server.Models;
 using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Facades;
+using Firebase.Database;
 
 namespace Roomiebill.Server.Services
 {
@@ -10,10 +11,17 @@ namespace Roomiebill.Server.Services
     {
         public UserFacade _userFacade { get; }
 
-        public UserService(IApplicationDbContext usersDb, IPasswordHasher<User> passwordHasher, ILogger<UserFacade> userFacadeLogger)
+        // public UserService(IApplicationDbContext usersDb, IPasswordHasher<User> passwordHasher, ILogger<UserFacade> userFacadeLogger)
+        // {
+        //     _userFacade = new UserFacade(usersDb, passwordHasher, userFacadeLogger);
+        // }
+
+        public UserService(FirebaseClient firebaseClient, IPasswordHasher<User> passwordHasher, ILogger<UserFacade> userFacadeLogger)
         {
-            _userFacade = new UserFacade(usersDb, passwordHasher, userFacadeLogger);
+            _userFacade = new UserFacade(firebaseClient, passwordHasher, userFacadeLogger);
         }
+
+        
 
         public async Task<User> RegisterUserAsync(RegisterUserDto registerUserDto)
         {

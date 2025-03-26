@@ -3,21 +3,32 @@ using Roomiebill.Server.Common.Validators;
 using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Models;
+using Firebase.Database;
+using Firebase.Database.Query;
+using Microsoft.Extensions.Logging;
 
 namespace Roomiebill.Server.Facades
 {
     public class UserFacade : IUserFacade
     {
-        private readonly IApplicationDbContext _applicaitonDbs;
+        //private readonly IApplicationDbContext _applicaitonDbs;
+        private readonly FirebaseClient _firebaseClient;
         private readonly IPasswordHasher<User> _passwordHasher;
         private ILogger<UserFacade> _logger;
 
-        public UserFacade(IApplicationDbContext usersDb, IPasswordHasher<User> passwordHasher, ILogger<UserFacade> logger)
+        
+        public UserFacade(FirebaseClient firebaseClient, IPasswordHasher<User> passwordHasher, ILogger<UserFacade> logger)
         {
-            _applicaitonDbs = usersDb;
+            _firebaseClient = firebaseClient;
             _passwordHasher = passwordHasher;
             _logger = logger;
         }
+        // public UserFacade(IApplicationDbContext usersDb, IPasswordHasher<User> passwordHasher, ILogger<UserFacade> logger)
+        // {
+        //     _applicaitonDbs = usersDb;
+        //     _passwordHasher = passwordHasher;
+        //     _logger = logger;
+        // }
 
         /// <summary>
         /// Register a new user with the given details.
@@ -39,7 +50,8 @@ namespace Roomiebill.Server.Facades
             // Update the user object with the hashed password
             newUser.PasswordHash = passwordHash;
 
-            _applicaitonDbs.AddUser(newUser);
+            await _firebaseClient.Child("users").Child(newUser.Username).PutAsync(newUser);
+            //_applicaitonDbs.AddUser(newUser);
 
             _logger.LogInformation($"User registered successfully with details: Username: {registerUserDto.Username}, Email: {registerUserDto.Email}");
 
@@ -98,16 +110,17 @@ namespace Roomiebill.Server.Facades
             }
 
             // Check if the user already exists by username
-            var existingUser = await _applicaitonDbs.GetUserByUsernameAsync(registerUserDto.Username);
-            if (existingUser != null)
+            //var existingUser = await _applicaitonDbs.GetUserByUsernameAsync(registerUserDto.Username);
+            var existingUsers = await _firebaseClient.Child("users").OnceAsync<User>();
+            if (existingUsers.Any(u => u.Object.Username == registerUserDto.Username))
             {
                 _logger.LogError($"User with this username = {registerUserDto.Username} already exists");
                 throw new Exception("User with this username already exists");
             }
 
             // Check if the user already exists by email
-            existingUser = await _applicaitonDbs.GetUserByEmailAsync(registerUserDto.Email);
-            if (existingUser != null)
+            //existingUser = await _applicaitonDbs.GetUserByEmailAsync(registerUserDto.Email);
+            if (existingUsers.Any(u => u.Object.Email == registerUserDto.Email))
             {
                 _logger.LogError($"User with this email = {registerUserDto.Email} already exists");
                 throw new Exception("User with this email already exists");
@@ -167,7 +180,8 @@ namespace Roomiebill.Server.Facades
             }
 
             // Check if the user exists by username
-            var existingUser = await _applicaitonDbs.GetUserByUsernameAsync(updatePasswordDto.Username);
+            var existingUser = await _firebaseClient.Child("users").Child(updatePasswordDto.Username).OnceSingleAsync<User>();
+            //var existingUser = await _applicaitonDbs.GetUserByUsernameAsync(updatePasswordDto.Username);
             if (existingUser == null)
             {
                 _logger.LogError($"User with this username: {updatePasswordDto.Username} does not exist");
@@ -191,7 +205,8 @@ namespace Roomiebill.Server.Facades
             // Update the last password changed date
             existingUser.LastPasswordChangedDate = DateTime.Now;
 
-            await _applicaitonDbs.UpdateUserAsync(existingUser);
+            await _firebaseClient.Child("users").Child(updatePasswordDto.Username).PutAsync(existingUser);
+            //await _applicaitonDbs.UpdateUserAsync(existingUser);
             _logger.LogInformation($"User {updatePasswordDto.Username} password updated successfully");
 
             return existingUser;
@@ -228,7 +243,8 @@ namespace Roomiebill.Server.Facades
             }
 
             // Check if the user exists by username
-            var existingUser = await _applicaitonDbs.GetUserByUsernameAsync(loginDto.Username);
+            var existingUser = await _firebaseClient.Child("users").Child(loginDto.Username).OnceSingleAsync<User>();
+            //var existingUser = await _applicaitonDbs.GetUserByUsernameAsync(loginDto.Username);
             if (existingUser == null)
             {
                 _logger.LogError($"User with this username: {loginDto.Username} does not exist");
@@ -246,11 +262,12 @@ namespace Roomiebill.Server.Facades
             if (existingUser.FirebaseToken != loginDto.FirebaseToken)
             {
                 existingUser.FirebaseToken = loginDto.FirebaseToken;
-                await _applicaitonDbs.UpdateUserAsync(existingUser);
+                //await _applicaitonDbs.UpdateUserAsync(existingUser);
             }
 
             existingUser.IsLoggedIn = true;
-            await _applicaitonDbs.UpdateUserAsync(existingUser);
+            //await _applicaitonDbs.UpdateUserAsync(existingUser);
+            await _firebaseClient.Child("users").Child(loginDto.Username).PutAsync(existingUser);
             _logger.LogInformation($"User {loginDto.Username} logged in successfully");
 
             return existingUser;
@@ -274,7 +291,8 @@ namespace Roomiebill.Server.Facades
             }
 
             // Check if the user exists by username
-            var existingUser = await _applicaitonDbs.GetUserByUsernameAsync(username);
+            var existingUser = await _firebaseClient.Child("users").Child(username).OnceSingleAsync<User>();
+            //var existingUser = await _applicaitonDbs.GetUserByUsernameAsync(username);
 
             if (existingUser == null)
             {
@@ -284,7 +302,8 @@ namespace Roomiebill.Server.Facades
 
             existingUser.IsLoggedIn = false;
 
-            await _applicaitonDbs.UpdateUserAsync(existingUser);
+            //await _applicaitonDbs.UpdateUserAsync(existingUser);
+            await _firebaseClient.Child("users").Child(existingUser.Username).PutAsync(existingUser);
 
             _logger.LogInformation($"User {username} logged out successfully");
         }
@@ -305,7 +324,8 @@ namespace Roomiebill.Server.Facades
                 throw new ArgumentNullException(nameof(username));
             }
             // Check if the user exists by username
-            var existingUser = await _applicaitonDbs.GetUserByUsernameAsync(username);
+            //var existingUser = await _applicaitonDbs.GetUserByUsernameAsync(username);
+            var existingUser = await _firebaseClient.Child("users").Child(username).OnceSingleAsync<User>();
             if (existingUser == null)
             {
                 _logger.LogError($"User with this username: {username} does not exist");
@@ -331,7 +351,8 @@ namespace Roomiebill.Server.Facades
                 throw new ArgumentNullException(nameof(username));
             }
             // Check if the user exists by username
-            var existingUser = await _applicaitonDbs.GetUserByUsernameAsync(username);
+            //var existingUser = await _applicaitonDbs.GetUserByUsernameAsync(username);
+            var existingUser = await _firebaseClient.Child("users").Child(username).OnceSingleAsync<User>();
             if (existingUser == null)
             {
                 _logger.LogError($"User with this username: {username} does not exist");
@@ -342,7 +363,13 @@ namespace Roomiebill.Server.Facades
 
         public async Task<User?> GetUserByIdAsync(int payerId)
         {
-            return await _applicaitonDbs.GetUserByIdAsync(payerId);
+            //return await _applicaitonDbs.GetUserByIdAsync(payerId);
+            var users = await _firebaseClient.Child("users")
+                                   .OrderByKey()
+                                   .EqualTo(payerId.ToString()) 
+                                   .OnceAsync<User>();
+
+            return users.FirstOrDefault()?.Object;
         }
 
         /// <summary>
@@ -354,37 +381,59 @@ namespace Roomiebill.Server.Facades
         /// <exception cref="Exception"></exception>
         public async Task AddGroupToUser(string username, int groupId)
         {
-            var user = await _applicaitonDbs.GetUserByUsernameAsync(username);
+            //var user = await _applicaitonDbs.GetUserByUsernameAsync(username);
+            var users = await _firebaseClient.Child("users")
+                                   .OrderBy("username")
+                                   .EqualTo(username)
+                                   .OnceAsync<User>();
+
+            var user = users.FirstOrDefault()?.Object;
             if (user == null)
             {
                 _logger.LogError($"User with username {username} does not exist");
                 throw new Exception("User does not exist");
             }
-            var group = await _applicaitonDbs.GetGroupByIdAsync(groupId);
+            var group = new Group();
+            //var group = await _applicaitonDbs.GetGroupByIdAsync(groupId);
             if (group == null)
             {
                 _logger.LogError($"Group with id {groupId} does not exist");
                 throw new Exception("Group does not exist");
             }
             user.AddGroup(group);
-            await _applicaitonDbs.UpdateUserAsync(user);
+            await _firebaseClient.Child("users").Child(user.Username).PutAsync(user);
+            //await _applicaitonDbs.UpdateUserAsync(user);
         }
 
         public async Task<List<Invite>> GetUserInvitesAsync(string username)
         {
-            return await _applicaitonDbs.GetUserInvitesAsync(username);
+            //TODO: modify as needed
+            return new List<Invite>();
+            //return await _applicaitonDbs.GetUserInvitesAsync(username);
         }
 
         #region Help functions
 
         public async Task<User?> GetUserByUsernameAsync(string username)
         {
-            return await _applicaitonDbs.GetUserByUsernameAsync(username);
+            var users = await _firebaseClient.Child("users")
+                                   .OrderBy("username")
+                                   .EqualTo(username)
+                                   .OnceAsync<User>();
+
+        return users.FirstOrDefault()?.Object;
+            //return await _applicaitonDbs.GetUserByUsernameAsync(username);
         }
 
         public async Task<User?> GetUserByEmailAsync(string email)
         {
-            return await _applicaitonDbs.GetUserByEmailAsync(email);
+            var users = await _firebaseClient.Child("users")
+                                   .OrderBy("email")
+                                   .EqualTo(email)
+                                   .OnceAsync<User>();
+
+            return users.FirstOrDefault()?.Object;
+            //return await _applicaitonDbs.GetUserByEmailAsync(email);
         }
 
 
