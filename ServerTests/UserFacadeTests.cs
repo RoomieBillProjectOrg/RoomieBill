@@ -264,7 +264,7 @@ public class UserFacadeTests
             NewPassword = "newPassword!1",
             VerifyNewPassword = "newPassword!1"
         };
-        _usersDbMock.Setup(db => db.GetUserByUsernameAsync(updateDto.Username)).ReturnsAsync((User)null);
+        _usersDbMock.Setup(db => db.GetUserByUsernameAsync(updateDto.Username)).ReturnsAsync((User?)null);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<Exception>(() => _userFacade.UpdatePasswordAsync(updateDto));
@@ -354,7 +354,7 @@ public class UserFacadeTests
             Password = "ValidPassword123!",
             FirebaseToken = "firebaseToken"
         };
-        _usersDbMock.Setup(db => db.GetUserByUsernameAsync(loginDto.Username)).ReturnsAsync((User)null);
+        _usersDbMock.Setup(db => db.GetUserByUsernameAsync(loginDto.Username)).ReturnsAsync((User?)null);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<Exception>(() => _userFacade.LoginAsync(loginDto));
@@ -412,7 +412,7 @@ public class UserFacadeTests
         // Arrange
         var username = "nonexistentuser";
 
-        _usersDbMock.Setup(db => db.GetUserByUsernameAsync(username)).ReturnsAsync((User)null);
+        _usersDbMock.Setup(db => db.GetUserByUsernameAsync(username)).ReturnsAsync((User?)null);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<Exception>(() => _userFacade.LogoutAsync(username));
