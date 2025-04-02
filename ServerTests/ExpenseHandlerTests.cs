@@ -243,6 +243,9 @@ namespace ServerTests
             // Act
             var totalDebt = expenseHandler.GetTotalDebtUserOwes(0, debtArray);
 
+            // print the array for debugging
+            Console.WriteLine("debtArray: " + string.Join(", ", debtArray)); 
+
             // Assert
             Assert.Equal(0, totalDebt);
         }

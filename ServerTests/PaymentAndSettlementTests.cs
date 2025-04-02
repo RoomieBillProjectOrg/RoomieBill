@@ -68,6 +68,10 @@ namespace ServerTests
                 IsPaid = false,
                 PayerId = creditor.Id,
                 GroupId = group.Id,
+                ExpenseSplits = new List<ExpenseSplit>
+                {
+                    new ExpenseSplit { UserId = debtor.Id, Amount = 50 }
+                }
             };
 
             group.AddExpense(expense);
