@@ -1,4 +1,4 @@
-﻿﻿using Microsoft.Extensions.Logging;
+﻿﻿﻿﻿using Microsoft.Extensions.Logging;
 using Moq;
 using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.DataAccessLayer.Dtos;
@@ -24,6 +24,31 @@ namespace ServerTests
         }
 
         #region CreateNewGroupAsync
+
+        [Fact]
+        public async Task TestCreateNewGroupAsync_WhenDuplicateGroupName_ThenThrowsException()
+        {
+            // Arrange
+            var admin = new User("admin", "admin@bgu.ac.il", "adminPassword!1") { Id = 1 };
+            var existingGroups = new List<Group>
+            {
+                new Group("Test Group", admin, new List<User>())
+            };
+
+            CreateNewGroupDto newGroupDto = new CreateNewGroupDto
+            {
+                GroupName = "Test Group", // Same name as existing group
+                AdminGroupUsername = "admin",
+                GroupMembersEmailsList = new List<string>()
+            };
+
+            _userFacadeMock.Setup(x => x.GetUserByUsernameAsync("admin")).ReturnsAsync(admin);
+            _groupDbMock.Setup(x => x.GetUserGroupsAsync(admin.Id)).ReturnsAsync(existingGroups);
+
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<Exception>(() => _groupFacade.CreateNewGroupAsync(newGroupDto));
+            Assert.Equal($"You already have a group named '{newGroupDto.GroupName}'. Please choose a different name.", exception.Message);
+        }
 
         [Fact]
         public async Task TestCreateNewGroupAsync_WhenSuccessfulCreate_ThenReturnsNewGroup()
