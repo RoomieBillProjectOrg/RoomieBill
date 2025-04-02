@@ -170,18 +170,18 @@ namespace ServerTests
             // Assert
             Assert.Single(group.Expenses);
             var addedExpense = group.Expenses.First();
-            double debt21 = group.getDebtBetweenUsers(2, 1);
-            double debt31 = group.getDebtBetweenUsers(3, 1);
-            double debt41 = group.getDebtBetweenUsers(4, 1);
-            double debt12 = group.getDebtBetweenUsers(1, 2);
-            double debt13 = group.getDebtBetweenUsers(1, 3);
-            double debt14 = group.getDebtBetweenUsers(1, 4);
+            double[] debt = group.getDebtArray();
+            double debt01 = group.getDebtBetweenUsers(0, 1);//20
+            double debt02 = group.getDebtBetweenUsers(0, 2);//0
+            double debt12 = group.getDebtBetweenUsers(1, 2);//0
+            double debt10 = group.getDebtBetweenUsers(1, 0); //0
+            double debt20 = group.getDebtBetweenUsers(2, 0);//0
+            double debt21 = group.getDebtBetweenUsers(2, 1);//30
 
-            Assert.Equal(0.0, debt12 + debt13 + debt14, 3);
-            Assert.Equal(0.0, debt21 + debt31 + debt41, 3);
-            Assert.Equal(20.0, debt21, 3);
-            Assert.Equal(50.0, debt31, 3);
-            Assert.Equal(30.0, debt41, 3);
+            Assert.Equal(50, debt01 + debt21);
+            Assert.Equal(0, debt10 + debt20 + debt02);
+            Assert.Equal(20, debt01);
+            Assert.Equal(30, debt21);
             Assert.Equal(expenseDto.Amount, addedExpense.Amount);
             Assert.Equal(expenseDto.Description, addedExpense.Description);
             Assert.Equal(expenseDto.IsPaid, addedExpense.IsPaid);
