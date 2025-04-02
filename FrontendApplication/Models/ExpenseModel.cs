@@ -12,5 +12,6 @@ namespace FrontendApplication.Models
         public int PayerId { get; set; } // Foreign Key to the User who paid
         public int GroupId { get; set; } // Foreign Key to the Group this expense belongs to
         public ICollection<ExpenseSplitModel> ExpenseSplits { get; set; } = new List<ExpenseSplitModel>(); // Navigation property for ExpenseSplit
+        public Category Category { get; set; } = Category.Other; // Category of the expense
     }
 }

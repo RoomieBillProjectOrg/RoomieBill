@@ -1,8 +1,6 @@
-using System;
-using System.Collections.Generic;
-using Xunit;
 using Roomiebill.Server.Facades;
 using Roomiebill.Server.Models;
+using Roomiebill.Server.Common.Enums;
 
 namespace ServerTests
 {
@@ -24,6 +22,7 @@ namespace ServerTests
             {
                 PayerId = 1,
                 Amount = 100,
+                Category = Category.Electricity,
                 ExpenseSplits = new List<ExpenseSplit>
                 {
                     new ExpenseSplit { UserId = 2, Percentage = 50 },
@@ -95,6 +94,7 @@ namespace ServerTests
             {
                 PayerId = 1,
                 Amount = 100,
+                Category = Category.Electricity,
                 ExpenseSplits = new List<ExpenseSplit>
                 {
                     new ExpenseSplit { UserId = 2, Percentage = 50 },
@@ -105,6 +105,7 @@ namespace ServerTests
             {
                 PayerId = 1,
                 Amount = 200,
+                Category = Category.Electricity,
                 ExpenseSplits = new List<ExpenseSplit>
                 {
                     new ExpenseSplit { UserId = 2, Percentage = 50 },
@@ -182,6 +183,7 @@ namespace ServerTests
             {
                 PayerId = 1,
                 Amount = 100,
+                Category = Category.Electricity,
                 ExpenseSplits = new List<ExpenseSplit>
                 {
                     new ExpenseSplit { UserId = 2, Percentage = 50 },
