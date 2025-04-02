@@ -16,7 +16,7 @@
 
             <!-- Name Entry -->
             <VerticalStackLayout Spacing="5">
-                <Label Text="NAME" 
+                <Label Text="Username" 
                        FontSize="14" 
                        TextColor="White" />
                 <Entry x:Name="UsernameEntry" 
@@ -60,7 +60,7 @@
                        TextColor="LightSlateGray" />
                 <Label Text="* At least one special char." 
                        FontSize="12" 
-                       TextColor="White" />
+                       TextColor="LightSlateGray" />
                 <Entry x:Name="PasswordEntry" 
                        IsPassword="True"
                        Placeholder="******" 

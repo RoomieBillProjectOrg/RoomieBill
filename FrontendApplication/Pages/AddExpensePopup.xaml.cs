@@ -139,7 +139,7 @@ namespace FrontendApplication.Popups
         // Command for canceling
         public Command CancelCommand => new Command(() =>
         {
-            Close("Expense add canceled"); // Dismiss the popup without returning data
+            // Do nothing, just close the popup.
         });
     }
 
