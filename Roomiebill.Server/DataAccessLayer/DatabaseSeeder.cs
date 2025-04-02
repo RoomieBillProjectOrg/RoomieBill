@@ -143,10 +143,10 @@ namespace Roomiebill.Server.DataAccessLayer
                     GroupId = group_Roomiebill.Id,
                     ExpenseSplits = new List<ExpenseSplit>
                     {
-                        new ExpenseSplit { UserId = group_Roomiebill.Members.ElementAt(0).Id, Percentage = 25.0 },
-                        new ExpenseSplit { UserId = group_Roomiebill.Members.ElementAt(1).Id, Percentage = 25.0 },
-                        new ExpenseSplit { UserId = group_Roomiebill.Members.ElementAt(2).Id, Percentage = 25.0 },
-                        new ExpenseSplit { UserId = group_Roomiebill.Members.ElementAt(3).Id, Percentage = 25.0 }
+                        new ExpenseSplit { UserId = group_Roomiebill.Members.ElementAt(0).Id, Amount = 125.0 },
+                        new ExpenseSplit { UserId = group_Roomiebill.Members.ElementAt(1).Id, Amount = 125.0 },
+                        new ExpenseSplit { UserId = group_Roomiebill.Members.ElementAt(2).Id, Amount = 125.0 },
+                        new ExpenseSplit { UserId = group_Roomiebill.Members.ElementAt(3).Id, Amount = 125.0 }
                     }
                 };
 

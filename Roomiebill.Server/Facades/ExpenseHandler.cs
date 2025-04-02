@@ -40,6 +40,7 @@ namespace Roomiebill.Server.Facades
             if (i > j) (i, j) = (j, i); // i should be less than j
             return i * (_userCount - 1) - i * (i + 1) / 2 + (j - 1);
         }
+
         //Get the index of the cell in the new debtArray 
         private int GetNewIndex(int i, int j, int newUserCount)
         {
@@ -48,10 +49,10 @@ namespace Roomiebill.Server.Facades
         }
 
         // Get the debt between 2 users - i owns to j- so if it is negative i owns j 0
-        public int GetDebtBetween(int i, int j, int[] debtArray)
+        public double GetDebtBetween(int i, int j, double[] debtArray)
         {
             int index = GetIndex(i, j);
-            int debt = debtArray[index];
+            double debt = debtArray[index];
             if (i < j)
             {
                 return debt > 0 ? debt : 0; // Positive: i owes j; Zero or negative: i owes j nothing
@@ -62,13 +63,13 @@ namespace Roomiebill.Server.Facades
             }
         }
        
-       // Get the debt between 2 users - i owns to j- so if it is negative i owns j 0
-        public int GetDebtBetweenIndex(int i, int j, int[] debtArray)
+        // Get the debt between 2 users - i owns to j- so if it is negative i owns j 0
+        public double GetDebtBetweenIndex(int i, int j, double[] debtArray)
         {
             int indexi = _userIndexMap[i];
             int indexj = _userIndexMap[j];
             int index = GetIndex(indexi, indexj);
-            int debt = debtArray[index];
+            double debt = debtArray[index];
             if (indexi < indexj)
             {
                 return debt > 0 ? debt : 0; // Positive: i owes j; Zero or negative: i owes j nothing
@@ -78,7 +79,8 @@ namespace Roomiebill.Server.Facades
                 return debt < 0 ? -debt : 0; // Negative: j owes i; Zero or positive: j owes i nothing
             }
         }
-        private void UpdateDebtArray(int i, int j, int amount, int[] debtArray)
+
+        private void UpdateDebtArray(int i, int j, double amount, double[] debtArray)
         {
             int index = GetIndex(i, j);
             if (i < j)
@@ -91,9 +93,18 @@ namespace Roomiebill.Server.Facades
             }
         }
 
-         public Expense AddExpense(Expense expense, int[] debtArray){
+        public Expense AddExpense(Expense expense, double[] debtArray)
+        {
             int payerId = expense.PayerId;
             int payerIndex = _userIndexMap[payerId];
+            
+            // Verify total split amounts equal expense amount
+            double totalSplitAmount = expense.ExpenseSplits.Sum(s => s.Amount);
+            if (Math.Abs(totalSplitAmount - expense.Amount) > 0.01) // Using small epsilon for double comparison
+            {
+                throw new InvalidOperationException($"Sum of split amounts ({totalSplitAmount}) must equal total expense amount ({expense.Amount})");
+            }
+
             foreach (ExpenseSplit split in expense.ExpenseSplits)
             {
                 int userId = split.UserId;
@@ -102,31 +113,36 @@ namespace Roomiebill.Server.Facades
                 {
                     continue;
                 }
-                int amount = (int)Math.Ceiling(expense.Amount * (split.Percentage / 100.0));
+                double amount = split.Amount;
+                if (split.UserId == payerId)
+                {
+                    continue;
+                }
                 UpdateDebtArray(payerIndex, userIndex, amount, debtArray);
             }
             return expense;
-         }
+        }
 
         // Get all debts between users (both sides  -i owns j and j owns i)
-        public Dictionary<(int, int), int> GetAllDebts(int[] debtArray)
+        public Dictionary<(int, int), double> GetAllDebts(double[] debtArray)
         {
-            Dictionary<(int, int), int> debts = new Dictionary<(int, int), int>();
+            Dictionary<(int, int), double> debts = new Dictionary<(int, int), double>();
             for (int i = 0; i < _userCount; i++)
             {
                 for (int j = 0; j < _userCount; j++)
                 {
                     if (i != j)
                     {
-                        int debt = GetDebtBetween(i, j, debtArray);
+                        double debt = GetDebtBetween(i, j, debtArray);
                         debts.Add((i, j), debt);
                     }
                 }
             }
             return debts;
         }
-        //settle all debt for a user and all other  users
-        public void SettleAllDebts(int userId, int[] debtArray)
+
+        //settle all debt for a user and all other users
+        public void SettleAllDebts(int userId, double[] debtArray)
         {
             if (!_userIndexMap.ContainsKey(userId))
             {
@@ -143,7 +159,7 @@ namespace Roomiebill.Server.Facades
         }
 
         // Settle debt between two users
-        public void SettleDebt(int i, int j, int[] debtArray)
+        public void SettleDebt(int i, int j, double[] debtArray)
         {
             if (!_userIndexMap.ContainsKey(i) || !_userIndexMap.ContainsKey(j))
             {
@@ -154,9 +170,18 @@ namespace Roomiebill.Server.Facades
             debtArray[index] = 0;
         }
 
-        public void DeleteExpense(Expense expense, int[] debtArray){
+        public void DeleteExpense(Expense expense, double[] debtArray)
+        {
             int payerId = expense.PayerId;
             int payerIndex = _userIndexMap[payerId];
+            
+            // Verify total split amounts equal expense amount
+            double totalSplitAmount = expense.ExpenseSplits.Sum(s => s.Amount);
+            if (Math.Abs(totalSplitAmount - expense.Amount) > 0.01)
+            {
+                throw new InvalidOperationException($"Sum of split amounts ({totalSplitAmount}) must equal total expense amount ({expense.Amount})");
+            }
+
             foreach (ExpenseSplit split in expense.ExpenseSplits)
             {
                 int userId = split.UserId;
@@ -165,19 +190,20 @@ namespace Roomiebill.Server.Facades
                 {
                     continue;
                 }
-                int amount = (int)(expense.Amount * (split.Percentage / 100.0));
+                double amount = split.Amount;
                 UpdateDebtArray(payerIndex, userIndex, -amount, debtArray); // Reverse the debt
             }
         }
 
-        public Expense UpdateExpense(Expense oldExpense, Expense newExpense, int[] debtArray){
+        public Expense UpdateExpense(Expense oldExpense, Expense newExpense, double[] debtArray)
+        {
             DeleteExpense(oldExpense, debtArray); // Reverse the debt
             Expense newAddedExpense = AddExpense(newExpense, debtArray);
             return newAddedExpense;
         }
 
         // Get total debt for a specific user (the sum all users have to pay to the user)
-        public double GetTotalDebtOwedToUser(int userId, int[] debtArray)
+        public double GetTotalDebtOwedToUser(int userId, double[] debtArray)
         {
             if (!_userIndexMap.ContainsKey(userId))
             {
@@ -195,10 +221,9 @@ namespace Roomiebill.Server.Facades
             }
             return totalDebt;
         }
-         
 
         // Get total debt a specific user owes to all other users
-        public double GetTotalDebtUserOwes(int userId, int[] debtArray)
+        public double GetTotalDebtUserOwes(int userId, double[] debtArray)
         {
             if (!_userIndexMap.ContainsKey(userId))
             {
@@ -217,30 +242,28 @@ namespace Roomiebill.Server.Facades
             return totalDebt;
         }
 
-        public int[] EnlargeDebtArraySize(int newUserCount, int oldUserCount, int[] debtArray)
+        public double[] EnlargeDebtArraySize(int newUserCount, int oldUserCount, double[] debtArray)
         {
             int newSize = (newUserCount * (newUserCount - 1)) / 2;
-            int[] newDebtArray = new int[newSize];
+            double[] newDebtArray = new double[newSize];
             // Copy existing debt value from the old arrayto the position in the new array.
             for (int i = 0; i < oldUserCount; i++)
             {
                 for (int j = i + 1; j < oldUserCount; j++)
                 {
                     int oldIndex = GetIndex(i, j);
-                    int newIndex = GetNewIndex(i, j,newUserCount);
+                    int newIndex = GetNewIndex(i, j, newUserCount);
                     newDebtArray[newIndex] = debtArray[oldIndex];
                 }
             }
             this._userCount = newUserCount;
             return newDebtArray;
         }
-        //TODO: add throw not settle debt exception
 
-        public int[] ReduceDebtArraySize(int newUserCount, int oldUserCount, List<int> removedUsers, int[] debtArray)
+        public double[] ReduceDebtArraySize(int newUserCount, int oldUserCount, List<int> removedUsers, double[] debtArray)
         {
             int newSize = (newUserCount * (newUserCount - 1)) / 2;
-            int[] newDebtArray = new int[newSize];
-           
+            double[] newDebtArray = new double[newSize];
 
             // Create a set of removed user indices for quick lookup
             HashSet<int> removedUserIndices = new HashSet<int>();
@@ -249,7 +272,7 @@ namespace Roomiebill.Server.Facades
                 removedUserIndices.Add(_userIndexMap[userId]);
             }
             //check for unsettled debts
-            checkUnsettledDebts(removedUsers,oldUserCount, debtArray);
+            checkUnsettledDebts(removedUsers, oldUserCount, debtArray);
 
             // Copy existing data to the new array, excluding the removed users
             for (int i = 0; i < oldUserCount; i++)
@@ -270,17 +293,17 @@ namespace Roomiebill.Server.Facades
             return newDebtArray;
         }
 
-        private void checkUnsettledDebts(List<int> removedUsers,int oldUserCount,int[] debtArray)
+        private void checkUnsettledDebts(List<int> removedUsers, int oldUserCount, double[] debtArray)
         {
-             // Check for unsettled debts
+            // Check for unsettled debts
             foreach (int userId in removedUsers)
             {
                 int userIndex = _userIndexMap[userId];
                 for (int i = 0; i < oldUserCount; i++)
                 {
                     if (i == userIndex) continue;
-                    int debt = GetDebtBetween(userIndex, i, debtArray);
-                    if (debt != 0)
+                    double debt = GetDebtBetween(userIndex, i, debtArray);
+                    if (Math.Abs(debt) > 0.01)
                     {
                         int id = GetUserId(i);
                         throw new UnsettledDebtException($"User {userId} owns {debt} to user {id}.");
@@ -288,7 +311,7 @@ namespace Roomiebill.Server.Facades
                 }
             }
         }
-        //
+
         private int GetUserId(int userIndex)
         {
             int userId = -1;
@@ -298,11 +321,11 @@ namespace Roomiebill.Server.Facades
                 {
                     userId = entry.Key;
                 }
-        }
+            }
             return userId;
         }
 
-        public int[]  UpdateDebtBetweenIndex(int payerIndex, int userIndex, int amount, int[] debtArray)
+        public double[] UpdateDebtBetweenIndex(int payerIndex, int userIndex, double amount, double[] debtArray)
         {
             UpdateDebtArray(payerIndex, userIndex, amount, debtArray);
             return debtArray;
@@ -311,8 +334,10 @@ namespace Roomiebill.Server.Facades
         public void AddUserToUserIndexMap(int userId)
         {
             int maxId = -1;
-            foreach (int mID in _userIndexMap.Values){
-                if (mID > maxId){
+            foreach (int mID in _userIndexMap.Values)
+            {
+                if (mID > maxId)
+                {
                     maxId = mID;
                 }
             }
