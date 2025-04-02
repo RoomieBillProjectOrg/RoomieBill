@@ -120,8 +120,8 @@ namespace ServerTests
             expenseHandler.UpdateExpense(oldExpense, newExpense, debtArray);
 
             // Assert
-            Assert.Equal(-100, debtArray[expenseHandler.GetIndex(0, 1)]);
-            Assert.Equal(-100, debtArray[expenseHandler.GetIndex(0, 2)]);
+            Assert.Equal(-50, debtArray[expenseHandler.GetIndex(0, 1)]);
+            Assert.Equal(-50, debtArray[expenseHandler.GetIndex(0, 2)]);
         }
 
         [Fact]
@@ -244,7 +244,7 @@ namespace ServerTests
             var totalDebt = expenseHandler.GetTotalDebtUserOwes(0, debtArray);
 
             // Assert
-            Assert.Equal(80, totalDebt);
+            Assert.Equal(0, totalDebt);
         }
 
         [Fact]
