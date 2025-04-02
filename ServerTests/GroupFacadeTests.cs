@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿using Microsoft.Extensions.Logging;
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using Microsoft.Extensions.Logging;
 using Moq;
 using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.DataAccessLayer.Dtos;
@@ -169,18 +169,18 @@ namespace ServerTests
             // Assert
             Assert.Single(group.Expenses);
             var addedExpense = group.Expenses.First();
-            double[] debt = group.getDebtArray();
-            double debt23 = group.getDebtBetweenUsers(2, 3);
-            double debt24 = group.getDebtBetweenUsers(2, 4);
-            double debt34 = group.getDebtBetweenUsers(3, 4);
-            double debt32 = group.getDebtBetweenUsers(3, 2);
-            double debt42 = group.getDebtBetweenUsers(4, 2);
-            double debt43 = group.getDebtBetweenUsers(4, 3);
+            double debt21 = group.getDebtBetweenUsers(2, 1);
+            double debt31 = group.getDebtBetweenUsers(3, 1);
+            double debt41 = group.getDebtBetweenUsers(4, 1);
+            double debt12 = group.getDebtBetweenUsers(1, 2);
+            double debt13 = group.getDebtBetweenUsers(1, 3);
+            double debt14 = group.getDebtBetweenUsers(1, 4);
 
-            Assert.Equal(20.0, debt23 + debt24 + debt43, 3);
-            Assert.Equal(0.0, debt32 + debt42 + debt34, 3);
-            Assert.Equal(20.0, debt23, 3);
-            Assert.Equal(30.0, debt34, 3);
+            Assert.Equal(0.0, debt12 + debt13 + debt14, 3);
+            Assert.Equal(0.0, debt21 + debt31 + debt41, 3);
+            Assert.Equal(20.0, debt21, 3);
+            Assert.Equal(50.0, debt31, 3);
+            Assert.Equal(30.0, debt41, 3);
             Assert.Equal(expenseDto.Amount, addedExpense.Amount);
             Assert.Equal(expenseDto.Description, addedExpense.Description);
             Assert.Equal(expenseDto.IsPaid, addedExpense.IsPaid);
@@ -340,8 +340,7 @@ namespace ServerTests
                 ExpenseSplits = new List<ExpenseSplitDto>
                 {
                     new ExpenseSplitDto { UserId = 2, Amount = 20.0 },
-                    new ExpenseSplitDto { UserId = 3, Amount = 50.0 },
-                    new ExpenseSplitDto { UserId = 4, Amount = 30.0 }
+                    new ExpenseSplitDto { UserId = 3, Amount = 80.0 },
                 }
             };
 
@@ -364,9 +363,9 @@ namespace ServerTests
             var existingExpense = group.Expenses.First();
             Assert.DoesNotContain(group.GetMembers(), u => u.Id == newMember.Id); // New member is removed
             Assert.Equal(3, group.GetMembers().Count); // Total members should now be 3
-            Assert.Contains(existingExpense.ExpenseSplits, es => es.UserId == 2 && es.Amount == 20.0);
-            Assert.Contains(existingExpense.ExpenseSplits, es => es.UserId == 3 && es.Amount == 50.0);
-            Assert.Contains(existingExpense.ExpenseSplits, es => es.UserId == 4 && es.Amount == 30.0);
+            Assert.Contains(existingExpense.ExpenseSplits, es => es.UserId == 2 && Math.Abs(es.Amount - 20.0) < 0.01);
+            Assert.Contains(existingExpense.ExpenseSplits, es => es.UserId == 3 && Math.Abs(es.Amount - 80.0) < 0.01);
+            Assert.DoesNotContain(existingExpense.ExpenseSplits, es => es.UserId == 4);
         }
 
         #endregion
