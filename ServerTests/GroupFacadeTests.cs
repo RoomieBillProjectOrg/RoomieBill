@@ -146,17 +146,18 @@ namespace ServerTests
                 GroupId = groupId,
                 ExpenseSplits = new List<ExpenseSplitDto>
                 {
-                    new ExpenseSplitDto { UserId = 2, Amount = 20.0 },
-                    new ExpenseSplitDto { UserId = 3, Amount = 50.0 },
-                    new ExpenseSplitDto { UserId = 4, Amount = 30.0 }
+                    new ExpenseSplitDto { UserId = 0, Amount = 20.0 },
+                    new ExpenseSplitDto { UserId = 1, Amount = 50.0 },
+                    new ExpenseSplitDto { UserId = 2, Amount = 30.0 }
                 }
             };
-            User payer = new User("payer", "payer@bgu.ac.il", "payerPassword!1") { Id = 1 };
-            User user2 = new User("user2", "user2@bgu.ac.il", "user2Password!1") { Id = 2 };
-            User user3 = new User("user3", "user3@bgu.ac.il", "user3Password!1") { Id = 3 };
-            User user4 = new User("user4", "user4@bgu.ac.il", "user4Password!1") { Id = 4 };
-
-            var group = new Group("Test Group", payer, new List<User> { user2, user3, user4 });
+            User payer = new User("payer", "payer@bgu.ac.il", "payerPassword!1");
+            User user1 = new User("user1", "user1@bgu.ac.il", "user1Password!1");
+            User user2 = new User("user2", "user2@bgu.ac.il", "user2Password!1");
+            payer.Id = 1;
+            user1.Id = 0;
+            user2.Id = 2;
+            var group = new Group("Test Group", payer, new List<User> { user1, user2 });
 
             _groupDbMock.Setup(x => x.GetGroupByIdAsync(groupId)).ReturnsAsync(group);
             _userFacadeMock.Setup(x => x.GetUserByIdAsync(payerId)).ReturnsAsync(payer);

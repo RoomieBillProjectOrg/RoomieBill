@@ -79,7 +79,7 @@ namespace ServerTests
             await _groupFacade.SettleDebtAsync(50, creditor, debtor, group.Id);
 
             // Assert
-            Assert.True(Math.Abs(group.getDebtBetweenUsers(creditor.Id, debtor.Id)) < 0.01);
+            Assert.True(Math.Abs(group.expenseHandler.GetDebtBetween(0, 1, group.getDebtArray())) < 0.01);
             _dbContextMock.Verify(db => db.UpdateGroupAsync(group), Times.Once);
         }
 
