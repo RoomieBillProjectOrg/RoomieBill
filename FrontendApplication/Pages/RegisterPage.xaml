@@ -60,7 +60,7 @@
                        TextColor="LightSlateGray" />
                 <Label Text="* At least one special char." 
                        FontSize="12" 
-                       TextColor="White" />
+                       TextColor="LightSlateGray" />
                 <Entry x:Name="PasswordEntry" 
                        IsPassword="True"
                        Placeholder="******" 
