@@ -1,5 +1,7 @@
-using System.Collections.ObjectModel;
+using System;
 using System.Linq;
+using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using CommunityToolkit.Maui.Views;
 using FrontendApplication.Models;
 using FrontendApplication.Services;
@@ -22,6 +24,10 @@ namespace FrontendApplication.Popups
             _payer = payer;
             _groupService = groupService;
             _group = group;
+
+            // Initialize category picker
+            CategoryPicker.ItemsSource = Enum.GetNames(typeof(Category));
+            CategoryPicker.SelectedIndex = 0; // Default to first category
 
             // Initialize members
             foreach (var member in _group.Members)
@@ -115,6 +121,7 @@ namespace FrontendApplication.Popups
                 IsPaid = false,
                 PayerId = _payer.Id,
                 GroupId = _group.Id,
+                Category = (Category)Enum.Parse(typeof(Category), CategoryPicker.SelectedItem.ToString()),
                 ExpenseSplits = expenseSplitsDtos
             };
 
