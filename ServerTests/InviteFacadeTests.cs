@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using Roomiebill.Server.DataAccessLayer;
-using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Facades;
 using Roomiebill.Server.Models;
 
@@ -31,7 +30,6 @@ namespace ServerTests
         {
             // Arrange
             string inviterUsername = "inviter";
-            string invitedUsername = "invited";
             int groupId = 1;
 
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(inviterUsername))!.ReturnsAsync((User?)null);

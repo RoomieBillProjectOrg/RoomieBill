@@ -44,6 +44,14 @@ namespace Roomiebill.Server.Facades
                 throw new Exception($"Error when trying to create new group: admin with username {newGroupDto.AdminGroupUsername} does not exist in the system.");
             }
 
+            // Check if user already has a group with the same name
+            var userGroups = await GetUserGroupsAsync(admin.Id);
+            if (userGroups.Any(g => g.GroupName.Equals(newGroupDto.GroupName, StringComparison.OrdinalIgnoreCase)))
+            {
+                _logger.LogError($"Error when trying to create new group: user already has a group named '{newGroupDto.GroupName}'");
+                throw new Exception($"You already have a group named '{newGroupDto.GroupName}'. Please choose a different name.");
+            }
+
             // Create new group
             Group newGroup = new Group(newGroupDto.GroupName, admin, new List<User>());
 
