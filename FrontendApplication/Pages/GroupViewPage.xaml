@@ -112,6 +112,13 @@
                    TextColor="#FF5722"
                    FontAttributes="Bold"
                    Padding="0,20,0,5" />
+                   
+            <!-- Explanation text -->
+            <Label Text="To pay your debt, tap the card with your friend's name and amount."
+                   FontSize="14"
+                   TextColor="LightSlateGray"
+                   HorizontalOptions="Center"
+                   Margin="0,0,0,10" />
 
             <!-- Your Owns Grid -->
             <CollectionView ItemsSource="{Binding YourOwnsTable}"
