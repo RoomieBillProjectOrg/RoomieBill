@@ -16,7 +16,7 @@
 
             <!-- Name Entry -->
             <VerticalStackLayout Spacing="5">
-                <Label Text="NAME" 
+                <Label Text="Username" 
                        FontSize="14" 
                        TextColor="White" />
                 <Entry x:Name="UsernameEntry" 
