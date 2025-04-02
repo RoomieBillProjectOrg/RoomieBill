@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using Roomiebill.Server.Common.Enums;
 
 namespace Roomiebill.Server.Models
 {
@@ -35,5 +36,8 @@ namespace Roomiebill.Server.Models
 
         // Navigation property for ExpenseSplit
         public ICollection<ExpenseSplit> ExpenseSplits { get; set; } = new List<ExpenseSplit>();
+
+        [Required]
+        public Category Category { get; set; } = Category.Other; // Category of the expense
     }
 }
