@@ -36,7 +36,7 @@
         <!-- Adjusted for consistent style -->
 
         <Entry x:Name="MembersEntry" 
-               Placeholder="Enter member usernames" 
+               Placeholder="Enter members emails" 
                TextColor="White" 
                PlaceholderColor="LightGray" 
                BackgroundColor="Gray" 

@@ -43,7 +43,7 @@
                                                FontSize="18"
                                                FontAttributes="Bold"
                                                TextColor="#FFFFFF" />
-                                        <Label Text="{Binding Amount, StringFormat='Amount: {0:C}'}"
+                                        <Label Text="{Binding Amount, StringFormat='{0:N2} NIS'}"
                                                FontSize="16"
                                                TextColor="#43A047"
                                                FontAttributes="Bold" />
