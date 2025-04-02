@@ -81,21 +81,21 @@ public partial class UserHomePage : ContentPage
 
     private async void OnShowMenu()
     {
-        string action = await DisplayActionSheet("Select an option", "Cancel", null, "Log Out", "Update User Details", "Add Group", "Invites");
+        string action = await DisplayActionSheet("Select an option", "Cancel", null, "Add Group", "Update User Password", "Invites", "Log Out");
 
         switch (action)
         {
-            case "Log Out":
-                await OnLogOut();
-                break;
-            case "Update User Details":
-                await OnUpdateUserDetails();
-                break;
             case "Add Group":
                 await OnAddGroup();
                 break;
+            case "Update User Password":
+                await OnUpdateUserDetails();
+                break;
             case "Invites":
                 await OnInvites();
+                break;
+            case "Log Out":
+                await OnLogOut();
                 break;
         }
     }
