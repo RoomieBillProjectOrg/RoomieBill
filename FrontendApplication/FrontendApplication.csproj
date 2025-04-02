@@ -75,6 +75,9 @@
 	  <Compile Update="Pages\RegisterPage.xaml.cs">
 	    <DependentUpon>RegisterPage.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="Pages\ViewHistoryTransactionsPopup.xaml.cs">
+	    <DependentUpon>ViewHistoryTransactionsPopup.xaml</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
