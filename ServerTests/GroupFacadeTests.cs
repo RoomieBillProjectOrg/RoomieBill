@@ -1,12 +1,16 @@
-﻿﻿using Microsoft.Extensions.Logging;
+﻿﻿﻿﻿﻿﻿using Microsoft.Extensions.Logging;
 using Moq;
 using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Facades;
 using Roomiebill.Server.Models;
+using Xunit;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System;
 
 namespace ServerTests
-
 {
     public class GroupFacadeTests
     {
@@ -142,23 +146,20 @@ namespace ServerTests
                 GroupId = groupId,
                 ExpenseSplits = new List<ExpenseSplitDto>
                 {
-                    new ExpenseSplitDto { UserId = 0, Percentage = 20.0 },
-                    new ExpenseSplitDto { UserId = 1, Percentage = 50.0 },
-                    new ExpenseSplitDto { UserId = 2, Percentage = 30.0}
-
+                    new ExpenseSplitDto { UserId = 2, Amount = 20.0 },
+                    new ExpenseSplitDto { UserId = 3, Amount = 50.0 },
+                    new ExpenseSplitDto { UserId = 4, Amount = 30.0 }
                 }
             };
-            User payer = new User("payer", "payer@bgu.ac.il", "payerPassword!1");
-            User user1 = new User("user1", "user1@bgu.ac.il", "user1Password!1");
-            User user2 = new User("user2", "user2@bgu.ac.il", "user2Password!1");
-            payer.Id = 1;
-            user1.Id = 0;
-            user2.Id = 2;
-            var group = new Group("Test Group", payer, new List<User> {user1, user2 });
+            User payer = new User("payer", "payer@bgu.ac.il", "payerPassword!1") { Id = 1 };
+            User user2 = new User("user2", "user2@bgu.ac.il", "user2Password!1") { Id = 2 };
+            User user3 = new User("user3", "user3@bgu.ac.il", "user3Password!1") { Id = 3 };
+            User user4 = new User("user4", "user4@bgu.ac.il", "user4Password!1") { Id = 4 };
+
+            var group = new Group("Test Group", payer, new List<User> { user2, user3, user4 });
 
             _groupDbMock.Setup(x => x.GetGroupByIdAsync(groupId)).ReturnsAsync(group);
             _userFacadeMock.Setup(x => x.GetUserByIdAsync(payerId)).ReturnsAsync(payer);
-            // _groupDbMock.Setup(x => x.SaveChangesAsync()).Returns(Task.CompletedTask);
 
             _groupFacade = new GroupFacade(_groupDbMock.Object, _loggerMock.Object, _userFacadeMock.Object);
 
@@ -168,17 +169,18 @@ namespace ServerTests
             // Assert
             Assert.Single(group.Expenses);
             var addedExpense = group.Expenses.First();
-            int[] debt = group.getDebtArray();
-            int debt01 = group.getDebtBetweenUsers(0, 1);//20
-            int debt02 = group.getDebtBetweenUsers(0, 2);//0
-            int debt12 = group.getDebtBetweenUsers(1, 2);//0
-            int debt10 = group.getDebtBetweenUsers(1, 0); //0
-            int debt20 = group.getDebtBetweenUsers(2, 0);//0
-            int debt21 = group.getDebtBetweenUsers(2, 1);//30
-            Assert.Equal(50, debt01 + debt21);
-            Assert.Equal(0, debt10 + debt20 + debt02);
-            Assert.Equal(20, debt01);
-            Assert.Equal(30, debt21);
+            double[] debt = group.getDebtArray();
+            double debt23 = group.getDebtBetweenUsers(2, 3);
+            double debt24 = group.getDebtBetweenUsers(2, 4);
+            double debt34 = group.getDebtBetweenUsers(3, 4);
+            double debt32 = group.getDebtBetweenUsers(3, 2);
+            double debt42 = group.getDebtBetweenUsers(4, 2);
+            double debt43 = group.getDebtBetweenUsers(4, 3);
+
+            Assert.Equal(20.0, debt23 + debt24 + debt43, 3);
+            Assert.Equal(0.0, debt32 + debt42 + debt34, 3);
+            Assert.Equal(20.0, debt23, 3);
+            Assert.Equal(30.0, debt34, 3);
             Assert.Equal(expenseDto.Amount, addedExpense.Amount);
             Assert.Equal(expenseDto.Description, addedExpense.Description);
             Assert.Equal(expenseDto.IsPaid, addedExpense.IsPaid);
@@ -208,8 +210,8 @@ namespace ServerTests
                 GroupId = groupId,
                 ExpenseSplits = new List<ExpenseSplitDto>
                 {
-                    new ExpenseSplitDto { UserId = 1, Percentage = 50.0 },
-                    new ExpenseSplitDto { UserId = 2, Percentage = 50.0 }
+                    new ExpenseSplitDto { UserId = 2, Amount = 50.0 },
+                    new ExpenseSplitDto { UserId = 3, Amount = 50.0 }
                 }
             };
 
@@ -223,14 +225,15 @@ namespace ServerTests
                 GroupId = groupId,
                 ExpenseSplits = new List<ExpenseSplitDto>
                 {
-                    new ExpenseSplitDto { UserId = 1, Percentage = 60.0 },
-                    new ExpenseSplitDto { UserId = 2, Percentage = 40.0 }
+                    new ExpenseSplitDto { UserId = 2, Amount = 90.0 },
+                    new ExpenseSplitDto { UserId = 3, Amount = 60.0 }
                 }
             };
 
             var payer = new User("payer", "payer@bgu.ac.il", "hashedPassword") { Id = payerId };
-            var user1 = new User("user1", "user1@bgu.ac.il", "hashedPassword") { Id = 2 };
-            var group = new Group("Test Group", payer, new List<User> { user1 })
+            var user2 = new User("user2", "user2@bgu.ac.il", "hashedPassword") { Id = 2 };
+            var user3 = new User("user3", "user3@bgu.ac.il", "hashedPassword") { Id = 3 };
+            var group = new Group("Test Group", payer, new List<User> { user2, user3 })
             {
                 Expenses = new List<Expense>
                 {
@@ -245,7 +248,7 @@ namespace ServerTests
                         ExpenseSplits = originalExpenseDto.ExpenseSplits.Select(splitDto => new ExpenseSplit
                         {
                             UserId = splitDto.UserId,
-                            Percentage = splitDto.Percentage
+                            Amount = splitDto.Amount
                         }).ToList()
                     }
                 }
@@ -295,29 +298,6 @@ namespace ServerTests
 
         #region AddMemberToGroupAsync
 
-        //[Fact]
-        //public async Task AddMemberToGroupAsync_WhenUserIsValid_ShouldAddUser()
-        //{
-        //    // Arrange
-        //    var groupId = 1;
-        //    var userToAdd = new User("newMember", "newMember@bgu.ac.il", "hashedPassword") { Id = 2 };
-        //    var admin = new User("admin", "admin@bgu.ac.il", "hashedPassword") { Id = 1 };
-        //    var group = new Group("Test Group", admin, new List<User> { })
-        //    {
-        //        Id = groupId
-        //    };
-
-        //    _groupDbMock.Setup(x => x.GetGroupByIdAsync(groupId)).ReturnsAsync(group);
-        //    _groupDbMock.Setup(x => x.UpdateGroupAsync(group)).Returns(Task.CompletedTask);
-
-        //    // Act
-        //    await _groupFacade.AddMemberToGroupAsync(userToAdd, group);
-
-        //    // Assert
-        //    Assert.Contains(userToAdd, group.Members);
-        //    _groupDbMock.Verify(x => x.UpdateGroupAsync(group), Times.Once);
-        //}
-
         [Fact]
         public async Task AddMemberToGroupAsync_WhenGroupDoesNotExist_ShouldThrowException()
         {
@@ -335,29 +315,6 @@ namespace ServerTests
             Assert.Equal($"Group with id {groupId} does not exist.", exception.Message);
         }
 
-        //[Fact]
-        //public async Task AddMemberToGroupAsync_WhenUserIsAlreadyMember_ShouldNotAddDuplicate()
-        //{
-        //    // Arrange
-        //    var groupId = 1;
-        //    var existingUser = new User("existingMember", "existing@bgu.ac.il", "hashedPassword") { Id = 2 };
-        //    var admin = new User("admin", "admin@bgu.ac.il", "hashedPassword") { Id = 1 };
-        //    var group = new Group("Test Group", admin, new List<User> { existingUser })
-        //    {
-        //        Id = groupId
-        //    };
-
-        //    _groupDbMock.Setup(x => x.GetGroupByIdAsync(groupId)).ReturnsAsync(group);
-        //    _groupDbMock.Setup(x => x.UpdateGroupAsync(group)).Returns(Task.CompletedTask);
-
-        //    // Act
-        //    await _groupFacade.AddMemberToGroupAsync(existingUser, group);
-
-        //    // Assert
-        //    Assert.Single(group.Members, existingUser);
-        //    _groupDbMock.Verify(x => x.UpdateGroupAsync(group), Times.Never);
-        //}
-
         #endregion
 
         #region RemoveMemberFromGroupAsync
@@ -368,8 +325,8 @@ namespace ServerTests
             // Arrange
             var groupId = 1;
             var admin = new User("admin", "admin@bgu.ac.il", "adminPassword!1") { Id = 1 };
-            var user1 = new User("user1", "user1@bgu.ac.il", "user1Password!1") { Id = 2 };
-            var user2 = new User("user2", "user2@bgu.ac.il", "user2Password!1") { Id = 3 };
+            var user2 = new User("user2", "user2@bgu.ac.il", "user2Password!1") { Id = 2 };
+            var user3 = new User("user3", "user3@bgu.ac.il", "user3Password!1") { Id = 3 };
             var newMember = new User("newMember", "newMember@bgu.ac.il", "newMemberPassword!1") { Id = 4 };
 
             var expensedto = new ExpenseDto
@@ -381,21 +338,20 @@ namespace ServerTests
                 PayerId = admin.Id,
                 GroupId = groupId,
                 ExpenseSplits = new List<ExpenseSplitDto>
-         {
-            new ExpenseSplitDto { UserId = 1, Percentage = 60.0 },
-            new ExpenseSplitDto { UserId = 2, Percentage = 20.0 },
-            new ExpenseSplitDto { UserId = 3, Percentage = 20.0 },
-            new ExpenseSplitDto { UserId = 4, Percentage = 0.0 }
-        }
+                {
+                    new ExpenseSplitDto { UserId = 2, Amount = 20.0 },
+                    new ExpenseSplitDto { UserId = 3, Amount = 50.0 },
+                    new ExpenseSplitDto { UserId = 4, Amount = 30.0 }
+                }
             };
 
-            var group = new Group("Test Group", admin, new List<User> {user1, user2, newMember })
+            var group = new Group("Test Group", admin, new List<User> { user2, user3, newMember })
             {
                 Id = groupId,
                 Expenses = new List<Expense> { }
             };
 
-             _groupDbMock.Setup(x => x.GetGroupByIdAsync(groupId)).ReturnsAsync(group);
+            _groupDbMock.Setup(x => x.GetGroupByIdAsync(groupId)).ReturnsAsync(group);
             _userFacadeMock.Setup(x => x.GetUserByIdAsync(admin.Id)).ReturnsAsync(admin);
             _userFacadeMock.Setup(x => x.GetUserByIdAsync(newMember.Id)).ReturnsAsync(newMember);
             _groupFacade = new GroupFacade(_groupDbMock.Object, _loggerMock.Object, _userFacadeMock.Object);
@@ -408,10 +364,9 @@ namespace ServerTests
             var existingExpense = group.Expenses.First();
             Assert.DoesNotContain(group.GetMembers(), u => u.Id == newMember.Id); // New member is removed
             Assert.Equal(3, group.GetMembers().Count); // Total members should now be 3
-            Assert.Contains(existingExpense.ExpenseSplits, es => es.UserId == admin.Id && es.Percentage == 60.0);
-            Assert.Contains(existingExpense.ExpenseSplits, es => es.UserId == user1.Id && es.Percentage == 20.0);
-            Assert.Contains(existingExpense.ExpenseSplits, es => es.UserId == user2.Id && es.Percentage == 20.0);
-
+            Assert.Contains(existingExpense.ExpenseSplits, es => es.UserId == 2 && es.Amount == 20.0);
+            Assert.Contains(existingExpense.ExpenseSplits, es => es.UserId == 3 && es.Amount == 50.0);
+            Assert.Contains(existingExpense.ExpenseSplits, es => es.UserId == 4 && es.Amount == 30.0);
         }
 
         #endregion
@@ -431,7 +386,7 @@ namespace ServerTests
                 ExpenseSplits = dto.ExpenseSplits.Select(splitDto => new ExpenseSplit
                 {
                     UserId = splitDto.UserId,
-                    Percentage = splitDto.Percentage
+                    Amount = splitDto.Amount
                 }).ToList()
             };
         }

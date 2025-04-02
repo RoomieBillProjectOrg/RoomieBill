@@ -90,9 +90,9 @@
                         </Picker>
                     </VerticalStackLayout>
 
-                    <!-- Custom Percentages -->
-                    <VerticalStackLayout x:Name="CustomPercentageLayout" IsVisible="False">
-                        <Label Text="Custom Percentages:"
+                    <!-- Custom Amounts -->
+                    <VerticalStackLayout x:Name="CustomAmountLayout" IsVisible="False">
+                        <Label Text="Custom Amounts:"
                             FontSize="16"
                             TextColor="White"
                             FontAttributes="Bold" />
@@ -101,8 +101,8 @@
                                 <DataTemplate>
                                     <Grid Padding="10" ColumnDefinitions="*, Auto">
                                         <Label Text="{Binding Member.Username}" FontSize="16" TextColor="White" />
-                                        <Entry Placeholder="%" Keyboard="Numeric" WidthRequest="50"
-                                            Text="{Binding CustomPercentage}" BackgroundColor="#3E3E3E" TextColor="White"/>
+                                        <Entry Placeholder="0.00" Keyboard="Numeric" WidthRequest="80"
+                                            Text="{Binding CustomAmount}" BackgroundColor="#3E3E3E" TextColor="White"/>
                                     </Grid>
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>

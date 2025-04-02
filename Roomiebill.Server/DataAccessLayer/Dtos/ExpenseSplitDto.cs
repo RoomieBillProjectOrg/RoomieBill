@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-
 namespace Roomiebill.Server.DataAccessLayer.Dtos
 {
     public class ExpenseSplitDto
@@ -13,7 +12,6 @@ namespace Roomiebill.Server.DataAccessLayer.Dtos
         public int UserId { get; set; } // Foreign Key to User
 
         [Required]
-        [Range(0.01, 100.0, ErrorMessage = "Percentage must be between 0.01 and 100.")]
-        public double Percentage { get; set; } // The percentage owed by the user
+        public double Amount { get; set; } // The amount owed by the user
     }
 }
