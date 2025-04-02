@@ -91,7 +91,7 @@ namespace ServerTests
             var debtor = new User { Id = 2, Username = "Debtor" };
 
             _dbContextMock.Setup(db => db.GetGroupByIdAsync(It.IsAny<int>()))
-                .ReturnsAsync((Group)null);
+                .ReturnsAsync((Group?)null);
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<Exception>(() => _groupFacade.SettleDebtAsync(50, creditor, debtor, 1));
@@ -101,4 +101,3 @@ namespace ServerTests
         #endregion
     }
 }
-

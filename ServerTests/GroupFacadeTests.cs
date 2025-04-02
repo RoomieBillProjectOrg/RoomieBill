@@ -1,4 +1,4 @@
-﻿﻿﻿﻿using Microsoft.Extensions.Logging;
+﻿﻿using Microsoft.Extensions.Logging;
 using Moq;
 using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.DataAccessLayer.Dtos;
@@ -61,11 +61,12 @@ namespace ServerTests
                 GroupMembersEmailsList = new List<string> { "member1", "member2" }
             };
 
-            User admin = new User("admin", "admin@bgu.ac.il", "adminPassword!1");
+            User admin = new User("admin", "admin@bgu.ac.il", "adminPassword!1") { Id = 1 };
             User member1 = new User("member1", "user1@bgu.ac.il", "user1Password!1");
             User member2 = new User("member2", "user2@bgu.ac.il", "user2Password!1");
 
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync("admin")).ReturnsAsync(admin);
+            _groupDbMock.Setup(x => x.GetUserGroupsAsync(admin.Id)).ReturnsAsync(new List<Group>());
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync("member1")).ReturnsAsync(member1);
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync("member2")).ReturnsAsync(member2);
 
@@ -106,9 +107,10 @@ namespace ServerTests
                 GroupMembersEmailsList = new List<string>()
             };
 
-            User admin = new User("admin", "admin@bgu.ac.il", "adminPassword!1");
+            User admin = new User("admin", "admin@bgu.ac.il", "adminPassword!1") { Id = 1 };
 
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync("admin"))!.ReturnsAsync(admin);
+            _groupDbMock.Setup(x => x.GetUserGroupsAsync(admin.Id)).ReturnsAsync(new List<Group>());
 
             // Act
             Group? result = await _groupFacade.CreateNewGroupAsync(newGroupDto);
