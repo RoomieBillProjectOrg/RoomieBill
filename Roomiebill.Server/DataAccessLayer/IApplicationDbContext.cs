@@ -1,4 +1,4 @@
-﻿﻿using System.Linq.Expressions;
+﻿﻿﻿﻿using System.Linq.Expressions;
 using Roomiebill.Server.Models;
 
 namespace Roomiebill.Server.DataAccessLayer
@@ -35,5 +35,10 @@ namespace Roomiebill.Server.DataAccessLayer
         public Task<List<Invite>> GetUserInvitesAsync(string username);
         public Task<int> GetNextExpenseIdAsync();
         public Task<int> GetNextExpenseSplitIdAsync();
+
+        public Task<List<PaymentReminder>> GetActiveRemindersAsync();
+        public Task AddPaymentReminderAsync(PaymentReminder reminder);
+        public Task UpdatePaymentReminderAsync(PaymentReminder reminder);
+        public Task<PaymentReminder?> GetPaymentReminderByIdAsync(int reminderId);
     }
 }

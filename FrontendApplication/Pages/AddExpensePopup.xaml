@@ -24,14 +24,61 @@
                         FontAttributes="Bold"
                         TextColor="White" />
 
-                    <!-- Description Entry -->
+                    <!-- Category Picker -->
                     <VerticalStackLayout>
+                        <Label Text="Category:"
+                               FontSize="16"
+                               TextColor="White"
+                               FontAttributes="Bold" />
+                        <Picker x:Name="CategoryPicker"
+                                Title="Select expense category"
+                                FontSize="16"
+                                BackgroundColor="#3E3E3E"
+                                TextColor="White"
+                                HeightRequest="40"
+                                Margin="0,5,0,0" />
+                    </VerticalStackLayout>
+
+                    <!-- Month Selection (for non-Other categories) -->
+                    <VerticalStackLayout x:Name="MonthsLayout" IsVisible="False">
+                        <Label Text="Months:"
+                               FontSize="16"
+                               TextColor="White"
+                               FontAttributes="Bold" />
+                        <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, Auto" Margin="0,5,0,0">
+                            <Label Text="Start Month:"
+                                   Grid.Row="0"
+                                   Grid.Column="0"
+                                   TextColor="White"
+                                   FontSize="14" />
+                            <DatePicker x:Name="StartMonthPicker"
+                                      Grid.Row="1"
+                                      Grid.Column="0"
+                                      Format="MMM yyyy"
+                                      BackgroundColor="#3E3E3E"
+                                      TextColor="White" />
+                            <Label Text="End Month:"
+                                   Grid.Row="0"
+                                   Grid.Column="1"
+                                   TextColor="White"
+                                   FontSize="14" />
+                            <DatePicker x:Name="EndMonthPicker"
+                                      Grid.Row="1"
+                                      Grid.Column="1"
+                                      Format="MMM yyyy"
+                                      BackgroundColor="#3E3E3E"
+                                      TextColor="White" />
+                        </Grid>
+                    </VerticalStackLayout>
+
+                    <!-- Description Entry (only for Other category) -->
+                    <VerticalStackLayout x:Name="DescriptionLayout">
                         <Label Text="Description:"
                             FontSize="16"
                             TextColor="White"
                             FontAttributes="Bold" />
                         <Entry x:Name="DescriptionEntry"
-                            Placeholder="Enter description"
+                            Placeholder="Enter description (required for Other category)"
                             FontSize="16"
                             BackgroundColor="#3E3E3E"
                             TextColor="White"
@@ -55,21 +102,6 @@
                             Margin="0,5,0,0" />
                     </VerticalStackLayout>
 
-                    <!-- Category Picker -->
-                    <VerticalStackLayout>
-                        <Label Text="Category:"
-                            FontSize="16"
-                            TextColor="White"
-                            FontAttributes="Bold" />
-                        <Picker x:Name="CategoryPicker"
-                                Title="Select expense category"
-                                FontSize="16"
-                                BackgroundColor="#3E3E3E"
-                                TextColor="White"
-                                HeightRequest="40"
-                                Margin="0,5,0,0" />
-                    </VerticalStackLayout>
-
                     <!-- Divide Dropdown -->
                     <VerticalStackLayout>
                         <Label Text="Divide:"
@@ -84,15 +116,17 @@
                                 HeightRequest="40"
                                 SelectedIndexChanged="OnDividePickerChanged">
                             <Picker.Items>
-                                <x:String>Equally</x:String>
+                                <x:String>Equally, between all group members</x:String>
                                 <x:String>Custom</x:String>
                             </Picker.Items>
                         </Picker>
                     </VerticalStackLayout>
 
-                    <!-- Custom Percentages -->
-                    <VerticalStackLayout x:Name="CustomPercentageLayout" IsVisible="False">
-                        <Label Text="Custom Percentages:"
+                    <Label x:Name="ErrorLabel" TextColor="Red" IsVisible="False" />
+
+                    <!-- Custom Amounts -->
+                    <VerticalStackLayout x:Name="CustomAmountLayout" IsVisible="False">
+                        <Label Text="Custom Amounts:"
                             FontSize="16"
                             TextColor="White"
                             FontAttributes="Bold" />
@@ -101,8 +135,8 @@
                                 <DataTemplate>
                                     <Grid Padding="10" ColumnDefinitions="*, Auto">
                                         <Label Text="{Binding Member.Username}" FontSize="16" TextColor="White" />
-                                        <Entry Placeholder="%" Keyboard="Numeric" WidthRequest="50"
-                                            Text="{Binding CustomPercentage}" BackgroundColor="#3E3E3E" TextColor="White"/>
+                                        <Entry Placeholder="0.00" Keyboard="Numeric" WidthRequest="80"
+                                            Text="{Binding CustomAmount}" BackgroundColor="#3E3E3E" TextColor="White"/>
                                     </Grid>
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>

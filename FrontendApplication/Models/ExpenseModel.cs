@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
 namespace FrontendApplication.Models
@@ -13,5 +13,8 @@ namespace FrontendApplication.Models
         public int GroupId { get; set; } // Foreign Key to the Group this expense belongs to
         public ICollection<ExpenseSplitModel> ExpenseSplits { get; set; } = new List<ExpenseSplitModel>(); // Navigation property for ExpenseSplit
         public Category Category { get; set; } = Category.Other; // Category of the expense
+        public DateTime? StartMonth { get; set; } // Start month for recurring expenses
+        public DateTime? EndMonth { get; set; } // End month for recurring expenses
+        public bool HasMonths => Category != Category.Other && StartMonth.HasValue && EndMonth.HasValue; // For XAML binding
     }
 }

@@ -108,7 +108,6 @@ namespace Roomiebill.Server.Facades
             // Extract user from database
             User? user = await _userFacade.GetUserByIdAsync(expenseDto.PayerId);
 
-
             // Alert if the user does not exist
             if (user == null)
             {
@@ -309,7 +308,10 @@ namespace Roomiebill.Server.Facades
                 PayerId = dto.PayerId,
                 Payer = await _userFacade.GetUserByIdAsync(dto.PayerId),
                 GroupId = dto.GroupId,
-                Group = await GetGroupByIdAsync(dto.GroupId)
+                Group = await GetGroupByIdAsync(dto.GroupId),
+                Category = dto.Category,
+                StartMonth = dto.StartMonth,
+                EndMonth = dto.EndMonth
             };
             
             return e;
@@ -327,7 +329,7 @@ namespace Roomiebill.Server.Facades
                         Expense = e,
                         UserId = es.UserId,
                         User = await _userFacade.GetUserByIdAsync(es.UserId),
-                        Percentage = es.Percentage
+                        Amount = es.Amount
                     });
             }
             e.ExpenseSplits = expenseSplits;

@@ -25,9 +25,29 @@ namespace FrontendApplication.Popups
             _groupService = groupService;
             _group = group;
 
-            // Initialize category picker
-            CategoryPicker.ItemsSource = Enum.GetNames(typeof(Category));
-            CategoryPicker.SelectedIndex = 0; // Default to first category
+            // Initialize category picker and handle selection changes
+            var categories = Enum.GetNames(typeof(Category)).ToList();
+            // Reorder to put "Other" first
+            categories.Remove("Other");
+            categories.Insert(0, "Other");
+            CategoryPicker.ItemsSource = categories;
+            CategoryPicker.SelectedIndex = 0; // Default to "Other"
+            CategoryPicker.SelectedIndexChanged += OnCategoryPickerChanged;
+
+            // Initialize visibility state
+            UpdateFieldsVisibility(Category.Other);
+
+            // Initialize date pickers
+            var today = DateTime.Today;
+            StartMonthPicker.Date = new DateTime(today.Year, today.Month, 1);
+            EndMonthPicker.Date = StartMonthPicker.Date.AddMonths(1);
+            
+            StartMonthPicker.MinimumDate = new DateTime(today.Year, today.Month, 1);
+            EndMonthPicker.MinimumDate = StartMonthPicker.Date.AddMonths(1);
+            
+            // Add handlers for date changes
+            StartMonthPicker.DateSelected += OnStartMonthSelected;
+            EndMonthPicker.DateSelected += OnEndMonthSelected;
 
             // Initialize members
             foreach (var member in _group.Members)
@@ -41,14 +61,14 @@ namespace FrontendApplication.Popups
 
         private void OnDividePickerChanged(object sender, EventArgs e)
         {
-            // Show/hide custom percentage layout based on selected division type
+            // Show/hide custom amount layout based on selected division type
             if (DividePicker.SelectedIndex == 1) // Custom division selected
             {
-                CustomPercentageLayout.IsVisible = true;
+                CustomAmountLayout.IsVisible = true;
             }
             else
             {
-                CustomPercentageLayout.IsVisible = false;
+                CustomAmountLayout.IsVisible = false;
             }
         }
 
@@ -59,15 +79,16 @@ namespace FrontendApplication.Popups
             var amount = AmountEntry?.Text;
             if (string.IsNullOrWhiteSpace(amount) || !double.TryParse(amount, out double parsedAmount) || parsedAmount <= 0)
             {
-                Close("Please enter a valid amount.");
+                DisplayError("Please enter a valid amount.");
                 return;
             }
 
-            // Validate Description
+            // Validate Description only for Other category
+            var selectedCategory = (Category)Enum.Parse(typeof(Category), CategoryPicker.SelectedItem.ToString());
             var description = DescriptionEntry?.Text;
-            if (string.IsNullOrWhiteSpace(description))
+            if (selectedCategory == Category.Other && string.IsNullOrWhiteSpace(description))
             {
-                Close("Please enter a description.");
+                DisplayError("Please enter a description for Other category expenses.");
                 return;
             }
 
@@ -76,19 +97,27 @@ namespace FrontendApplication.Popups
             // Check Custom Division Logic
             if (DividePicker.SelectedIndex == 1) // Custom division selected
             {
-                // Ensure at least one percentage is provided
-                var contributingMembers = Members.Where(m => !string.IsNullOrWhiteSpace(m.CustomPercentage) && double.TryParse(m.CustomPercentage, out double percentage) && percentage > 0).ToList();
+                // Ensure at least one amount is provided
+                var contributingMembers = Members.Where(m => !string.IsNullOrWhiteSpace(m.CustomAmount) && double.TryParse(m.CustomAmount, out double amountValue) && amountValue > 0).ToList();
                 if (!contributingMembers.Any())
                 {
-                    Close("Please provide at least one valid percentage for custom division.");
+                    DisplayError("Please provide at least one valid amount for custom division.");
                     return;
                 }
 
-                // Ensure all percentages are valid and sum up to 100%
-                var totalPercentage = contributingMembers.Sum(m => decimal.Parse(m.CustomPercentage));
-                if (totalPercentage != 100)
+                // Ensure all amounts sum up to total expense amount
+                var totalAmount = contributingMembers.Sum(m =>
                 {
-                    Close("The total percentage for custom split must equal 100%.");
+                    if (double.TryParse(m.CustomAmount, out double parsedValue))
+                    {
+                        return parsedValue;
+                    }
+                    return 0;
+                });
+
+                if (Math.Abs(totalAmount - parsedAmount) > 0.01) // Using small epsilon for double comparison
+                {
+                    DisplayError($"The sum of split amounts ({totalAmount}) must equal the total expense amount ({parsedAmount}).");
                     return;
                 }
 
@@ -98,31 +127,52 @@ namespace FrontendApplication.Popups
                     Id = -1,
                     ExpenseId = -1,
                     UserId = m.Member.Id,
-                    Percentage = Convert.ToDouble(m.CustomPercentage)
+                    Amount = Convert.ToDouble(m.CustomAmount)
                 }).ToList();
             }
             else
             {
+                // Split equally
+                var splitAmount = parsedAmount / _group.Members.Count;
                 expenseSplitsDtos = _group.Members.Select(m => new ExpenseSplitModel
                 {
                     Id = -1,
                     ExpenseId = -1,
                     UserId = m.Id,
-                    Percentage = 100 / _group.Members.Count
+                    Amount = splitAmount
                 }).ToList();
             }
 
             // Set the expense dto
+            // Validate dates for non-Other categories
+            if (selectedCategory != Category.Other)
+            {
+                if (EndMonthPicker.Date <= StartMonthPicker.Date)
+                {
+                    DisplayError("End month must be after start month.");
+                    return;
+                }
+
+                // Ensure we're using the first day of the month
+                if (StartMonthPicker.Date.Day != 1 || EndMonthPicker.Date.Day != 1)
+                {
+                    DisplayError("Dates must be set to the first day of the month.");
+                    return;
+                }
+            }
+
             ExpenseModel expense = new ExpenseModel
             {
                 Id = -1,
                 Amount = parsedAmount,
-                Description = description,
+                Description = description ?? string.Empty,
                 IsPaid = false,
                 PayerId = _payer.Id,
                 GroupId = _group.Id,
-                Category = (Category)Enum.Parse(typeof(Category), CategoryPicker.SelectedItem.ToString()),
-                ExpenseSplits = expenseSplitsDtos
+                Category = selectedCategory,
+                ExpenseSplits = expenseSplitsDtos,
+                StartMonth = selectedCategory != Category.Other ? StartMonthPicker.Date : null,
+                EndMonth = selectedCategory != Category.Other ? EndMonthPicker.Date : null
             };
 
             try
@@ -132,21 +182,89 @@ namespace FrontendApplication.Popups
             }
             catch (Exception ex)
             {
-                Close($"Error: {ex.Message}");
+                DisplayError($"Error: {ex.Message}");
             }
         });
 
-        // Command for canceling
+        // Command for canceling - do nothing
         public Command CancelCommand => new Command(() =>
         {
-            // Do nothing, just close the popup.
+            Close();
         });
+
+        private void OnStartMonthSelected(object sender, DateChangedEventArgs e)
+        {
+            // Ensure first day of month
+            StartMonthPicker.Date = new DateTime(e.NewDate.Year, e.NewDate.Month, 1);
+            
+            // Update end month minimum if needed
+            var minEndDate = StartMonthPicker.Date.AddMonths(1);
+            EndMonthPicker.MinimumDate = minEndDate;
+            if (EndMonthPicker.Date <= StartMonthPicker.Date)
+            {
+                EndMonthPicker.Date = minEndDate;
+            }
+        }
+
+        private void OnEndMonthSelected(object sender, DateChangedEventArgs e)
+        {
+            // Ensure first day of month
+            var selectedDate = new DateTime(e.NewDate.Year, e.NewDate.Month, 1);
+            
+            // Validate against start date
+            if (selectedDate.Year == StartMonthPicker.Date.Year && 
+                selectedDate.Month == StartMonthPicker.Date.Month)
+            {
+                DisplayError("Start and end months cannot be the same");
+                EndMonthPicker.Date = StartMonthPicker.Date.AddMonths(1);
+                return;
+            }
+            
+            if (selectedDate < StartMonthPicker.Date)
+            {
+                DisplayError("End month must be after start month");
+                EndMonthPicker.Date = StartMonthPicker.Date.AddMonths(1);
+                return;
+            }
+
+            EndMonthPicker.Date = selectedDate;
+            ErrorLabel.IsVisible = false; // Clear error if valid
+        }
+
+        private void UpdateFieldsVisibility(Category category)
+        {
+            MonthsLayout.IsVisible = category != Category.Other;
+            
+            // Clear description if switching to non-Other category
+            if (category != Category.Other)
+            {
+                DescriptionEntry.Text = string.Empty;
+            }
+
+            // Ensure EndMonthPicker is always at least one month after StartMonthPicker
+            if (category != Category.Other && EndMonthPicker.Date <= StartMonthPicker.Date)
+            {
+                EndMonthPicker.Date = StartMonthPicker.Date.AddMonths(1);
+            }
+        }
+
+        private void OnCategoryPickerChanged(object sender, EventArgs e)
+        {
+            var selectedCategory = (Category)Enum.Parse(typeof(Category), CategoryPicker.SelectedItem.ToString());
+            UpdateFieldsVisibility(selectedCategory);
+        }
+
+        private void DisplayError(string message)
+        {
+            ErrorLabel.Text = message;
+            ErrorLabel.IsVisible = true;
+        }
     }
 
     public class MemberViewModel
     {
         public UserModel Member { get; set; }
         public bool IsSelected { get; set; } = false;
-        public string CustomPercentage { get; set; } = string.Empty;
+        public string CustomAmount { get; set; } = string.Empty;
     }
 }
