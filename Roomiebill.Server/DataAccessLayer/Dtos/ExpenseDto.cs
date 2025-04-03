@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Roomiebill.Server.Common.Enums;
 using Roomiebill.Server.Models;
 
 namespace Roomiebill.Server.DataAccessLayer.Dtos
@@ -12,7 +13,6 @@ namespace Roomiebill.Server.DataAccessLayer.Dtos
         [Range(0.01, double.MaxValue, ErrorMessage = "Amount must be greater than zero.")]
         public double Amount { get; set; }
 
-        [Required]
         [StringLength(100, ErrorMessage = "Description cannot be longer than 100 characters.")]
         public string Description { get; set; } = string.Empty;
 
@@ -24,6 +24,11 @@ namespace Roomiebill.Server.DataAccessLayer.Dtos
 
         [Required]
         public List<ExpenseSplitDto> ExpenseSplits { get; set; } = new List<ExpenseSplitDto>();
-        
+
+        [Required]
+        public Category Category { get; set; } // Category of the expense
+        public DateTime? StartMonth { get; set; } // Start month for recurring expenses
+        public DateTime? EndMonth { get; set; } // End month for recurring expenses
+
     }
 }
