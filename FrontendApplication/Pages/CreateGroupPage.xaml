@@ -43,12 +43,25 @@
                Margin="0,0,0,20"/>
         <!-- Styled entry -->
 
-        <!-- Submit Button -->
-        <Button Text="Create Group" 
-                BackgroundColor="Green" 
-                TextColor="White" 
-                Clicked="OnCreateGroupClicked" 
-                Margin="0,0,0,20"/>
+        <!-- Buttons -->
+        <HorizontalStackLayout Grid.Row="1" Spacing="10" HorizontalOptions="Center">
+            <Button Text="Cancel"
+                    BackgroundColor="Transparent"
+                    TextColor="DarkRed"
+                    FontAttributes="Bold"
+                    BorderColor="DarkRed"
+                    BorderWidth="2"
+                    CornerRadius="25"
+                    HeightRequest="50"
+                    Clicked="OnCancelClicked" />
+            <Button Text="Create Group"
+                    BackgroundColor="LightSeaGreen"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    CornerRadius="25"
+                    HeightRequest="50"
+                    Clicked="OnCreateGroupClicked" />
+        </HorizontalStackLayout>
 
         <!-- Error Message -->
         <Label x:Name="ErrorLabel" 

@@ -29,8 +29,8 @@
                                     <Label Grid.Column="0" Text="{Binding Group.GroupName}" VerticalOptions="Center" FontSize="18" TextColor="Black"/>
                                     <!-- Set label text color -->
                                     <StackLayout Orientation="Horizontal" HorizontalOptions="EndAndExpand" VerticalOptions="Center">
-                                        <Button Text="✓" BackgroundColor="Green" TextColor="White" Command="{Binding AcceptCommand}" CommandParameter="{Binding}" WidthRequest="40" HeightRequest="40"/>
-                                        <Button Text="✗" BackgroundColor="Red" TextColor="White" Command="{Binding RejectCommand}" CommandParameter="{Binding}" WidthRequest="40" HeightRequest="40" Margin="10,0,0,0"/>
+                                        <Button Text="✓" BackgroundColor="LightSeaGreen" TextColor="White" Command="{Binding AcceptCommand}" CommandParameter="{Binding}" WidthRequest="40" HeightRequest="40"/>
+                                        <Button Text="✗" BackgroundColor="DarkRed" TextColor="White" Command="{Binding RejectCommand}" CommandParameter="{Binding}" WidthRequest="40" HeightRequest="40" Margin="10,0,0,0"/>
                                     </StackLayout>
                                 </Grid>
                             </Frame>

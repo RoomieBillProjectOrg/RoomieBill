@@ -147,20 +147,22 @@
 
             <!-- Fixed Buttons at the Bottom -->
             <HorizontalStackLayout Grid.Row="1" Spacing="10" HorizontalOptions="Center">
-                <Button Text="CANCEL"
+                <Button Text="Cancel"
                         Command="{Binding CancelCommand}"
-                        BackgroundColor="#B0BEC5"
-                        TextColor="White"
-                        CornerRadius="20"
-                        FontSize="18"
-                        Padding="10" />
-                <Button Text="SUBMIT"
+                        BackgroundColor="Transparent"
+                        TextColor="DarkRed"
+                        FontAttributes="Bold"
+                        BorderColor="DarkRed"
+                        BorderWidth="2"
+                        CornerRadius="25"
+                        HeightRequest="50" />
+                <Button Text="Submit"
                         Command="{Binding AddExpenseCommand}"
-                        BackgroundColor="#FF5722"
+                        BackgroundColor="LightSeaGreen"
                         TextColor="White"
-                        CornerRadius="20"
-                        FontSize="18"
-                        Padding="10" />
+                        FontAttributes="Bold"
+                        CornerRadius="25"
+                        HeightRequest="50" />
             </HorizontalStackLayout>
         </Grid>
     </Frame>
