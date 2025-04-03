@@ -25,9 +25,29 @@ namespace FrontendApplication.Popups
             _groupService = groupService;
             _group = group;
 
-            // Initialize category picker
-            CategoryPicker.ItemsSource = Enum.GetNames(typeof(Category));
-            CategoryPicker.SelectedIndex = 0; // Default to first category
+            // Initialize category picker and handle selection changes
+            var categories = Enum.GetNames(typeof(Category)).ToList();
+            // Reorder to put "Other" first
+            categories.Remove("Other");
+            categories.Insert(0, "Other");
+            CategoryPicker.ItemsSource = categories;
+            CategoryPicker.SelectedIndex = 0; // Default to "Other"
+            CategoryPicker.SelectedIndexChanged += OnCategoryPickerChanged;
+
+            // Initialize visibility state
+            UpdateFieldsVisibility(Category.Other);
+
+            // Initialize date pickers
+            var today = DateTime.Today;
+            StartMonthPicker.Date = new DateTime(today.Year, today.Month, 1);
+            EndMonthPicker.Date = StartMonthPicker.Date.AddMonths(1);
+            
+            StartMonthPicker.MinimumDate = new DateTime(today.Year, today.Month, 1);
+            EndMonthPicker.MinimumDate = StartMonthPicker.Date.AddMonths(1);
+            
+            // Add handlers for date changes
+            StartMonthPicker.DateSelected += OnStartMonthSelected;
+            EndMonthPicker.DateSelected += OnEndMonthSelected;
 
             // Initialize members
             foreach (var member in _group.Members)
@@ -63,11 +83,12 @@ namespace FrontendApplication.Popups
                 return;
             }
 
-            // Validate Description
+            // Validate Description only for Other category
+            var selectedCategory = (Category)Enum.Parse(typeof(Category), CategoryPicker.SelectedItem.ToString());
             var description = DescriptionEntry?.Text;
-            if (string.IsNullOrWhiteSpace(description))
+            if (selectedCategory == Category.Other && string.IsNullOrWhiteSpace(description))
             {
-                DisplayError("Please enter a description.");
+                DisplayError("Please enter a description for Other category expenses.");
                 return;
             }
 
@@ -123,16 +144,35 @@ namespace FrontendApplication.Popups
             }
 
             // Set the expense dto
+            // Validate dates for non-Other categories
+            if (selectedCategory != Category.Other)
+            {
+                if (EndMonthPicker.Date <= StartMonthPicker.Date)
+                {
+                    DisplayError("End month must be after start month.");
+                    return;
+                }
+
+                // Ensure we're using the first day of the month
+                if (StartMonthPicker.Date.Day != 1 || EndMonthPicker.Date.Day != 1)
+                {
+                    DisplayError("Dates must be set to the first day of the month.");
+                    return;
+                }
+            }
+
             ExpenseModel expense = new ExpenseModel
             {
                 Id = -1,
                 Amount = parsedAmount,
-                Description = description,
+                Description = description ?? string.Empty,
                 IsPaid = false,
                 PayerId = _payer.Id,
                 GroupId = _group.Id,
-                Category = (Category)Enum.Parse(typeof(Category), CategoryPicker.SelectedItem.ToString()),
-                ExpenseSplits = expenseSplitsDtos
+                Category = selectedCategory,
+                ExpenseSplits = expenseSplitsDtos,
+                StartMonth = selectedCategory != Category.Other ? StartMonthPicker.Date : null,
+                EndMonth = selectedCategory != Category.Other ? EndMonthPicker.Date : null
             };
 
             try
@@ -152,6 +192,67 @@ namespace FrontendApplication.Popups
             Close();
         });
 
+        private void OnStartMonthSelected(object sender, DateChangedEventArgs e)
+        {
+            // Ensure first day of month
+            StartMonthPicker.Date = new DateTime(e.NewDate.Year, e.NewDate.Month, 1);
+            
+            // Update end month minimum if needed
+            var minEndDate = StartMonthPicker.Date.AddMonths(1);
+            EndMonthPicker.MinimumDate = minEndDate;
+            if (EndMonthPicker.Date <= StartMonthPicker.Date)
+            {
+                EndMonthPicker.Date = minEndDate;
+            }
+        }
+
+        private void OnEndMonthSelected(object sender, DateChangedEventArgs e)
+        {
+            // Ensure first day of month
+            var selectedDate = new DateTime(e.NewDate.Year, e.NewDate.Month, 1);
+            
+            // Validate against start date
+            if (selectedDate.Year == StartMonthPicker.Date.Year && 
+                selectedDate.Month == StartMonthPicker.Date.Month)
+            {
+                DisplayError("Start and end months cannot be the same");
+                EndMonthPicker.Date = StartMonthPicker.Date.AddMonths(1);
+                return;
+            }
+            
+            if (selectedDate < StartMonthPicker.Date)
+            {
+                DisplayError("End month must be after start month");
+                EndMonthPicker.Date = StartMonthPicker.Date.AddMonths(1);
+                return;
+            }
+
+            EndMonthPicker.Date = selectedDate;
+            ErrorLabel.IsVisible = false; // Clear error if valid
+        }
+
+        private void UpdateFieldsVisibility(Category category)
+        {
+            MonthsLayout.IsVisible = category != Category.Other;
+            
+            // Clear description if switching to non-Other category
+            if (category != Category.Other)
+            {
+                DescriptionEntry.Text = string.Empty;
+            }
+
+            // Ensure EndMonthPicker is always at least one month after StartMonthPicker
+            if (category != Category.Other && EndMonthPicker.Date <= StartMonthPicker.Date)
+            {
+                EndMonthPicker.Date = StartMonthPicker.Date.AddMonths(1);
+            }
+        }
+
+        private void OnCategoryPickerChanged(object sender, EventArgs e)
+        {
+            var selectedCategory = (Category)Enum.Parse(typeof(Category), CategoryPicker.SelectedItem.ToString());
+            UpdateFieldsVisibility(selectedCategory);
+        }
 
         private void DisplayError(string message)
         {

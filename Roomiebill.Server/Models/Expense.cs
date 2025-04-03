@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
@@ -38,6 +38,11 @@ namespace Roomiebill.Server.Models
         public ICollection<ExpenseSplit> ExpenseSplits { get; set; } = new List<ExpenseSplit>();
 
         [Required]
-        public Category Category { get; set; } = Category.Other; // Category of the expense
+        public Category Category { get; set; } // Category of the expense
+
+        // StartMonth and EndMonth for recurring expenses (nullable for Category.Other)
+        public DateTime? StartMonth { get; set; }
+
+        public DateTime? EndMonth { get; set; }
     }
 }

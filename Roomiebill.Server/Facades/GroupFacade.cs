@@ -308,7 +308,10 @@ namespace Roomiebill.Server.Facades
                 PayerId = dto.PayerId,
                 Payer = await _userFacade.GetUserByIdAsync(dto.PayerId),
                 GroupId = dto.GroupId,
-                Group = await GetGroupByIdAsync(dto.GroupId)
+                Group = await GetGroupByIdAsync(dto.GroupId),
+                Category = dto.Category,
+                StartMonth = dto.StartMonth,
+                EndMonth = dto.EndMonth
             };
             
             return e;

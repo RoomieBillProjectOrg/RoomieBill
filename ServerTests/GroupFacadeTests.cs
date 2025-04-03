@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System;
+using Roomiebill.Server.Common.Enums;
 
 namespace ServerTests
 {
@@ -149,7 +150,8 @@ namespace ServerTests
                     new ExpenseSplitDto { UserId = 0, Amount = 20.0 },
                     new ExpenseSplitDto { UserId = 1, Amount = 50.0 },
                     new ExpenseSplitDto { UserId = 2, Amount = 30.0 }
-                }
+                },
+                Category = Category.Other
             };
             User payer = new User("payer", "payer@bgu.ac.il", "payerPassword!1");
             User user1 = new User("user1", "user1@bgu.ac.il", "user1Password!1");
@@ -213,7 +215,8 @@ namespace ServerTests
                 {
                     new ExpenseSplitDto { UserId = 2, Amount = 50.0 },
                     new ExpenseSplitDto { UserId = 3, Amount = 50.0 }
-                }
+                },
+                Category = Category.Other
             };
 
             var updatedExpenseDto = new ExpenseDto
@@ -342,7 +345,8 @@ namespace ServerTests
                 {
                     new ExpenseSplitDto { UserId = 2, Amount = 20.0 },
                     new ExpenseSplitDto { UserId = 3, Amount = 80.0 },
-                }
+                },
+                Category = Category.Other
             };
 
             var group = new Group("Test Group", admin, new List<User> { user2, user3, newMember })

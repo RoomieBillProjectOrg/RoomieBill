@@ -1,5 +1,6 @@
 using Roomiebill.Server.Models;
 using Roomiebill.Server.Exceptions;
+using Roomiebill.Server.Common.Validators;
 
 namespace Roomiebill.Server.Facades
 {
@@ -95,6 +96,8 @@ namespace Roomiebill.Server.Facades
 
         public Expense AddExpense(Expense expense, double[] debtArray)
         {
+            ExpenseValidator.ValidateExpenseFields(expense);
+            
             int payerId = expense.PayerId;
             int payerIndex = _userIndexMap[payerId];
             
