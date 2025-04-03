@@ -24,6 +24,21 @@
                         FontAttributes="Bold"
                         TextColor="White" />
 
+                    <!-- Category Picker -->
+                    <VerticalStackLayout>
+                        <Label Text="Category:"
+                               FontSize="16"
+                               TextColor="White"
+                               FontAttributes="Bold" />
+                        <Picker x:Name="CategoryPicker"
+                                Title="Select expense category"
+                                FontSize="16"
+                                BackgroundColor="#3E3E3E"
+                                TextColor="White"
+                                HeightRequest="40"
+                                Margin="0,5,0,0" />
+                    </VerticalStackLayout>
+
                     <!-- Description Entry -->
                     <VerticalStackLayout>
                         <Label Text="Description:"
@@ -55,21 +70,6 @@
                             Margin="0,5,0,0" />
                     </VerticalStackLayout>
 
-                    <!-- Category Picker -->
-                    <VerticalStackLayout>
-                        <Label Text="Category:"
-                            FontSize="16"
-                            TextColor="White"
-                            FontAttributes="Bold" />
-                        <Picker x:Name="CategoryPicker"
-                                Title="Select expense category"
-                                FontSize="16"
-                                BackgroundColor="#3E3E3E"
-                                TextColor="White"
-                                HeightRequest="40"
-                                Margin="0,5,0,0" />
-                    </VerticalStackLayout>
-
                     <!-- Divide Dropdown -->
                     <VerticalStackLayout>
                         <Label Text="Divide:"
@@ -84,15 +84,17 @@
                                 HeightRequest="40"
                                 SelectedIndexChanged="OnDividePickerChanged">
                             <Picker.Items>
-                                <x:String>Equally</x:String>
+                                <x:String>Equally, between all group members</x:String>
                                 <x:String>Custom</x:String>
                             </Picker.Items>
                         </Picker>
                     </VerticalStackLayout>
 
-                    <!-- Custom Percentages -->
-                    <VerticalStackLayout x:Name="CustomPercentageLayout" IsVisible="False">
-                        <Label Text="Custom Percentages:"
+                    <Label x:Name="ErrorLabel" TextColor="Red" IsVisible="False" />
+
+                    <!-- Custom Amounts -->
+                    <VerticalStackLayout x:Name="CustomAmountLayout" IsVisible="False">
+                        <Label Text="Custom Amounts:"
                             FontSize="16"
                             TextColor="White"
                             FontAttributes="Bold" />
@@ -101,8 +103,8 @@
                                 <DataTemplate>
                                     <Grid Padding="10" ColumnDefinitions="*, Auto">
                                         <Label Text="{Binding Member.Username}" FontSize="16" TextColor="White" />
-                                        <Entry Placeholder="%" Keyboard="Numeric" WidthRequest="50"
-                                            Text="{Binding CustomPercentage}" BackgroundColor="#3E3E3E" TextColor="White"/>
+                                        <Entry Placeholder="0.00" Keyboard="Numeric" WidthRequest="80"
+                                            Text="{Binding CustomAmount}" BackgroundColor="#3E3E3E" TextColor="White"/>
                                     </Grid>
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>

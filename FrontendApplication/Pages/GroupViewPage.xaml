@@ -163,17 +163,17 @@
                 <Button Text="View History Transactions"
                         BackgroundColor="#1E88E5"
                         TextColor="#FFFFFF"
-                        FontSize="18"
+                        FontSize="16"
                         CornerRadius="10"
-                        WidthRequest="180"
+                        WidthRequest="170"
                         HeightRequest="50"
                         Clicked="OnViewTransactionClicked" />
                 <Button Text="Add Expense"
                         BackgroundColor="#1E88E5"
                         TextColor="#FFFFFF"
-                        FontSize="18"
+                        FontSize="16"
                         CornerRadius="10"
-                        WidthRequest="120"
+                        WidthRequest="150"
                         HeightRequest="50"
                         Clicked="OnAddExpenseClicked" />
             </HorizontalStackLayout>
