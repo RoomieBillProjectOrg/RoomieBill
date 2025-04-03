@@ -1,4 +1,4 @@
-﻿﻿using Microsoft.EntityFrameworkCore;
+﻿﻿﻿﻿﻿﻿using Microsoft.EntityFrameworkCore;
 using Roomiebill.Server.Facades;
 using Roomiebill.Server.Models;
 
@@ -17,6 +17,7 @@ namespace Roomiebill.Server.DataAccessLayer
         public DbSet<Invite> Invites { get; set; }
         public DbSet<Expense> Expenses { get; set; }
         public DbSet<ExpenseSplit> ExpenseSplits { get; set; }
+        public DbSet<PaymentReminder> PaymentReminders { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -69,6 +70,19 @@ namespace Roomiebill.Server.DataAccessLayer
                 .HasOne(i => i.Group)
                 .WithMany(g => g.Invites)
                 .OnDelete(DeleteBehavior.Restrict); // Optional: Prevent cascading delete
+
+            // Configure PaymentReminder relationships
+            modelBuilder.Entity<PaymentReminder>()
+                .HasOne(pr => pr.User)
+                .WithMany()
+                .HasForeignKey(pr => pr.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<PaymentReminder>()
+                .HasOne(pr => pr.Group)
+                .WithMany()
+                .HasForeignKey(pr => pr.GroupId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
         /* User methods */
         public async Task<User?> GetUserByEmailAsync(string email)
@@ -207,6 +221,35 @@ namespace Roomiebill.Server.DataAccessLayer
         public async Task<int> GetNextExpenseSplitIdAsync(){
             int maxId = await ExpenseSplits.MaxAsync(e => (int?)e.Id) ?? 0;
             return maxId + 1;
+        }
+
+        public async Task<List<PaymentReminder>> GetActiveRemindersAsync()
+        {
+            return await PaymentReminders
+                .Include(r => r.User)
+                .Include(r => r.Group)
+                .Where(r => r.IsActive)
+                .ToListAsync();
+        }
+
+        public async Task AddPaymentReminderAsync(PaymentReminder reminder)
+        {
+            await PaymentReminders.AddAsync(reminder);
+            await SaveChangesAsync();
+        }
+
+        public async Task UpdatePaymentReminderAsync(PaymentReminder reminder)
+        {
+            PaymentReminders.Update(reminder);
+            await SaveChangesAsync();
+        }
+
+        public async Task<PaymentReminder?> GetPaymentReminderByIdAsync(int reminderId)
+        {
+            return await PaymentReminders
+                .Include(r => r.User)
+                .Include(r => r.Group)
+                .FirstOrDefaultAsync(r => r.Id == reminderId);
         }
     }
 }

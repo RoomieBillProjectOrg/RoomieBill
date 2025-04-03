@@ -34,6 +34,14 @@ builder.Services.AddScoped<BillingService>();
 builder.Services.AddScoped<DatabaseSeeder>();
 builder.Services.AddScoped<IPaymentService, MockPaymentService>();
 
+// Register PaymentReminderService and configure update interval
+builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+builder.Services.AddHostedService<PaymentReminderService>();
+builder.Services.Configure<HostOptions>(opts => 
+{
+    opts.ShutdownTimeout = TimeSpan.FromSeconds(30);
+});
+
 var app = builder.Build();
 
 FirebaseApp.Create(new AppOptions()
