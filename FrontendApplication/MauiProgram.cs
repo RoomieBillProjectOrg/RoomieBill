@@ -1,4 +1,4 @@
-﻿using FrontendApplication.Services;
+﻿﻿using FrontendApplication.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Plugin.Firebase.Auth;
@@ -47,6 +47,7 @@ namespace FrontendApplication
             builder.Services.AddSingleton<UserServiceApi>();
             builder.Services.AddSingleton<GroupServiceApi>();
             builder.Services.AddSingleton<PaymentService>();
+            builder.Services.AddSingleton<PaymentReminderService>();
 
 #if DEBUG
             builder.Logging.AddDebug();

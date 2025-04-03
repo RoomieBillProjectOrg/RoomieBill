@@ -3,6 +3,8 @@ using CommunityToolkit.Maui.Views;
 using FrontendApplication.Models;
 using FrontendApplication.Popups;
 using FrontendApplication.Services;
+using FrontendApplication.Models;
+using System.Windows.Input;
 namespace FrontendApplication.Pages;
 
 public partial class GroupViewPage : ContentPage
@@ -10,6 +12,7 @@ public partial class GroupViewPage : ContentPage
     private readonly UserServiceApi _userService;
     private readonly GroupServiceApi _groupService;
     private readonly PaymentService _paymentService;
+    private readonly PaymentReminderService _reminderService;
 
     public ObservableCollection<UserModel> Members { get; set; } = new ObservableCollection<UserModel>();
     public ObservableCollection<DebtModel> ShameTable { get; set; } = new ObservableCollection<DebtModel>();
@@ -17,21 +20,26 @@ public partial class GroupViewPage : ContentPage
 
     public bool IsShameTableEmpty => ShameTable.Count == 0;
     public bool IsYourOwnsTableEmpty => YourOwnsTable.Count == 0;
+    public ObservableCollection<PaymentReminderModel> PaymentReminders { get; set; } = new ObservableCollection<PaymentReminderModel>();
+    public bool HasPaymentReminders => PaymentReminders.Count > 0;
+    public ICommand DeleteReminderCommand { get; }
 
     public GroupModel _group { get; set; }
     public UserModel _currentUser { get; }
 
     public GroupViewPage(UserServiceApi userService, GroupServiceApi groupService, PaymentService paymentService,
-        GroupModel group, UserModel CurrentUser)
+        PaymentReminderService reminderService, GroupModel group, UserModel CurrentUser)
     {
         InitializeComponent();
 
         _userService = userService;
         _groupService = groupService;
         _paymentService = paymentService;
+        _reminderService = reminderService;
         _group = group;
         _currentUser = CurrentUser;
         BindingContext = this;
+        DeleteReminderCommand = new Command<int>(async (id) => await DeleteReminder(id));
     }
 
     protected override async void OnAppearing()
@@ -64,7 +72,6 @@ public partial class GroupViewPage : ContentPage
 
         if (result is null)
         {
-            await DisplayAlert("Canceled", "No roomie was added.", "OK");
             return;
         }
 
@@ -209,8 +216,54 @@ public partial class GroupViewPage : ContentPage
         await LoadGroupMembersAsync();
         await LoadShameTableAsync();
         await LoadYourOwnsTableAsync();
+        await LoadPaymentRemindersAsync();
         OnPropertyChanged(nameof(IsShameTableEmpty));
         OnPropertyChanged(nameof(IsYourOwnsTableEmpty));
+        OnPropertyChanged(nameof(HasPaymentReminders));
+    }
+
+    private async Task LoadPaymentRemindersAsync()
+    {
+        try
+        {
+            PaymentReminders.Clear();
+            var reminders = await _reminderService.GetUserReminders(_currentUser.Id);
+            foreach (var reminder in reminders.Where(r => r.GroupId == _group.Id))
+            {
+                PaymentReminders.Add(reminder);
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", $"Failed to load payment reminders: {ex.Message}", "OK");
+        }
+    }
+
+    private async void OnAddPaymentReminderClicked(object sender, EventArgs e)
+    {
+        var popup = new AddPaymentReminderPopup(_reminderService, _currentUser.Id, _group.Id);
+        var result = await this.ShowPopupAsync(popup);
+        if (result != null)
+        {
+            await RefreshPageDataAsync();
+        }
+    }
+
+    private async Task DeleteReminder(int reminderId)
+    {
+        try
+        {
+            var confirm = await DisplayAlert("Confirm Delete", "Are you sure you want to delete this reminder?", "Yes", "No");
+            if (confirm)
+            {
+                await _reminderService.DeleteReminder(reminderId);
+                await RefreshPageDataAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", $"Failed to delete reminder: {ex.Message}", "OK");
+        }
     }
 
     private async void OnHomePageButtonClicked(object sender, EventArgs e)
