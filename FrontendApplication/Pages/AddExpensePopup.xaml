@@ -39,14 +39,46 @@
                                 Margin="0,5,0,0" />
                     </VerticalStackLayout>
 
-                    <!-- Description Entry -->
-                    <VerticalStackLayout>
+                    <!-- Month Selection (for non-Other categories) -->
+                    <VerticalStackLayout x:Name="MonthsLayout" IsVisible="False">
+                        <Label Text="Months:"
+                               FontSize="16"
+                               TextColor="White"
+                               FontAttributes="Bold" />
+                        <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, Auto" Margin="0,5,0,0">
+                            <Label Text="Start Month:"
+                                   Grid.Row="0"
+                                   Grid.Column="0"
+                                   TextColor="White"
+                                   FontSize="14" />
+                            <DatePicker x:Name="StartMonthPicker"
+                                      Grid.Row="1"
+                                      Grid.Column="0"
+                                      Format="MMM yyyy"
+                                      BackgroundColor="#3E3E3E"
+                                      TextColor="White" />
+                            <Label Text="End Month:"
+                                   Grid.Row="0"
+                                   Grid.Column="1"
+                                   TextColor="White"
+                                   FontSize="14" />
+                            <DatePicker x:Name="EndMonthPicker"
+                                      Grid.Row="1"
+                                      Grid.Column="1"
+                                      Format="MMM yyyy"
+                                      BackgroundColor="#3E3E3E"
+                                      TextColor="White" />
+                        </Grid>
+                    </VerticalStackLayout>
+
+                    <!-- Description Entry (only for Other category) -->
+                    <VerticalStackLayout x:Name="DescriptionLayout">
                         <Label Text="Description:"
                             FontSize="16"
                             TextColor="White"
                             FontAttributes="Bold" />
                         <Entry x:Name="DescriptionEntry"
-                            Placeholder="Enter description"
+                            Placeholder="Enter description (required for Other category)"
                             FontSize="16"
                             BackgroundColor="#3E3E3E"
                             TextColor="White"
