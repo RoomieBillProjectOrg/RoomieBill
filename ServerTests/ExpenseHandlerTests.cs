@@ -30,7 +30,9 @@ namespace ServerTests
                 {
                     new ExpenseSplit { UserId = 2, Amount = 50 },
                     new ExpenseSplit { UserId = 3, Amount = 50 }
-                }
+                },
+                StartMonth = DateTime.UtcNow,
+                EndMonth = DateTime.UtcNow.AddMonths(1)
             };
 
             // Act
@@ -191,7 +193,9 @@ namespace ServerTests
                 {
                     new ExpenseSplit { UserId = 2, Amount = 50 },
                     new ExpenseSplit { UserId = 3, Amount = 50 }
-                }
+                },
+                StartMonth = DateTime.UtcNow,
+                EndMonth = DateTime.UtcNow.AddMonths(1)
             };
             expenseHandler.AddExpense(expense, debtArray);
 
