@@ -26,7 +26,7 @@ namespace Roomiebill.Server.Models
             get => JsonSerializer.Serialize(_debtArray);
             set => _debtArray = string.IsNullOrEmpty(value) 
                                 ? [] 
-                                : JsonSerializer.Deserialize<int[]>(value) ?? [];
+                                : JsonSerializer.Deserialize<double[]>(value) ?? [];
         }
 
         [JsonIgnore]
@@ -37,7 +37,7 @@ namespace Roomiebill.Server.Models
         public ExpenseHandler expenseHandler { get; set; }
 
         [NotMapped]
-        private int[] _debtArray = new int[0]; // Backing field for the serialized DebtArray
+        private double[] _debtArray = new double[0]; // Backing field for the serialized DebtArray
 
         public Group()
         {
@@ -62,7 +62,6 @@ namespace Roomiebill.Server.Models
             if (!Members.Contains(groupAdmin))
             {
                 Members.Add(groupAdmin); // Add the admin to the members list
-                // AddMember(groupAdmin);
             }
             
             InitializeCollections();
@@ -80,30 +79,8 @@ namespace Roomiebill.Server.Models
         {
             int memberCount = Members.Count;
             int size = (memberCount * (memberCount - 1)) / 2; // Calculate size for 1D representation
-            _debtArray = new int[size];
+            _debtArray = new double[size];
         }
-
-
-        // public void UpdateDebtArray()
-        // {
-        //     // Reset the debt array
-        //     InitializeDebtArray();
-
-        //     // Update the debt array based on the current expenses
-        //     foreach (var expense in Expenses)
-        //     {
-        //         foreach (var split in expense.ExpenseSplits)
-        //         {
-        //             int payerIndex = Members.ToList().FindIndex(m => m.Id == expense.PayerId);
-        //             int userIndex = Members.ToList().FindIndex(m => m.Id == split.UserId);
-        //             if (payerIndex != -1 && userIndex != -1 && payerIndex != userIndex)
-        //             {
-        //                 int amount = (int)(split.Percentage * expense.Amount / 100);
-        //                 expenseHandler.UpdateDebtBetweenIndex(payerIndex, userIndex, amount, _debtArray);
-        //             }
-        //         }
-        //     }
-        // }
 
         public void InitializeNonPersistentProperties()
         {
@@ -173,7 +150,6 @@ namespace Roomiebill.Server.Models
             ReduceDebtArraySize(Members.Count, Members.Count + removedMembers.Count, removedUsers);
         }
 
-        //TODO: check for operation completion
         public void updateExpense(Expense oldExpense, Expense newExpense)
         {
             Expense updatedExpense = expenseHandler.UpdateExpense(oldExpense, newExpense, _debtArray);
@@ -181,28 +157,22 @@ namespace Roomiebill.Server.Models
             Expenses.Add(updatedExpense);
         }
 
-        //TODO: check for operation completion
         public void DeleteExpense(Expense expense)
         {
             expenseHandler.DeleteExpense(expense, _debtArray);
             Expenses.Remove(expense);
         }
 
-        public int[] getDebtArray()
+        public double[] getDebtArray()
         {
             return _debtArray;
         }
 
-        public int getDebtBetweenUsers(int user1Id, int user2Id)
+        public double getDebtBetweenUsers(int user1Id, int user2Id)
         {
             return expenseHandler.GetDebtBetweenIndex(user1Id, user2Id, _debtArray);
         }
 
-        /// <summary>
-        /// calculate the debts owed to a specific user
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns></returns>
         public List<DebtDto> GetDebtsForUser(int userId)
         {
             List<DebtDto> debts = new List<DebtDto>();
@@ -210,11 +180,11 @@ namespace Roomiebill.Server.Models
             {
                 if (member.Id != userId)
                 {
-                    int amount = expenseHandler.GetDebtBetweenIndex(member.Id, userId, _debtArray);
-                    if (amount > 0)
+                    double amount = expenseHandler.GetDebtBetweenIndex(member.Id, userId, _debtArray);
+                    if (amount > 0.01) // Using small epsilon for double comparison
                     {
                         DebtDto debt = new DebtDto();
-                        debt.amount = amount;
+                        debt.amount = (decimal)amount; // Convert to decimal for currency values
                         debt.creditor = getUserById(userId);
                         debt.debtor = getUserById(member.Id);
                         debts.Add(debt);
@@ -223,6 +193,7 @@ namespace Roomiebill.Server.Models
             }
             return debts;
         }
+
         public List<DebtDto> GetDebtsOwedByUser(int userId)
         {
             List<DebtDto> debts = new List<DebtDto>();
@@ -230,11 +201,11 @@ namespace Roomiebill.Server.Models
             {
                 if (member.Id != userId)
                 {
-                    int amount = expenseHandler.GetDebtBetweenIndex(userId, member.Id, _debtArray);
-                    if (amount > 0)
+                    double amount = expenseHandler.GetDebtBetweenIndex(userId, member.Id, _debtArray);
+                    if (amount > 0.01) // Using small epsilon for double comparison
                     {
                         DebtDto debt = new DebtDto();
-                        debt.amount = amount;
+                        debt.amount = (decimal)amount; // Convert to decimal for currency values
                         debt.creditor = getUserById(member.Id);
                         debt.debtor = getUserById(userId);
                         debts.Add(debt);
@@ -244,8 +215,8 @@ namespace Roomiebill.Server.Models
             return debts;
         }
        
-        public void SettleDebt(decimal amount, int creditor, int debtor){
-            //TODO: Here we should think of supporting amount of payment.
+        public void SettleDebt(decimal amount, int creditor, int debtor)
+        {
             expenseHandler.SettleDebt(creditor, debtor, _debtArray);
         }
 
@@ -264,13 +235,13 @@ namespace Roomiebill.Server.Models
             return GroupName;
         }
 
-        public User getUserById(int userId){
-            if(userId < 0){
+        public User getUserById(int userId)
+        {
+            if(userId < 0)
+            {
                 throw new Exception("User with wrong id");
             }
             return Members.FirstOrDefault(m => m.Id == userId);
         }
-
-        
     }
 }

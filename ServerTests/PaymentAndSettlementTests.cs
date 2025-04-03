@@ -68,6 +68,10 @@ namespace ServerTests
                 IsPaid = false,
                 PayerId = creditor.Id,
                 GroupId = group.Id,
+                ExpenseSplits = new List<ExpenseSplit>
+                {
+                    new ExpenseSplit { UserId = debtor.Id, Amount = 50 }
+                }
             };
 
             group.AddExpense(expense);
@@ -79,7 +83,7 @@ namespace ServerTests
             await _groupFacade.SettleDebtAsync(50, creditor, debtor, group.Id);
 
             // Assert
-            Assert.True(group.expenseHandler.GetDebtBetween(0, 1, group.getDebtArray()) == 0);
+            Assert.True(Math.Abs(group.expenseHandler.GetDebtBetween(0, 1, group.getDebtArray())) < 0.01);
             _dbContextMock.Verify(db => db.UpdateGroupAsync(group), Times.Once);
         }
 

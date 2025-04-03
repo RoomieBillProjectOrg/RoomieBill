@@ -41,14 +41,14 @@ namespace FrontendApplication.Popups
 
         private void OnDividePickerChanged(object sender, EventArgs e)
         {
-            // Show/hide custom percentage layout based on selected division type
+            // Show/hide custom amount layout based on selected division type
             if (DividePicker.SelectedIndex == 1) // Custom division selected
             {
-                CustomPercentageLayout.IsVisible = true;
+                CustomAmountLayout.IsVisible = true;
             }
             else
             {
-                CustomPercentageLayout.IsVisible = false;
+                CustomAmountLayout.IsVisible = false;
             }
         }
 
@@ -59,7 +59,7 @@ namespace FrontendApplication.Popups
             var amount = AmountEntry?.Text;
             if (string.IsNullOrWhiteSpace(amount) || !double.TryParse(amount, out double parsedAmount) || parsedAmount <= 0)
             {
-                Close("Please enter a valid amount.");
+                DisplayError("Please enter a valid amount.");
                 return;
             }
 
@@ -67,7 +67,7 @@ namespace FrontendApplication.Popups
             var description = DescriptionEntry?.Text;
             if (string.IsNullOrWhiteSpace(description))
             {
-                Close("Please enter a description.");
+                DisplayError("Please enter a description.");
                 return;
             }
 
@@ -76,19 +76,27 @@ namespace FrontendApplication.Popups
             // Check Custom Division Logic
             if (DividePicker.SelectedIndex == 1) // Custom division selected
             {
-                // Ensure at least one percentage is provided
-                var contributingMembers = Members.Where(m => !string.IsNullOrWhiteSpace(m.CustomPercentage) && double.TryParse(m.CustomPercentage, out double percentage) && percentage > 0).ToList();
+                // Ensure at least one amount is provided
+                var contributingMembers = Members.Where(m => !string.IsNullOrWhiteSpace(m.CustomAmount) && double.TryParse(m.CustomAmount, out double amountValue) && amountValue > 0).ToList();
                 if (!contributingMembers.Any())
                 {
-                    Close("Please provide at least one valid percentage for custom division.");
+                    DisplayError("Please provide at least one valid amount for custom division.");
                     return;
                 }
 
-                // Ensure all percentages are valid and sum up to 100%
-                var totalPercentage = contributingMembers.Sum(m => decimal.Parse(m.CustomPercentage));
-                if (totalPercentage != 100)
+                // Ensure all amounts sum up to total expense amount
+                var totalAmount = contributingMembers.Sum(m =>
                 {
-                    Close("The total percentage for custom split must equal 100%.");
+                    if (double.TryParse(m.CustomAmount, out double parsedValue))
+                    {
+                        return parsedValue;
+                    }
+                    return 0;
+                });
+
+                if (Math.Abs(totalAmount - parsedAmount) > 0.01) // Using small epsilon for double comparison
+                {
+                    DisplayError($"The sum of split amounts ({totalAmount}) must equal the total expense amount ({parsedAmount}).");
                     return;
                 }
 
@@ -98,17 +106,19 @@ namespace FrontendApplication.Popups
                     Id = -1,
                     ExpenseId = -1,
                     UserId = m.Member.Id,
-                    Percentage = Convert.ToDouble(m.CustomPercentage)
+                    Amount = Convert.ToDouble(m.CustomAmount)
                 }).ToList();
             }
             else
             {
+                // Split equally
+                var splitAmount = parsedAmount / _group.Members.Count;
                 expenseSplitsDtos = _group.Members.Select(m => new ExpenseSplitModel
                 {
                     Id = -1,
                     ExpenseId = -1,
                     UserId = m.Id,
-                    Percentage = 100 / _group.Members.Count
+                    Amount = splitAmount
                 }).ToList();
             }
 
@@ -132,21 +142,28 @@ namespace FrontendApplication.Popups
             }
             catch (Exception ex)
             {
-                Close($"Error: {ex.Message}");
+                DisplayError($"Error: {ex.Message}");
             }
         });
 
-        // Command for canceling
+        // Command for canceling - do nothing
         public Command CancelCommand => new Command(() =>
         {
-            // Do nothing, just close the popup.
+            Close();
         });
+
+
+        private void DisplayError(string message)
+        {
+            ErrorLabel.Text = message;
+            ErrorLabel.IsVisible = true;
+        }
     }
 
     public class MemberViewModel
     {
         public UserModel Member { get; set; }
         public bool IsSelected { get; set; } = false;
-        public string CustomPercentage { get; set; } = string.Empty;
+        public string CustomAmount { get; set; } = string.Empty;
     }
 }
