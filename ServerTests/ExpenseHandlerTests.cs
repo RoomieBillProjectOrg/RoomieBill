@@ -31,8 +31,8 @@ namespace ServerTests
                     new ExpenseSplit { UserId = 2, Amount = 50 },
                     new ExpenseSplit { UserId = 3, Amount = 50 }
                 },
-                StartMonth = DateTime.UtcNow,
-                EndMonth = DateTime.UtcNow.AddMonths(1)
+                StartMonth = new DateTime(2023, 1, 1),
+                EndMonth = new DateTime(2023, 2, 1)
             };
 
             // Act
@@ -93,8 +93,10 @@ namespace ServerTests
                 new User { Id = 2 },
                 new User { Id = 3 }
             };
+
             var expenseHandler = new ExpenseHandler(users);
             var debtArray = new double[3];
+
             var oldExpense = new Expense
             {
                 PayerId = 1,
@@ -104,8 +106,11 @@ namespace ServerTests
                 {
                     new ExpenseSplit { UserId = 2, Amount = 50 },
                     new ExpenseSplit { UserId = 3, Amount = 50 }
-                }
+                },
+                StartMonth = new DateTime(2023, 1, 1),
+                EndMonth = new DateTime(2023, 2, 1)
             };
+
             var newExpense = new Expense
             {
                 PayerId = 1,
@@ -115,7 +120,9 @@ namespace ServerTests
                 {
                     new ExpenseSplit { UserId = 2, Amount = 100 },
                     new ExpenseSplit { UserId = 3, Amount = 100 }
-                }
+                },
+                StartMonth = new DateTime(2023, 1, 1),
+                EndMonth = new DateTime(2023, 2, 1)
             };
 
             // Act
@@ -159,6 +166,7 @@ namespace ServerTests
                 new User { Id = 1 },
                 new User { Id = 2 }
             };
+
             var expenseHandler = new ExpenseHandler(users);
             var debtArray = new double[3];
             debtArray[expenseHandler.GetIndex(0, 1)] = -50;
@@ -182,8 +190,10 @@ namespace ServerTests
                 new User { Id = 2 },
                 new User { Id = 3 }
             };
+
             var expenseHandler = new ExpenseHandler(users);
             var debtArray = new double[3];
+
             var expense = new Expense
             {
                 PayerId = 1,
@@ -194,9 +204,10 @@ namespace ServerTests
                     new ExpenseSplit { UserId = 2, Amount = 50 },
                     new ExpenseSplit { UserId = 3, Amount = 50 }
                 },
-                StartMonth = DateTime.UtcNow,
-                EndMonth = DateTime.UtcNow.AddMonths(1)
+                StartMonth = new DateTime(2023, 1, 1),
+                EndMonth = new DateTime(2023, 2, 1)
             };
+
             expenseHandler.AddExpense(expense, debtArray);
 
             // Act
@@ -217,6 +228,7 @@ namespace ServerTests
                 new User { Id = 1 },
                 new User { Id = 2 }
             };
+
             var expenseHandler = new ExpenseHandler(users);
             var debtArray = new double[3];
             debtArray[expenseHandler.GetIndex(1, 0)] = -50;
@@ -239,6 +251,7 @@ namespace ServerTests
                 new User { Id = 1 },
                 new User { Id = 2 }
             };
+
             var expenseHandler = new ExpenseHandler(users);
             var debtArray = new double[3];
             debtArray[expenseHandler.GetIndex(0, 1)] = -50;
@@ -275,7 +288,9 @@ namespace ServerTests
                 {
                     new ExpenseSplit { UserId = 2, Amount = 40 },
                     new ExpenseSplit { UserId = 3, Amount = 50 }
-                }
+                },
+                StartMonth = new DateTime(2023, 1, 1),
+                EndMonth = new DateTime(2023, 2, 1)
             };
 
             // Act & Assert
