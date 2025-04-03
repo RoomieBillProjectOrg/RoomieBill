@@ -69,4 +69,9 @@ public partial class CreateGroupPage : ContentPage
     {
         await Navigation.PushAsync(new UserHomePage(_userService, _groupService, _paymentService, _user));
     }
+
+    private async void OnCancelClicked(object sender, EventArgs e)
+    {
+        await Navigation.PopAsync();
+    }
 }
