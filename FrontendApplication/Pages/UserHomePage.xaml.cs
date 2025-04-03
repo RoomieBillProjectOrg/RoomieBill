@@ -2,6 +2,7 @@ using Firebase.Messaging;
 using FrontendApplication.Models;
 using FrontendApplication.Services;
 using System.Collections.ObjectModel;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FrontendApplication.Pages;
 
@@ -104,7 +105,8 @@ public partial class UserHomePage : ContentPage
     {
         if (sender is Button button && button.CommandParameter is GroupModel group)
         {
-            await Navigation.PushAsync(new GroupViewPage(_userService, _groupService, _paymentService, group, User));
+            var reminderService = App.Current.Handler.MauiContext.Services.GetRequiredService<PaymentReminderService>();
+            await Navigation.PushAsync(new GroupViewPage(_userService, _groupService, _paymentService, reminderService, group, User));
         }
     }
 

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<popup:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:popup="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="FrontendApplication.Popups.AddPaymentReminderPopup">
+    <Frame BackgroundColor="#2A2A2A"
+           CornerRadius="20"
+           Padding="20"
+           WidthRequest="350"
+           HeightRequest="500"
+           VerticalOptions="Center"
+           HorizontalOptions="Center"
+           HasShadow="True">
+
+        <VerticalStackLayout Spacing="15">
+            <Label Text="Add Payment Reminder" 
+                   FontSize="22"
+                   FontAttributes="Bold"
+                   TextColor="White" 
+                   HorizontalOptions="Center"/>
+
+            <VerticalStackLayout>
+                <Label Text="Category"
+                       FontSize="16"
+                       TextColor="White"
+                       FontAttributes="Bold"/>
+                <Picker x:Name="CategoryPicker"
+                        Title="Select Category"
+                        FontSize="16"
+                        BackgroundColor="#3E3E3E"
+                        TextColor="White"
+                        ItemsSource="{Binding Categories}"
+                        SelectedItem="{Binding SelectedCategory}"/>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout>
+                <Label Text="Recurrence"
+                       FontSize="16"
+                       TextColor="White"
+                       FontAttributes="Bold"/>
+                <Picker x:Name="RecurrencePicker"
+                        Title="Select Recurrence"
+                        FontSize="16"
+                        BackgroundColor="#3E3E3E"
+                        TextColor="White"
+                        ItemsSource="{Binding RecurrencePatterns}"
+                        SelectedItem="{Binding SelectedRecurrencePattern}"/>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout>
+                <Label Text="Day of Month"
+                       FontSize="16"
+                       TextColor="White"
+                       FontAttributes="Bold"/>
+                <Entry x:Name="DayOfMonthEntry"
+                       Placeholder="Enter day (1-28)"
+                       PlaceholderColor="#666666"
+                       TextColor="White"
+                       BackgroundColor="#3E3E3E"
+                       FontSize="16"
+                       Text="{Binding DayOfMonth}"
+                       TextChanged="OnDayOfMonthTextChanged"
+                       Keyboard="Numeric"/>
+                <Label x:Name="ErrorLabel" 
+                       TextColor="#FF5722" 
+                       IsVisible="false"
+                       FontSize="14"
+                       Text="Day must be between 1 and 28"/>
+            </VerticalStackLayout>
+
+            <StackLayout Orientation="Horizontal" 
+                        Spacing="10" 
+                        HorizontalOptions="Center"
+                        Margin="0,20,0,0">
+                <Button Text="Cancel"
+                        Command="{Binding CancelCommand}"
+                        BackgroundColor="#B0BEC5"
+                        TextColor="White"
+                        CornerRadius="20"
+                        FontSize="16"
+                        WidthRequest="120"/>
+                <Button Text="Save"
+                        Command="{Binding SaveCommand}"
+                        BackgroundColor="#4CAF50"
+                        TextColor="White"
+                        CornerRadius="20"
+                        FontSize="16"
+                        WidthRequest="120"/>
+            </StackLayout>
+        </VerticalStackLayout>
+    </Frame>
+</popup:Popup>
