@@ -1,3 +1,4 @@
+using Roomiebill.Server.Common.Enums;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Models;
 using Roomiebill.Server.Services;
@@ -133,11 +134,12 @@ namespace Roomiebill.Server.DataAccessLayer
                 //await _groupService.InviteToGroupByUsername(inviteDetails_Vladi_testInvite);
                 //await _groupService.InviteToGroupByUsername(inviteDetails_Tal_testInvite);
 
-                // Create an expense
-                var expense = new Expense
+                // Create expenses
+
+                var expenseFood = new Expense
                 {
                     Amount = 500.0,
-                    Description = "Power 10-12.2024",
+                    Description = "Food",
                     IsPaid = false,
                     PayerId = group_Roomiebill.Members.First().Id,
                     GroupId = group_Roomiebill.Id,
@@ -150,9 +152,41 @@ namespace Roomiebill.Server.DataAccessLayer
                     }
                 };
 
-                // Add expense to group
-                group_Roomiebill.AddExpense(expense);
+                var expenseElectric = new Expense
+                {
+                    Amount = 200.0,
+                    IsPaid = false,
+                    PayerId = group_Roomiebill.Members.First().Id,
+                    GroupId = group_Roomiebill.Id,
+                    ExpenseSplits = new List<ExpenseSplit>
+                    {
+                        new ExpenseSplit { UserId = group_Roomiebill.Members.ElementAt(0).Id, Amount = 50.0 },
+                        new ExpenseSplit { UserId = group_Roomiebill.Members.ElementAt(1).Id, Amount = 50.0 },
+                        new ExpenseSplit { UserId = group_Roomiebill.Members.ElementAt(2).Id, Amount = 50.0 },
+                        new ExpenseSplit { UserId = group_Roomiebill.Members.ElementAt(3).Id, Amount = 50.0 }
+                    },
+                    Category = Category.Electricity,
+                    StartMonth = new DateTime(2024, 1, 1),
+                    EndMonth = new DateTime(2024, 2, 1)
+                };
+
+                // Add expenses to group
+                group_Roomiebill.AddExpense(expenseFood);
+                group_Roomiebill.AddExpense(expenseElectric);
                 _context.SaveChanges();
+
+                // Add payment reminder to the group. usnig CreateReminder in PaymentReminderController
+                var paymentReminder = new PaymentReminder
+                {
+                    Id = 1,
+                    UserId = group_Roomiebill.Members.First().Id,
+                    GroupId = group_Roomiebill.Id,
+                    Category = Category.Electricity,
+                    RecurrencePattern = RecurrencePattern.Monthly,
+                    DayOfMonth = 1
+                };
+
+                _context.PaymentReminders.Add(paymentReminder);
 
                 // //update an expense
                 // var expenseToUpdate = _context.Expenses.FirstOrDefault(e => e.Description == "Power 10-12.2024");
