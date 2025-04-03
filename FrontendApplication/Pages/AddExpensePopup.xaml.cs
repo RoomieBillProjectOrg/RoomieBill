@@ -59,7 +59,7 @@ namespace FrontendApplication.Popups
             var amount = AmountEntry?.Text;
             if (string.IsNullOrWhiteSpace(amount) || !double.TryParse(amount, out double parsedAmount) || parsedAmount <= 0)
             {
-                Close("Please enter a valid amount.");
+                DisplayError("Please enter a valid amount.");
                 return;
             }
 
@@ -67,7 +67,7 @@ namespace FrontendApplication.Popups
             var description = DescriptionEntry?.Text;
             if (string.IsNullOrWhiteSpace(description))
             {
-                Close("Please enter a description.");
+                DisplayError("Please enter a description.");
                 return;
             }
 
@@ -80,7 +80,7 @@ namespace FrontendApplication.Popups
                 var contributingMembers = Members.Where(m => !string.IsNullOrWhiteSpace(m.CustomAmount) && double.TryParse(m.CustomAmount, out double amountValue) && amountValue > 0).ToList();
                 if (!contributingMembers.Any())
                 {
-                    Close("Please provide at least one valid amount for custom division.");
+                    DisplayError("Please provide at least one valid amount for custom division.");
                     return;
                 }
 
@@ -96,7 +96,7 @@ namespace FrontendApplication.Popups
 
                 if (Math.Abs(totalAmount - parsedAmount) > 0.01) // Using small epsilon for double comparison
                 {
-                    Close($"The sum of split amounts ({totalAmount}) must equal the total expense amount ({parsedAmount}).");
+                    DisplayError($"The sum of split amounts ({totalAmount}) must equal the total expense amount ({parsedAmount}).");
                     return;
                 }
 
@@ -142,15 +142,22 @@ namespace FrontendApplication.Popups
             }
             catch (Exception ex)
             {
-                Close($"Error: {ex.Message}");
+                DisplayError($"Error: {ex.Message}");
             }
         });
 
-        // Command for canceling
+        // Command for canceling - do nothing
         public Command CancelCommand => new Command(() =>
         {
-            // Do nothing, just close the popup.
+            Close();
         });
+
+
+        private void DisplayError(string message)
+        {
+            ErrorLabel.Text = message;
+            ErrorLabel.IsVisible = true;
+        }
     }
 
     public class MemberViewModel
