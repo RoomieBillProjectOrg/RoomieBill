@@ -27,7 +27,8 @@ namespace FrontendApplication
             // Configure Https
             var baseUrl = new Uri(AppConfig.ApiBaseUrl);
 #if ANDROID
-            baseUrl = new Uri("https://132.73.84.62:433/api");
+            baseUrl = new Uri("https://132.73.84.62:443/api"); // University server
+            //baseUrl = new Uri("https://10.0.2.2:5001/api"); // localhost
 #endif
             // Register the HttpClient with a platform-specific base address
             builder.Services.AddSingleton<HttpClientService>();
