@@ -62,30 +62,33 @@
                        TextChanged="OnDayOfMonthTextChanged"
                        Keyboard="Numeric"/>
                 <Label x:Name="ErrorLabel" 
-                       TextColor="#FF5722" 
+                       TextColor="Red" 
                        IsVisible="false"
                        FontSize="14"
                        Text="Day must be between 1 and 28"/>
             </VerticalStackLayout>
 
-            <StackLayout Orientation="Horizontal" 
-                        Spacing="10" 
+            <StackLayout Spacing="10" 
                         HorizontalOptions="Center"
                         Margin="0,20,0,0">
                 <Button Text="Cancel"
                         Command="{Binding CancelCommand}"
-                        BackgroundColor="#B0BEC5"
-                        TextColor="White"
-                        CornerRadius="20"
-                        FontSize="16"
-                        WidthRequest="120"/>
+                        BackgroundColor="Transparent"
+                        TextColor="DarkRed"
+                        FontAttributes="Bold"
+                        BorderColor="DarkRed"
+                        BorderWidth="2"
+                        CornerRadius="25"
+                        HeightRequest="50"
+                        WidthRequest="200" />
                 <Button Text="Save"
                         Command="{Binding SaveCommand}"
-                        BackgroundColor="#4CAF50"
+                        BackgroundColor="LightSeaGreen"
                         TextColor="White"
-                        CornerRadius="20"
-                        FontSize="16"
-                        WidthRequest="120"/>
+                        FontAttributes="Bold"
+                        CornerRadius="25"
+                        HeightRequest="50"
+                        WidthRequest="200" />
             </StackLayout>
         </VerticalStackLayout>
     </Frame>

@@ -32,25 +32,24 @@
 
                 <!-- Action Buttons -->
                 <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+                    <!-- Cancel Button -->
+                    <Button Text="Cancel"
+                           BackgroundColor="Transparent"
+                           TextColor="DarkRed"
+                           FontAttributes="Bold"
+                           BorderColor="DarkRed"
+                           BorderWidth="2"
+                           CornerRadius="25"
+                           HeightRequest="50"
+                           Clicked="OnCancelClicked" />
                     <!-- Invite Button -->
                     <Button Text="Invite"
-                        BackgroundColor="#00ADB5"
-                        TextColor="White"
-                        BorderColor="White"
-                        BorderWidth="1"
-                        HeightRequest="40"
-                        CornerRadius="20"
-                        Clicked="OnInviteClicked" />
-
-                        <!-- Cancel Button -->
-                        <Button Text="Cancel"
-                        BackgroundColor="#FF5722"
-                            TextColor="White"
-                        BorderColor="White"
-                        BorderWidth="1"
-                        HeightRequest="40"
-                        CornerRadius="20"
-                        Clicked="OnCancelClicked" />
+                           BackgroundColor="LightSeaGreen"
+                           TextColor="White"
+                           FontAttributes="Bold"
+                           CornerRadius="25"
+                           HeightRequest="50"
+                           Clicked="OnInviteClicked" />
                 </HorizontalStackLayout>
         </VerticalStackLayout>
     </Frame>
