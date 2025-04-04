@@ -8,11 +8,13 @@ namespace Roomiebill.Server.Models
         public int Id { get; set; }
         public string Username { get; set; }
         public string Email { get; set; }
+        public string BitLink { get; set; }
         public string PasswordHash { get; set; }  // Store the hashed password
         public bool IsLoggedIn { get; set; } = false;
         public bool IsSystemAdmin { get; set; } = false;
         public string FirebaseToken { get; set; }
         public DateTime LastPasswordChangedDate { get; set; }
+      
 
         [JsonIgnore]
         public List<Invite> Invites { get; set; } = [];
@@ -22,11 +24,12 @@ namespace Roomiebill.Server.Models
 
         public User() { }
 
-        public User(string username, string email, string passwordHash, bool isSystemAdmin = false, bool isLoggedIn = false, string firebaseToken = "")
+        public User(string username, string email, string passwordHash, string bitLink, bool isSystemAdmin = false, bool isLoggedIn = false, string firebaseToken = "")
         {
             Username = username;
             Email = email;
             PasswordHash = passwordHash;
+            BitLink = bitLink;
             IsSystemAdmin = isSystemAdmin;
             IsLoggedIn = isLoggedIn;
             FirebaseToken = firebaseToken;

@@ -27,6 +27,9 @@ namespace FrontendApplication.Pages
             var email = EmailEntry.Text;
             var password = PasswordEntry.Text;
             var confirmPassword = PasswordConfirmationEntry.Text;
+            var bitLink = BitLinkEntry.Text;
+
+            
 
             // Alert on empty fields
             if (string.IsNullOrWhiteSpace(username))
@@ -72,7 +75,8 @@ namespace FrontendApplication.Pages
                     Username = username,
                     Password = password,
                     Email = email,
-                    FirebaseToken = await GetUserFirebaseToken()
+                    FirebaseToken = await GetUserFirebaseToken(),
+                    BitLink = BitLinkEntry.Text
                 };
 
                 _verificationCode = await _userService.VerifyUserRegisterDetails(user);
@@ -88,6 +92,18 @@ namespace FrontendApplication.Pages
             {
                 await DisplayAlert("Error", ex.Message, "OK");
             }
+        }
+        private async void OnBitLinkInfoClicked(object sender, EventArgs e)
+        {
+            string message =
+                "🔗 **How to Get Your Bit Payment Link:**\n\n" +
+                "1️⃣ Open the **Bit** app.\n\n" +
+                "2️⃣ Tap **More**.\n\n" +
+                "3️⃣ Select **Permanent QR to receive money**.\n\n" +
+                "4️⃣ Tap the QR code — the link is now copied to your clipboard.\n\n" +
+                "💡 You can paste it into the BitLink field above.";
+
+            await DisplayAlert("How to Find Your Bit Link", message, "Got it!");
         }
 
         private async Task<string> GetUserFirebaseToken()
