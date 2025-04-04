@@ -84,6 +84,27 @@
                        HeightRequest="40" />
             </VerticalStackLayout>
 
+              <!-- BitLink Entry -->      
+              <VerticalStackLayout Spacing="5">
+              <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
+                     <Label Text="BIT LINK" 
+                            FontSize="14" 
+                            TextColor="White" />
+                     <ImageButton Source="white_info.png" 
+                                   HeightRequest="16" 
+                                   WidthRequest="16"
+                                   BackgroundColor="#E6FFFFFF"
+                                   Clicked="OnBitLinkInfoClicked" />
+              </HorizontalStackLayout>
+              <Entry x:Name="BitLinkEntry" 
+                     Placeholder="Enter your BitLink" 
+                     BackgroundColor="#2A2A2A"
+                     TextColor="White"
+                     PlaceholderColor="#A9A9A9"
+                     HeightRequest="40" />
+              </VerticalStackLayout>
+
+
             <!-- Checkbox -->
             <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
                 <CheckBox x:Name="NotRobotCheckBox" />

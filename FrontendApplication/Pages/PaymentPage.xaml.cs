@@ -45,6 +45,16 @@ public partial class PaymentPage : ContentPage
             var request = new PaymentRequestModel(_debt.amount, "NIS", _debt.creditor, _debt.debtor, "CARD", _groupOfUsers.Id);
             await _paymentService.ProcessPaymentAsync(request);
 
+            // Open the payment verification pop-up
+            var paymentVerificationPopup = new PaymentVerificationPopup();
+            await Application.Current.MainPage.Navigation.PushModalAsync(paymentVerificationPopup);
+
+            // Wait for the user to confirm payment in the pop-up
+            while (!paymentVerificationPopup.IsPaymentConfirmed)
+            {
+                await Task.Delay(500); // Poll every 500ms
+            }
+
             // Success feedback
             await DisplayAlert("Success", $"You successfully transferred {_debt.amount:N2} NIS to {_debt.creditor.Username}.", "OK");
 
