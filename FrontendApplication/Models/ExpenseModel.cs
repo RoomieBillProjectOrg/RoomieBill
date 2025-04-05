@@ -18,5 +18,6 @@ namespace FrontendApplication.Models
         public bool HasMonths => Category != Category.Other && StartMonth.HasValue && EndMonth.HasValue; // For XAML binding
         public string CategoryName => Category.GetName();
 
+
     }
 }
