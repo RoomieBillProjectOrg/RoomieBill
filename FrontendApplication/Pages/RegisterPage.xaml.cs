@@ -159,20 +159,20 @@ namespace FrontendApplication.Pages
                 byte[] bytes = new byte[size];
                 Marshal.Copy(ptr, bytes, 0, size);
 
-                var width = skBitmap.Width;
-                var height = skBitmap.Height;
+                int width = skBitmap.Width;
+                int height = skBitmap.Height;
 
+                // Create luminance source
                 var source = new RGBLuminanceSource(bytes, width, height);
-                var binarizer = new HybridBinarizer(source);
-                var binaryBitmap = new BinaryBitmap(binarizer);
-                var reader = new ZXing.BarcodeReader();
-                reader.Options = new ZXing.Common.DecodingOptions
+
+                // Use BarcodeReaderGeneric and cast to correct interface
+                var reader = new BarcodeReaderGeneric
                 {
-                    TryHarder = true,
-                    PossibleFormats = new List<ZXing.BarcodeFormat> { ZXing.BarcodeFormat.QR_CODE }
+                    AutoRotate = true,
+                    TryInverted = true
                 };
 
-                var result = reader.Decode(binaryBitmap);
+                var result = ((IBarcodeReader<ZXing.LuminanceSource>)reader).Decode(source);
                 return result?.Text;
             }
             catch (Exception ex)
