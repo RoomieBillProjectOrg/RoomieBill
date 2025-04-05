@@ -54,6 +54,14 @@ public partial class ViewTransactionsPopup : Popup
         }
     }
 
+    private void OnFilterTypeChanged(object sender, EventArgs e)
+    {
+        var selected = FilterTypePicker.SelectedItem as string;
+
+        CategoryFilterSection.IsVisible = selected == "Category";
+        DateFilterSection.IsVisible = selected == "Date Range";
+    }
+
     private void OnCategorySelected(object sender, EventArgs e)
     {
         var selectedCategoryName = CategoryPicker.SelectedItem as string;
