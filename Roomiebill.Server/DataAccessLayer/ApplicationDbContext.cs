@@ -83,6 +83,13 @@ namespace Roomiebill.Server.DataAccessLayer
                 .WithMany()
                 .HasForeignKey(pr => pr.GroupId)
                 .OnDelete(DeleteBehavior.Restrict);
+            // Configure the Link property if needed
+            modelBuilder.Entity<User>()
+                .Property(u => u.BitLink)
+                .IsRequired();
+
+
+
         }
         /* User methods */
         public async Task<User?> GetUserByEmailAsync(string email)
