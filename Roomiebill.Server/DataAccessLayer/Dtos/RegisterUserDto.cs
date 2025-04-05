@@ -13,6 +13,9 @@ namespace Roomiebill.Server.DataAccessLayer.Dtos
         [Required]
         public string? Password { get; set; }
         [Required]
+        public string? BitLink { get; set; }
+
+        [Required]
         public string? FirebaseToken { get; set; }
     }
 }

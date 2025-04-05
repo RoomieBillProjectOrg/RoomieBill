@@ -46,7 +46,7 @@ namespace ServerTests
             string invitedUsername = "invited";
             int groupId = 1;
 
-            User inviter = new User("inviter", "Metar@bgu.ac.il",  "MetarPassword2@");
+            User inviter = new User("inviter", "Metar@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(inviterUsername))!.ReturnsAsync(inviter);
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(invitedUsername))!.ReturnsAsync((User?)null);
 
@@ -62,8 +62,8 @@ namespace ServerTests
             string invitedUsername = "invited";
             int groupId = 1;
 
-            User inviter = new User("inviter", "Metar@bgu.ac.il",  "MetarPassword2@");
-            User invited = new User("invited", "Metar2@bgu.ac.il",  "MetarPassword2@");
+            User inviter = new User("inviter", "Metar@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
+            User invited = new User("invited", "Metar2@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(inviterUsername))!.ReturnsAsync(inviter);
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(invitedUsername))!.ReturnsAsync(invited);
 
@@ -78,8 +78,8 @@ namespace ServerTests
             string inviterUsername = "inviter";
             string invitedUsername = "invited";
             
-            User inviter = new User(inviterUsername, "Metar@bgu.ac.il",  "MetarPassword2@");
-            User invited = new User(invitedUsername, "Metar2@bgu.ac.il",  "MetarPassword2@");
+            User inviter = new User(inviterUsername, "Metar@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
+            User invited = new User(invitedUsername, "Metar2@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
             Group group = new Group();
             group.AddMember(inviter);
             group.AddInvite(new Invite(inviter, invited, group));
@@ -98,8 +98,8 @@ namespace ServerTests
             string inviterUsername = "inviter";
             string invitedUsername = "invited";
             
-            User inviter = new User("inviter", "Metar@bgu.ac.il",  "MetarPassword2@");
-            User invited = new User("invited", "Metar2@bgu.ac.il",  "MetarPassword2@");
+            User inviter = new User("inviter", "Metar@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
+            User invited = new User("invited", "Metar2@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
             Group group = new Group();
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(inviterUsername))!.ReturnsAsync(inviter);
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(invitedUsername))!.ReturnsAsync(invited);
@@ -116,8 +116,8 @@ namespace ServerTests
             string inviterUsername = "inviter";
             string invitedUsername = "invited";
             
-            User inviter = new User(inviterUsername, "Metar@bgu.ac.il",  "MetarPassword2@");
-            User invited = new User(invitedUsername, "Metar2@bgu.ac.il",  "MetarPassword2@");
+            User inviter = new User(inviterUsername, "Metar@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
+            User invited = new User(invitedUsername, "Metar2@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
             Group group = new Group();
             group.AddMember(inviter);
             group.AddMember(invited);
@@ -163,8 +163,8 @@ namespace ServerTests
             string inviterUsername = "inviter";
             string invitedUsername = "invited";
             
-            User inviter = new User(inviterUsername, "Metar@bgu.ac.il",  "MetarPassword2@");
-            User invited = new User(invitedUsername, "Metar2@bgu.ac.il",  "MetarPassword2@");
+            User inviter = new User(inviterUsername, "Metar@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
+            User invited = new User(invitedUsername, "Metar2@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
 
             Group group = new Group();
 
@@ -192,8 +192,8 @@ namespace ServerTests
             string inviterUsername = "inviter";
             string invitedUsername = "invited";
             
-            User inviter = new User(inviterUsername, "Metar@bgu.ac.il",  "MetarPassword2@");
-            User invited = new User(invitedUsername, "Metar2@bgu.ac.il",  "MetarPassword2@");
+            User inviter = new User(inviterUsername, "Metar@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
+            User invited = new User(invitedUsername, "Metar2@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
 
             Group group = new Group();
 
@@ -215,8 +215,8 @@ namespace ServerTests
             string inviterUsername = "inviter";
             string invitedUsername = "invited";
             
-            User inviter = new User(inviterUsername, "Metar@bgu.ac.il",  "MetarPassword2@");
-            User invited = new User(invitedUsername, "Metar2@bgu.ac.il",  "MetarPassword2@");
+            User inviter = new User(inviterUsername, "Metar@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
+            User invited = new User(invitedUsername, "Metar2@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
 
             Group group = new Group();
 
@@ -240,8 +240,8 @@ namespace ServerTests
             string inviterUsername = "inviter";
             string invitedUsername = "invited";
             
-            User inviter = new User(inviterUsername, "Metar@bgu.ac.il",  "MetarPassword2@");
-            User invited = new User(invitedUsername, "Metar2@bgu.ac.il",  "MetarPassword2@");
+            User inviter = new User(inviterUsername, "Metar@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
+            User invited = new User(invitedUsername, "Metar2@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
 
             Group group = new Group();
 
