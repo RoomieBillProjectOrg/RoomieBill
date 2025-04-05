@@ -16,5 +16,7 @@ namespace FrontendApplication.Models
         public DateTime? StartMonth { get; set; } // Start month for recurring expenses
         public DateTime? EndMonth { get; set; } // End month for recurring expenses
         public bool HasMonths => Category != Category.Other && StartMonth.HasValue && EndMonth.HasValue; // For XAML binding
+        public string CategoryName => Category.GetName();
+
     }
 }

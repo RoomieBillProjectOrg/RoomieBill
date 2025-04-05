@@ -24,7 +24,16 @@
                            FontAttributes="Bold"
                            TextColor="#FFFFFF"
                            Margin="0,0,0,20" />
-
+                    <!-- Category Filter Picker -->
+                    <Picker x:Name="CategoryPicker"
+                            Title="Filter by Category"
+                            SelectedIndexChanged="OnCategorySelected"
+                            ItemsSource="{Binding AvailableCategories}"
+                            TextColor="Black"
+                            BackgroundColor="White"
+                            Margin="0,0,0,10"
+                            FontSize="14"
+                            HeightRequest="40" />
                     <!-- List of Transactions -->
                     <CollectionView ItemsSource="{Binding Transactions}">
                         <CollectionView.ItemsLayout>
