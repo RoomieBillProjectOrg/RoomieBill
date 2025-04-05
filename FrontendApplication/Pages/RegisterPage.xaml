@@ -102,8 +102,8 @@
                      TextColor="White"
                      PlaceholderColor="#A9A9A9"
                      HeightRequest="40" />
+              <Button Text="Upload QR Code Image" Clicked="OnUploadQRCodeClicked" />
               </VerticalStackLayout>
-
 
             <!-- Checkbox -->
             <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
