@@ -20,7 +20,7 @@
                     <!-- Title -->
                     <Label Text="Transaction History"
                            FontSize="26"
-                           HorizontalOptions="Center"
+                        HorizontalOptions="Center"
                            FontAttributes="Bold"
                            TextColor="#FFFFFF"
                            Margin="0,0,0,20" />
@@ -34,6 +34,43 @@
                             Margin="0,0,0,10"
                             FontSize="14"
                             HeightRequest="40" />
+
+                        <!-- Date Range Filter -->
+                        <Frame BackgroundColor="#1E1E1E" CornerRadius="10" Padding="10" HasShadow="False" Margin="0,0,0,10">
+                            <VerticalStackLayout Spacing="8">
+                                <Label Text="📅 Date Range"
+                                    FontSize="16"
+                                    FontAttributes="Bold"
+                                    TextColor="White" />
+
+                                <HorizontalStackLayout Spacing="15">
+                                    <VerticalStackLayout Spacing="3">
+                                        <Label Text="From" FontSize="13" TextColor="#CCCCCC" />
+                                        <DatePicker x:Name="StartDatePicker"
+                                                    TextColor="White"
+                                                    BackgroundColor="#2A2A2A"
+                                                    HeightRequest="40" />
+                                    </VerticalStackLayout>
+
+                                    <VerticalStackLayout Spacing="3">
+                                        <Label Text="To" FontSize="13" TextColor="#CCCCCC" />
+                                        <DatePicker x:Name="EndDatePicker"
+                                                    TextColor="White"
+                                                    BackgroundColor="#2A2A2A"
+                                                    HeightRequest="40" />
+                                    </VerticalStackLayout>
+                                </HorizontalStackLayout>
+
+                                <Button Text="Apply Filter"
+                                        Clicked="OnApplyDateFilterClicked"
+                                        BackgroundColor="#2E8B57"
+                                        TextColor="White"
+                                        CornerRadius="8"
+                                        HeightRequest="45"
+                                        FontAttributes="Bold"
+                                        FontSize="14"/>
+                            </VerticalStackLayout>
+                        </Frame>
                     <!-- List of Transactions -->
                     <CollectionView ItemsSource="{Binding Transactions}">
                         <CollectionView.ItemsLayout>

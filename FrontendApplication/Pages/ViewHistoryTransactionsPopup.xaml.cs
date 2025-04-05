@@ -68,6 +68,21 @@ public partial class ViewTransactionsPopup : Popup
             Transactions.Add(expense);
     }
 
+    private void OnApplyDateFilterClicked(object sender, EventArgs e)
+    {
+        var startDate = StartDatePicker.Date;
+        var endDate = EndDatePicker.Date;
+
+        Transactions.Clear();
+
+        var filtered = _allExpenses
+            .Where(e => e.StartMonth >= startDate && e.EndMonth <= endDate)
+            .ToList();
+
+        foreach (var item in filtered)
+            Transactions.Add(item);
+    }
+
     public Command CloseCommand => new Command(() =>
     {
         Close(); // Dismiss the popup
