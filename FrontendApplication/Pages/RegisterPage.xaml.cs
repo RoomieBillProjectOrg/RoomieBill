@@ -117,8 +117,8 @@ namespace FrontendApplication.Pages
                 // Open file picker to select an image
                 var result = await FilePicker.PickAsync(new PickOptions
                 {
-                    FileTypes = FilePickerFileType.Images,
-                    PickerTitle = "Select a QR Code Image"
+                    FileTypes = FilePickerFileType.Images, // Prioritize image files
+                    PickerTitle = "Select a QR Code Image from Gallery"
                 });
 
                 if (result != null)
