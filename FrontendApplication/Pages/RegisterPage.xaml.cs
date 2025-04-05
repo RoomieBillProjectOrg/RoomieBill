@@ -146,34 +146,53 @@ namespace FrontendApplication.Pages
         {
             try
             {
+                // Load the image
                 using var stream = File.OpenRead(imagePath);
-                using var skBitmap = SKBitmap.Decode(stream);
+                using var bitmap = SKBitmap.Decode(stream);
 
-                if (skBitmap == null || skBitmap.IsEmpty)
+                if (bitmap == null || bitmap.IsEmpty)
                     return null;
 
-                var pixmap = skBitmap.PeekPixels();
-                var ptr = pixmap.GetPixels();
-                int size = pixmap.Info.BytesSize;
+                // Get the image data
+                int width = bitmap.Width;
+                int height = bitmap.Height;
 
-                byte[] bytes = new byte[size];
-                Marshal.Copy(ptr, bytes, 0, size);
+                // Create byte array with RGB values
+                byte[] rgbBytes = new byte[width * height * 3];
+                int index = 0;
 
-                int width = skBitmap.Width;
-                int height = skBitmap.Height;
-
-                // Create luminance source
-                var source = new RGBLuminanceSource(bytes, width, height);
-
-                // Use BarcodeReaderGeneric and cast to correct interface
-                var reader = new BarcodeReaderGeneric
+                for (int y = 0; y < height; y++)
                 {
-                    AutoRotate = true,
-                    TryInverted = true
-                };
+                    for (int x = 0; x < width; x++)
+                    {
+                        SKColor pixel = bitmap.GetPixel(x, y);
+                        rgbBytes[index++] = pixel.Red;
+                        rgbBytes[index++] = pixel.Green;
+                        rgbBytes[index++] = pixel.Blue;
+                    }
+                }
 
-                var result = ((IBarcodeReader<ZXing.LuminanceSource>)reader).Decode(source);
-                return result?.Text;
+                // Create RGB luminance source
+                var luminanceSource = new RGBLuminanceSource(rgbBytes, width, height);
+                var binaryBitmap = new BinaryBitmap(new HybridBinarizer(luminanceSource));
+
+                // Set up the reader with options
+                var reader = new MultiFormatReader();
+                var hints = new Dictionary<DecodeHintType, object>
+        {
+            { DecodeHintType.POSSIBLE_FORMATS, new List<BarcodeFormat> { BarcodeFormat.QR_CODE } },
+            { DecodeHintType.TRY_HARDER, true }
+        };
+
+                // Attempt to decode
+                var result = reader.decode(binaryBitmap, hints);
+
+                if (result != null)
+                {
+                    return result.Text;
+                }
+
+                return null;
             }
             catch (Exception ex)
             {
