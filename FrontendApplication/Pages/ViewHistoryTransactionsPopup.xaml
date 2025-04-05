@@ -16,108 +16,108 @@
         <Grid RowDefinitions="*, Auto">
             <!-- Scrollable Content -->
             <ScrollView Grid.Row="0">
-                <VerticalStackLayout Spacing="20" Padding="0,10,0,10">
+                <VerticalStackLayout Padding="20"
+                        Spacing="15">
+
                     <!-- Title -->
                     <Label Text="Transaction History"
-                           FontSize="26"
-                        HorizontalOptions="Center"
                            FontAttributes="Bold"
-                           TextColor="#FFFFFF"
-                           Margin="0,0,0,20" />
-                    <!-- Category Filter Picker -->
-                    <Picker x:Name="CategoryPicker"
-                            Title="Filter by Category"
-                            SelectedIndexChanged="OnCategorySelected"
-                            ItemsSource="{Binding AvailableCategories}"
-                            TextColor="Black"
-                            BackgroundColor="White"
-                            Margin="0,0,0,10"
+                           FontSize="22"
+                           TextColor="White"
+                           HorizontalOptions="Center"/>
+
+                    <!-- Filter Type Picker -->
+                    <Picker x:Name="FilterTypePicker"
+                            Title="Select Filter Type"
+                            SelectedIndexChanged="OnFilterTypeChanged"
+                            TextColor="White"
+                            BackgroundColor="#2A2A2A"
                             FontSize="14"
-                            HeightRequest="40" />
+                            HeightRequest="40">
+                        <Picker.Items>
+                            <x:String>Category</x:String>
+                            <x:String>Date Range</x:String>
+                        </Picker.Items>
+                    </Picker>
 
-                        <!-- Date Range Filter -->
-                        <Frame BackgroundColor="#1E1E1E" CornerRadius="10" Padding="10" HasShadow="False" Margin="0,0,0,10">
-                            <VerticalStackLayout Spacing="8">
-                                <Label Text="📅 Date Range"
-                                    FontSize="16"
-                                    FontAttributes="Bold"
-                                    TextColor="White" />
+                    <!-- Category Filter Section -->
+                    <VerticalStackLayout x:Name="CategoryFilterSection"
+                            IsVisible="False">
+                        <Picker x:Name="CategoryPicker"
+                                Title="Filter by Category"
+                                SelectedIndexChanged="OnCategorySelected"
+                                ItemsSource="{Binding AvailableCategories}"
+                                TextColor="White"
+                                BackgroundColor="#2A2A2A"
+                                FontSize="14"
+                                HeightRequest="40"/>
+                    </VerticalStackLayout>
 
-                                <HorizontalStackLayout Spacing="15">
-                                    <VerticalStackLayout Spacing="3">
-                                        <Label Text="From" FontSize="13" TextColor="#CCCCCC" />
-                                        <DatePicker x:Name="StartDatePicker"
-                                                    TextColor="White"
-                                                    BackgroundColor="#2A2A2A"
-                                                    HeightRequest="40" />
-                                    </VerticalStackLayout>
+                    <!-- Date Filter Section -->
+                    <VerticalStackLayout x:Name="DateFilterSection"
+                            IsVisible="False"
+                            Spacing="10">
+                        <Label Text="Filter by Date Range"
+                               FontAttributes="Bold"
+                               TextColor="White"
+                               FontSize="14"/>
 
-                                    <VerticalStackLayout Spacing="3">
-                                        <Label Text="To" FontSize="13" TextColor="#CCCCCC" />
-                                        <DatePicker x:Name="EndDatePicker"
-                                                    TextColor="White"
-                                                    BackgroundColor="#2A2A2A"
-                                                    HeightRequest="40" />
-                                    </VerticalStackLayout>
-                                </HorizontalStackLayout>
-
-                                <Button Text="Apply Filter"
-                                        Clicked="OnApplyDateFilterClicked"
-                                        BackgroundColor="#2E8B57"
+                        <HorizontalStackLayout Spacing="15">
+                            <VerticalStackLayout>
+                                <Label Text="From:"
                                         TextColor="White"
-                                        CornerRadius="8"
-                                        HeightRequest="45"
-                                        FontAttributes="Bold"
-                                        FontSize="14"/>
+                                        FontSize="13"/>
+                                <DatePicker x:Name="StartDatePicker"
+                                            TextColor="White"
+                                            BackgroundColor="#2A2A2A"
+                                            HeightRequest="40"/>
                             </VerticalStackLayout>
-                        </Frame>
-                    <!-- List of Transactions -->
-                    <CollectionView ItemsSource="{Binding Transactions}">
-                        <CollectionView.ItemsLayout>
-                            <LinearItemsLayout Orientation="Vertical" ItemSpacing="15" />
-                        </CollectionView.ItemsLayout>
+
+                            <VerticalStackLayout>
+                                <Label Text="To:"
+                                        TextColor="White"
+                                        FontSize="13"/>
+                                <DatePicker x:Name="EndDatePicker"
+                                            TextColor="White"
+                                            BackgroundColor="#2A2A2A"
+                                            HeightRequest="40"/>
+                            </VerticalStackLayout>
+                        </HorizontalStackLayout>
+
+                        <Button Text="Apply Date Filter"
+                                Clicked="OnApplyDateFilterClicked"
+                                BackgroundColor="#356c67"
+                                TextColor="White"
+                                CornerRadius="10"
+                                HeightRequest="45"/>
+                    </VerticalStackLayout>
+
+                    <!-- Transaction List -->
+                    <CollectionView x:Name="TransactionList"
+                                    ItemsSource="{Binding Transactions}"
+                                    EmptyView="No transactions found.">
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <Frame BorderColor="#2E2E2E"
-                                       Padding="15"
-                                       Margin="0,0,0,10"
-                                       CornerRadius="15"
-                                       HasShadow="False"
-                                       BackgroundColor="#2D2D2D">
-                                    <VerticalStackLayout Spacing="8">
-                                        <Label Text="{Binding Category}"
-                                               FontSize="18"
+                                <Frame BackgroundColor="#1E1E1E"
+                                       CornerRadius="10"
+                                       Padding="10"
+                                       Margin="0,5,0,5"
+                                       HasShadow="True">
+                                    <VerticalStackLayout>
+                                        <Label Text="{Binding Category.Name}"
                                                FontAttributes="Bold"
-                                               TextColor="#FFFFFF" />
-                                        <!-- Category and Months Row -->
-                                        <HorizontalStackLayout Spacing="10">
-                                            <Label Text="{Binding Description}"
-                                                   FontSize="14"
-                                                   TextColor="#A9A9A9" />
-                                            <!-- Hide months for Other category -->
-                                            <HorizontalStackLayout IsVisible="{Binding HasMonths}"
-                                                                  Spacing="5">
-                                                <Label Text="|"
-                                                       TextColor="#A9A9A9"
-                                                       FontSize="14" />
-                                                <Label Text="{Binding StartMonth, StringFormat='{0:MMM yyyy}'}"
-                                                       TextColor="#A9A9A9"
-                                                       FontSize="14" />
-                                                <Label Text="-"
-                                                       TextColor="#A9A9A9"
-                                                       FontSize="14" />
-                                                <Label Text="{Binding EndMonth, StringFormat='{0:MMM yyyy}'}"
-                                                       TextColor="#A9A9A9"
-                                                       FontSize="14" />
-                                            </HorizontalStackLayout>
-                                        </HorizontalStackLayout>
-                                        <Label Text="{Binding Amount, StringFormat='{0:N2} NIS'}"
                                                FontSize="16"
-                                               TextColor="#43A047"
-                                               FontAttributes="Bold" />
-                                        <Label Text="{Binding PayerName, StringFormat='Paid by: {0}'}"
+                                               TextColor="White"/>
+                                        <Label Text="{Binding Description}"
+                                               FontSize="13"
+                                               TextColor="LightGray"/>
+                                        <Label Text="{Binding Period}"
+                                               FontSize="13"
+                                               TextColor="LightGray"/>
+                                        <Label Text="{Binding Amount, StringFormat='{0:N2} NIS'}"
                                                FontSize="14"
-                                               TextColor="#A9A9A9" />
+                                               FontAttributes="Bold"
+                                               TextColor="LimeGreen"/>
                                     </VerticalStackLayout>
                                 </Frame>
                             </DataTemplate>
@@ -138,7 +138,7 @@
                     HorizontalOptions="Center"
                     WidthRequest="200"
                     HeightRequest="50"
-                    Margin="0,15,0,0" />
+                    Margin="0,15,0,0"/>
         </Grid>
     </Frame>
 </popup:Popup>
