@@ -3,6 +3,11 @@ using FrontendApplication.Models;
 using FrontendApplication.Popups;
 using FrontendApplication.Services;
 using Plugin.Firebase.CloudMessaging;
+using ZXing;
+using ZXing.Common;
+using SkiaSharp;
+using System.Runtime.InteropServices;
+
 
 namespace FrontendApplication.Pages
 {
@@ -29,7 +34,7 @@ namespace FrontendApplication.Pages
             var confirmPassword = PasswordConfirmationEntry.Text;
             var bitLink = BitLinkEntry.Text;
 
-            
+
 
             // Alert on empty fields
             if (string.IsNullOrWhiteSpace(username))
@@ -105,7 +110,77 @@ namespace FrontendApplication.Pages
 
             await DisplayAlert("How to Find Your Bit Link", message, "Got it!");
         }
+        private async void OnUploadQRCodeClicked(object sender, EventArgs e)
+        {
+            try
+            {
+                // Open file picker to select an image
+                var result = await FilePicker.PickAsync(new PickOptions
+                {
+                    FileTypes = FilePickerFileType.Images,
+                    PickerTitle = "Select a QR Code Image"
+                });
 
+                if (result != null)
+                {
+                    // Process the selected image
+                    var qrCodeLink = await ExtractQRCodeLink(result.FullPath);
+
+                    if (!string.IsNullOrEmpty(qrCodeLink))
+                    {
+                        BitLinkEntry.Text = qrCodeLink; // Set the extracted link to the BitLink field
+                        await DisplayAlert("Success", "QR Code link extracted successfully!", "OK");
+                    }
+                    else
+                    {
+                        await DisplayAlert("Error", "Could not extract a valid link from the QR Code.", "OK");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
+            }
+        }
+        private async Task<string> ExtractQRCodeLink(string imagePath)
+        {
+            try
+            {
+                using var stream = File.OpenRead(imagePath);
+                using var skBitmap = SKBitmap.Decode(stream);
+
+                if (skBitmap == null || skBitmap.IsEmpty)
+                    return null;
+
+                var pixmap = skBitmap.PeekPixels();
+                var ptr = pixmap.GetPixels();
+                int size = pixmap.Info.BytesSize;
+
+                byte[] bytes = new byte[size];
+                Marshal.Copy(ptr, bytes, 0, size);
+
+                var width = skBitmap.Width;
+                var height = skBitmap.Height;
+
+                var source = new RGBLuminanceSource(bytes, width, height);
+                var binarizer = new HybridBinarizer(source);
+                var binaryBitmap = new BinaryBitmap(binarizer);
+                var reader = new ZXing.BarcodeReader();
+                reader.Options = new ZXing.Common.DecodingOptions
+                {
+                    TryHarder = true,
+                    PossibleFormats = new List<ZXing.BarcodeFormat> { ZXing.BarcodeFormat.QR_CODE }
+                };
+
+                var result = reader.Decode(binaryBitmap);
+                return result?.Text;
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", $"Failed to decode QR code: {ex.Message}", "OK");
+                return null;
+            }
+        }
         private async Task<string> GetUserFirebaseToken()
         {
             await CrossFirebaseCloudMessaging.Current.CheckIfValidAsync();

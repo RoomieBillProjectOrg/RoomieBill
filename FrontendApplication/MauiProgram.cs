@@ -9,7 +9,6 @@ using Plugin.Firebase.Core.Platforms.iOS;
 #elif ANDROID
 using Plugin.Firebase.Core.Platforms.Android;
 using CommunityToolkit.Maui;
-
 #endif
 namespace FrontendApplication
 {
@@ -22,7 +21,7 @@ namespace FrontendApplication
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-            }).RegisterFirebaseServices().UseMauiCommunityToolkit();
+            }).RegisterFirebaseServices().UseMauiCommunityToolkit(); // Initialize ZXing.Net.Maui
             
             // Configure Https
             var baseUrl = new Uri(AppConfig.ApiBaseUrl);
