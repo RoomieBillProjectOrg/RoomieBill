@@ -6,6 +6,7 @@
         public string Username { get; set; } = "DefaultUser";
         public string Email { get; set; } = "DefaultUser@email.com";
         public string PasswordHash { get; set; }  = ""; // Store the hashed password
+        public string BitLink { get; set; }
         public bool IsLoggedIn { get; set; } = false;
         public bool IsSystemAdmin { get; set; } = false;
         public string FirebaseToken { get; set; }

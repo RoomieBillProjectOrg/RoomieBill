@@ -31,8 +31,8 @@ namespace Roomiebill.Server.Facades
         public async Task<User> RegisterUserAsync(RegisterUserDto registerUserDto)
         {
             // Create a new user object from the DTO
-            User newUser = new User(registerUserDto.Username, registerUserDto.Email, registerUserDto.Password, firebaseToken: registerUserDto.FirebaseToken);
-
+            User newUser = new User(registerUserDto.Username, registerUserDto.Email, registerUserDto.Password, registerUserDto.BitLink, firebaseToken: registerUserDto.FirebaseToken);
+            
             // Hash the password
             string passwordHash = _passwordHasher.HashPassword(newUser, registerUserDto.Password);
 
