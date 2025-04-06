@@ -27,9 +27,6 @@ namespace FrontendApplication.Popups
 
             // Initialize category picker and handle selection changes
             var categories = Enum.GetNames(typeof(Category)).ToList();
-            // Reorder to put "Other" first
-            categories.Remove("Other");
-            categories.Insert(0, "Other");
             CategoryPicker.ItemsSource = categories;
             CategoryPicker.SelectedIndex = 0; // Default to "Other"
             CategoryPicker.SelectedIndexChanged += OnCategoryPickerChanged;
