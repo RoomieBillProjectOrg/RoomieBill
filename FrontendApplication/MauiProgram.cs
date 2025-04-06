@@ -9,7 +9,6 @@ using Plugin.Firebase.Core.Platforms.iOS;
 #elif ANDROID
 using Plugin.Firebase.Core.Platforms.Android;
 using CommunityToolkit.Maui;
-
 #endif
 namespace FrontendApplication
 {
@@ -22,13 +21,13 @@ namespace FrontendApplication
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-            }).RegisterFirebaseServices().UseMauiCommunityToolkit();
+            }).RegisterFirebaseServices().UseMauiCommunityToolkit(); // Initialize ZXing.Net.Maui
             
             // Configure Https
             var baseUrl = new Uri(AppConfig.ApiBaseUrl);
 #if ANDROID
-            baseUrl = new Uri("https://132.73.84.62:443/api"); // University server
-            //baseUrl = new Uri("https://10.0.2.2:5001/api"); // localhost
+            // baseUrl = new Uri("https://132.73.84.62:443/api"); // University server
+            baseUrl = new Uri("https://10.0.2.2/api");
 #endif
             // Register the HttpClient with a platform-specific base address
             builder.Services.AddSingleton<HttpClientService>();

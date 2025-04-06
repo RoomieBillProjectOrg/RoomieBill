@@ -11,6 +11,7 @@ public class PaymentRequestModel
     public UserModel PayerInfo { get; set; }
     public string PaymentMethod { get; set; }
     public int GroupId { get; set; }
+    public string BitLink { get; set; }
 
     public PaymentRequestModel(){}
 
@@ -21,5 +22,7 @@ public class PaymentRequestModel
         PayeeInfo = payeeInfo;
         PaymentMethod = paymentMethod;
         GroupId = groupId;
+        BitLink = payeeInfo.BitLink;
+
     }
 }
