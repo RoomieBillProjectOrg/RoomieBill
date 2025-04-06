@@ -20,21 +20,42 @@ namespace Roomiebill.Server.DataAccessLayer
             _groupInviteMediatorService = groupInviteMediatorService;
             _context = context;
         }
+
         public async Task SeedAsync()
         {
             // Check if the database is already seeded
             if (!_context.Users.Any())
             {
-                await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Inbar", Email = "Inbar@bgu.ac.il", Password = "InbarPassword1!", FirebaseToken = "Test" });
-                await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Metar", Email = "Metar@bgu.ac.il", Password = "MetarPassword2@", FirebaseToken = "Test" });
-                await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Vladi", Email = "Vladi@bgu.ac.il", Password = "VladiPassword3#", FirebaseToken = "Test" });
-                await _userService.RegisterUserAsync(new RegisterUserDto { Username = "Tal", Email = "Tal@bgu.ac.il", Password = "TalPassword4$", FirebaseToken = "Test" });
+                await _userService.RegisterUserAsync(new RegisterUserDto
+                {
+                    Username = "Inbar", Email = "Inbar@bgu.ac.il", Password = "InbarPassword1!",
+                    BitLink = "test", FirebaseToken = "Test"
+                });
+                await _userService.RegisterUserAsync(new RegisterUserDto
+                {
+                    Username = "Metar", Email = "Metar@bgu.ac.il", Password = "MetarPassword2@",
+                    BitLink = "test", FirebaseToken = "Test"
+                });
+                await _userService.RegisterUserAsync(new RegisterUserDto
+                {
+                    Username = "Vladi", Email = "Vladi@bgu.ac.il", Password = "VladiPassword3#",
+                    BitLink = "test", FirebaseToken = "Test"
+                });
+                await _userService.RegisterUserAsync(new RegisterUserDto
+                    { 
+                        Username = "Tal", Email = "Tal@bgu.ac.il", Password = "TalPassword4$", 
+                        BitLink = "test", FirebaseToken = "Test"
+                    });
 
                 // Log in all data users
-                await _userService.LoginAsync(new LoginDto { Username = "Inbar", Password = "InbarPassword1!", FirebaseToken = "Test" });
-                await _userService.LoginAsync(new LoginDto { Username = "Metar", Password = "MetarPassword2@", FirebaseToken = "Test" });
-                await _userService.LoginAsync(new LoginDto { Username = "Vladi", Password = "VladiPassword3#", FirebaseToken = "Test" });
-                await _userService.LoginAsync(new LoginDto { Username = "Tal", Password = "TalPassword4$", FirebaseToken = "Test" });
+                await _userService.LoginAsync(new LoginDto
+                    { Username = "Inbar", Password = "InbarPassword1!", FirebaseToken = "Test" });
+                await _userService.LoginAsync(new LoginDto
+                    { Username = "Metar", Password = "MetarPassword2@", FirebaseToken = "Test" });
+                await _userService.LoginAsync(new LoginDto
+                    { Username = "Vladi", Password = "VladiPassword3#", FirebaseToken = "Test" });
+                await _userService.LoginAsync(new LoginDto
+                    { Username = "Tal", Password = "TalPassword4$", FirebaseToken = "Test" });
 
                 // Create a new group for all data users - "Roomiebill"
                 CreateNewGroupDto newGroupDetails = new CreateNewGroupDto
@@ -44,7 +65,8 @@ namespace Roomiebill.Server.DataAccessLayer
                     GroupName = "Roomiebill"
                 };
 
-                Group group_Roomiebill = await _groupInviteMediatorService.CreateNewGroupSendInvitesAsync(newGroupDetails);
+                Group group_Roomiebill =
+                    await _groupInviteMediatorService.CreateNewGroupSendInvitesAsync(newGroupDetails);
 
                 // Invite users to the group
                 //InviteToGroupByUsernameDto inviteDetails_Metar = new InviteToGroupByUsernameDto
@@ -108,7 +130,8 @@ namespace Roomiebill.Server.DataAccessLayer
                     GroupName = "Test Invites"
                 };
 
-                Group group_Roomiebill_TestInvites = await _groupInviteMediatorService.CreateNewGroupSendInvitesAsync(newGroupDetails_TestInvites);
+                Group group_Roomiebill_TestInvites =
+                    await _groupInviteMediatorService.CreateNewGroupSendInvitesAsync(newGroupDetails_TestInvites);
 
                 // Invite users to the group
                 //InviteToGroupByUsernameDto inviteDetails_Metar_testInvite = new InviteToGroupByUsernameDto

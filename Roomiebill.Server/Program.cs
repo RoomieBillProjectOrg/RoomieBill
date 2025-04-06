@@ -20,7 +20,7 @@ builder.Services.AddApplicationInsightsTelemetry(builder.Configuration["Applicat
 
 // Configure the connection string for SQL Server using the settings from appsettings.json
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("MetarLocalConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("InbarLocalConnection")));
 builder.Services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
 
 
