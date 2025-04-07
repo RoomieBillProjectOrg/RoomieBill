@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using System.Net;
+using Roomiebill.Server.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +21,7 @@ builder.Services.AddApplicationInsightsTelemetry(builder.Configuration["Applicat
 
 // Configure the connection string for SQL Server using the settings from appsettings.json
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("ServerConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("TalLocalConnection")));
 builder.Services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
 
 
@@ -36,6 +37,7 @@ builder.Services.AddScoped<IPaymentService, MockPaymentService>();
 
 // Register PaymentReminderService and configure update interval
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+builder.Services.AddSingleton<GeminiService>();
 builder.Services.AddHostedService<PaymentReminderService>();
 builder.Services.Configure<HostOptions>(opts => 
 {

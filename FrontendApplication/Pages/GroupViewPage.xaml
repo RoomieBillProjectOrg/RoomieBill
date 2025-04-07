@@ -40,6 +40,16 @@
                     HeightRequest="50"
                     Clicked="OnAddRoomieClicked" />
 
+            <Button Text="Gemini Feedback 💬"
+                    BackgroundColor="#673AB7"
+                    TextColor="#FFFFFF"
+                    FontSize="16"
+                    CornerRadius="10"
+                    WidthRequest="200"
+                    HeightRequest="50"
+                    HorizontalOptions="Center"
+                    Clicked="OnGeminiFeedbackClicked" />
+
             <!-- Grid for Group Members -->
             <CollectionView ItemsSource="{Binding Members}"
                             HorizontalOptions="FillAndExpand">
