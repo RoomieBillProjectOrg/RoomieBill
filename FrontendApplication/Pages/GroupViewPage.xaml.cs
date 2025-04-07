@@ -13,6 +13,8 @@ public partial class GroupViewPage : ContentPage
     private readonly GroupServiceApi _groupService;
     private readonly PaymentService _paymentService;
     private readonly PaymentReminderService _reminderService;
+    private readonly UploadServiceApi _uploadService;
+
 
     public ObservableCollection<UserModel> Members { get; set; } = new ObservableCollection<UserModel>();
     public ObservableCollection<DebtModel> ShameTable { get; set; } = new ObservableCollection<DebtModel>();
@@ -27,8 +29,8 @@ public partial class GroupViewPage : ContentPage
     public GroupModel _group { get; set; }
     public UserModel _currentUser { get; }
 
-    public GroupViewPage(UserServiceApi userService, GroupServiceApi groupService, PaymentService paymentService,
-        PaymentReminderService reminderService, GroupModel group, UserModel CurrentUser)
+    public GroupViewPage(UserServiceApi userService, GroupServiceApi groupService, PaymentService paymentService, 
+        UploadServiceApi uploadService, PaymentReminderService reminderService, GroupModel group, UserModel CurrentUser)
     {
         InitializeComponent();
 
@@ -36,6 +38,7 @@ public partial class GroupViewPage : ContentPage
         _groupService = groupService;
         _paymentService = paymentService;
         _reminderService = reminderService;
+        _uploadService = uploadService;
         _group = group;
         _currentUser = CurrentUser;
         BindingContext = this;
@@ -151,14 +154,14 @@ public partial class GroupViewPage : ContentPage
 
     private async void OnViewTransactionClicked(object sender, EventArgs e)
     {
-        var popup = new ViewTransactionsPopup(_group, _groupService);
+        var popup = new ViewHistoryTransactionsPopup(_group, _groupService, _uploadService);
         await this.ShowPopupAsync(popup);
     }
 
     //add a new pop up window to add an expense
     private async void OnAddExpenseClicked(object sender, EventArgs e)
     {
-        var popup = new AddExpensePopup(_group, _currentUser, _groupService);
+        var popup = new AddExpensePopup(_group, _currentUser, _groupService, _uploadService);
         var res = await this.ShowPopupAsync(popup);
         await DisplayAlert("Expense", (string)res, "OK");
         if (res is string message && !message.StartsWith("Error"))
@@ -207,7 +210,7 @@ public partial class GroupViewPage : ContentPage
             await DisplayAlert("Debt", $"You owe {selectedItem.creditor.Username} {selectedItem.amount} NIS.", "OK");
 
             // Add your logic here (e.g., navigation or additional functionality)
-            await Navigation.PushAsync(new PaymentPage(selectedItem, _group, _userService, _groupService, _paymentService, _currentUser));
+            await Navigation.PushAsync(new PaymentPage(selectedItem, _group, _userService, _groupService, _paymentService, _uploadService, _currentUser));
         }
     });
 
@@ -269,7 +272,7 @@ public partial class GroupViewPage : ContentPage
     private async void OnHomePageButtonClicked(object sender, EventArgs e)
     {
         // Navigate to UserHomePage
-        await Navigation.PushAsync(new UserHomePage(_userService, _groupService, _paymentService, _currentUser));
+        await Navigation.PushAsync(new UserHomePage(_userService, _groupService, _paymentService, _uploadService, _currentUser));
     }
 
     private async void OnGeminiFeedbackClicked(object sender, EventArgs e)

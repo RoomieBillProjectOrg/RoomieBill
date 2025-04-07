@@ -8,12 +8,13 @@ public partial class PaymentPage : ContentPage
     private readonly UserServiceApi _userService;
     private readonly GroupServiceApi _groupService;
     private readonly PaymentService _paymentService;
+    private readonly UploadServiceApi _uploadService;
     private UserModel _user;
 
     public DebtModel _debt { get; }
     public GroupModel _groupOfUsers { get; }
 
-    public PaymentPage(DebtModel debt, GroupModel groupOfUsers, UserServiceApi userService, GroupServiceApi groupService, PaymentService paymentService, UserModel user)
+    public PaymentPage(DebtModel debt, GroupModel groupOfUsers, UserServiceApi userService, GroupServiceApi groupService, PaymentService paymentService, UploadServiceApi uploadService, UserModel user)
     {
         InitializeComponent();
 
@@ -22,6 +23,7 @@ public partial class PaymentPage : ContentPage
         _userService = userService;
         _groupService = groupService;
         _paymentService = paymentService;
+        _uploadService = uploadService;
         _user = user;
 
         // Dynamically display debt details
@@ -87,6 +89,6 @@ public partial class PaymentPage : ContentPage
     private async void OnHomePageButtonClicked(object sender, EventArgs e)
     {
         // Navigate to UserHomePage
-        await Navigation.PushAsync(new UserHomePage(_userService, _groupService, _paymentService, _user));
+        await Navigation.PushAsync(new UserHomePage(_userService, _groupService, _paymentService, _uploadService, _user));
     }
 }

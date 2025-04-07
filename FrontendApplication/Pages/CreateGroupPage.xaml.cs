@@ -10,14 +10,17 @@ public partial class CreateGroupPage : ContentPage
     private readonly UserServiceApi _userService;
     private readonly GroupServiceApi _groupService;
     private readonly PaymentService _paymentService;
+    private readonly UploadServiceApi _uploadService;
+    
     private UserModel _user;
 
-    public CreateGroupPage(UserServiceApi userService, GroupServiceApi groupServiceApi, PaymentService paymentService, UserModel user)
+    public CreateGroupPage(UserServiceApi userService, GroupServiceApi groupServiceApi, PaymentService paymentService, UploadServiceApi uploadService, UserModel user)
     {
         InitializeComponent();
         _userService = userService;
         _groupService = groupServiceApi;
         _paymentService = paymentService;
+        _uploadService = uploadService;
         _user = user;
     }
 
@@ -67,7 +70,7 @@ public partial class CreateGroupPage : ContentPage
 
     private async void OnHomePageButtonClicked(object sender, EventArgs e)
     {
-        await Navigation.PushAsync(new UserHomePage(_userService, _groupService, _paymentService, _user));
+        await Navigation.PushAsync(new UserHomePage(_userService, _groupService, _paymentService, _uploadService, _user));
     }
 
     private async void OnCancelClicked(object sender, EventArgs e)

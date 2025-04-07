@@ -11,17 +11,19 @@ public partial class UserHomePage : ContentPage
     private readonly UserServiceApi _userService;
     private readonly GroupServiceApi _groupService;
     private readonly PaymentService _paymentService;
+    private readonly UploadServiceApi _uploadService;
 
     public UserModel User { get; set; }
     public ObservableCollection<GroupModel> Groups { get; set; }
 
-    public UserHomePage(UserServiceApi userService, GroupServiceApi groupService, PaymentService paymentService, UserModel user)
+    public UserHomePage(UserServiceApi userService, GroupServiceApi groupService, PaymentService paymentService, UploadServiceApi uploadService, UserModel user)
     {
         InitializeComponent();
 
         _userService = userService;
         _groupService = groupService;
         _paymentService = paymentService;
+        _uploadService = uploadService;
         User = user;
         Groups = new ObservableCollection<GroupModel>();
 
@@ -106,7 +108,7 @@ public partial class UserHomePage : ContentPage
         if (sender is Button button && button.CommandParameter is GroupModel group)
         {
             var reminderService = App.Current.Handler.MauiContext.Services.GetRequiredService<PaymentReminderService>();
-            await Navigation.PushAsync(new GroupViewPage(_userService, _groupService, _paymentService, reminderService, group, User));
+            await Navigation.PushAsync(new GroupViewPage(_userService, _groupService, _paymentService, _uploadService, reminderService, group, User));
         }
     }
 
@@ -118,7 +120,7 @@ public partial class UserHomePage : ContentPage
             await DisplayAlert("Success", "User logged out successfully!", "OK");
             
             // Navigate to the main page
-            await Navigation.PushAsync(new MainPage(_userService, _groupService, _paymentService));
+            await Navigation.PushAsync(new MainPage(_userService, _groupService, _paymentService, _uploadService));
         }
         catch (Exception ex)
         {
@@ -128,16 +130,16 @@ public partial class UserHomePage : ContentPage
 
     private async Task OnUpdateUserDetails()
     {
-        await Navigation.PushAsync(new UpdateUserDetailsPage(_userService, _groupService, _paymentService, User));
+        await Navigation.PushAsync(new UpdateUserDetailsPage(_userService, _groupService, _paymentService, _uploadService, User));
     }
 
     private async Task OnAddGroup()
     {
-        await Navigation.PushAsync(new CreateGroupPage(_userService, _groupService, _paymentService, User));
+        await Navigation.PushAsync(new CreateGroupPage(_userService, _groupService, _paymentService, _uploadService, User));
     }
 
     private async Task OnInvites()
     {
-        await Navigation.PushAsync(new InvitesPage(_userService, _groupService, _paymentService, User));
+        await Navigation.PushAsync(new InvitesPage(_userService, _groupService, _paymentService, _uploadService, User));
     }
 }
