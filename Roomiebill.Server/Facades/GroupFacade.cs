@@ -311,7 +311,8 @@ namespace Roomiebill.Server.Facades
                 Group = await GetGroupByIdAsync(dto.GroupId),
                 Category = dto.Category,
                 StartMonth = dto.StartMonth,
-                EndMonth = dto.EndMonth
+                EndMonth = dto.EndMonth,
+                ReceiptString = dto.ReceiptString
             };
             
             return e;

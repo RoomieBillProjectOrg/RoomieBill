@@ -9,13 +9,15 @@ public partial class LoginPage : ContentPage
     private readonly UserServiceApi _userService;
     private readonly GroupServiceApi _groupService;
     private readonly PaymentService _paymentService;
+    private readonly UploadServiceApi _uploadService;
 
-    public LoginPage(UserServiceApi userService, GroupServiceApi groupService, PaymentService paymentService)
+    public LoginPage(UserServiceApi userService, GroupServiceApi groupService, PaymentService paymentService, UploadServiceApi uploadService)
 	{
 		InitializeComponent();
         _userService = userService;
         _groupService = groupService;
         _paymentService = paymentService;
+        _uploadService = uploadService;
     }
 
     private async void OnLoginClicked(object sender, EventArgs e)
@@ -52,12 +54,12 @@ public partial class LoginPage : ContentPage
                 );
 
                 // 3. Navigate to UpdateUserDetailsPage (instead of the home page).
-                await Navigation.PushAsync(new UpdateUserDetailsPage(_userService, _groupService, _paymentService, user));
+                await Navigation.PushAsync(new UpdateUserDetailsPage(_userService, _groupService, _paymentService, _uploadService, user));
             }
             else
             {
                 // Navigate to UserHomePage
-                await Navigation.PushAsync(new UserHomePage(_userService, _groupService, _paymentService, user));
+                await Navigation.PushAsync(new UserHomePage(_userService, _groupService, _paymentService, _uploadService, user));
             }
         }
         catch(Exception ex)

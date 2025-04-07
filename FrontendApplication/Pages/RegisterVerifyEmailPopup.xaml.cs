@@ -13,6 +13,7 @@ namespace FrontendApplication.Popups
         private UserServiceApi _userService;
         private GroupServiceApi _groupService;
         private PaymentService _paymentService;
+        private readonly UploadServiceApi _uploadService;
         private VerifiyCodeModel _verificationCode;
         private RegisterUserDto _user;
 

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Roomiebill.Server.DataAccessLayer;
 
@@ -11,9 +12,11 @@ using Roomiebill.Server.DataAccessLayer;
 namespace Roomiebill.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250402183035_mymig")]
+    partial class mymig
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,16 +51,10 @@ namespace Roomiebill.Server.Migrations
                     b.Property<double>("Amount")
                         .HasColumnType("float");
 
-                    b.Property<int>("Category")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTime?>("EndMonth")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("GroupId")
                         .HasColumnType("int");
@@ -68,9 +65,6 @@ namespace Roomiebill.Server.Migrations
                     b.Property<int>("PayerId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("StartMonth")
-                        .HasColumnType("datetime2");
-                        
                     b.Property<string>("ReceiptString")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -92,11 +86,11 @@ namespace Roomiebill.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<double>("Amount")
-                        .HasColumnType("float");
-
                     b.Property<int>("ExpenseId")
                         .HasColumnType("int");
+
+                    b.Property<double>("Percentage")
+                        .HasColumnType("float");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -176,50 +170,6 @@ namespace Roomiebill.Server.Migrations
                     b.ToTable("Invites");
                 });
 
-            modelBuilder.Entity("Roomiebill.Server.Models.PaymentReminder", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Category")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("DayOfMonth")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GroupId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("LastReminderSent")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("RecurrencePattern")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GroupId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("PaymentReminders");
-                });
-
             modelBuilder.Entity("Roomiebill.Server.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -227,10 +177,6 @@ namespace Roomiebill.Server.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("BitLink")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -351,25 +297,6 @@ namespace Roomiebill.Server.Migrations
                     b.Navigation("Invited");
 
                     b.Navigation("Inviter");
-                });
-
-            modelBuilder.Entity("Roomiebill.Server.Models.PaymentReminder", b =>
-                {
-                    b.HasOne("Roomiebill.Server.Models.Group", "Group")
-                        .WithMany()
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Roomiebill.Server.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Group");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Roomiebill.Server.Models.Expense", b =>
