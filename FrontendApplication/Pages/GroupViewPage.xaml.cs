@@ -272,4 +272,18 @@ public partial class GroupViewPage : ContentPage
         await Navigation.PushAsync(new UserHomePage(_userService, _groupService, _paymentService, _currentUser));
     }
 
+    private async void OnGeminiFeedbackClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            var feedback = await _groupService.GetGeiminiResponseForExpenses(_group.Id);
+
+            await DisplayAlert("Gemini Insight 💡", feedback, "OK");
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", $"Failed to get feedback: {ex.Message}", "OK");
+        }
+    }
+
 }

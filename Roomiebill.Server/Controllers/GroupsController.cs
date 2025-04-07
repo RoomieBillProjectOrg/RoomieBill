@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+using Roomiebill.Server.Common;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Models;
 using Roomiebill.Server.Services;
@@ -12,7 +14,7 @@ namespace Roomiebill.Server.Controllers
         private readonly GroupService _groupService;
         private readonly GroupInviteMediatorService _groupInviteMediatorService;
 
-        public GroupsController(GroupService groupService, GroupInviteMediatorService groupInviteMediatorService)
+        public GroupsController(GroupService groupService, GroupInviteMediatorService groupInviteMediatorService, GeminiService geminiService)
         {
             _groupService = groupService;
             _groupInviteMediatorService = groupInviteMediatorService;
@@ -123,6 +125,27 @@ namespace Roomiebill.Server.Controllers
             {
                 await _groupService.SnoozeMemberToPayAsync(snoozeInfo);
                 return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("getGeiminiResponseForExpenses")]
+        public async Task<IActionResult> GetGeiminiResponseForExpenses([FromQuery] int groupId)
+        {
+            try
+            {
+                var transactions = await _groupService.GetExpensesForGroupAsync(groupId);
+                var transactionsString = JsonSerializer.Serialize(transactions, new JsonSerializerOptions
+                {
+                    WriteIndented = true // optional: makes it pretty
+                });
+                var prompt = $"Please provide helpful feedback based on this group expense data: {transactionsString} make it short and in dots, talk about each type of expense and compere it to an average expense in Israel. " +
+                    $"Also, please provide a summary of the total expenses and any recommendations for the group members.";
+                var feedback = await _groupService.GetFeedbackFromGeminiAsync(prompt);
+                return Ok(feedback);
             }
             catch (Exception ex)
             {

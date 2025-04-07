@@ -91,4 +91,12 @@ public class GroupServiceApi
             throw new Exception(errorResponse.Message);
         }
     }
+
+    public async Task<string> GetGeiminiResponseForExpenses(int groupId){
+        var response = await _httpClient.GetAsync($"{_httpClient.BaseAddress}/Groups/getGeiminiResponseForExpenses?groupId={groupId}");
+        response.EnsureSuccessStatusCode();
+        
+        var geminiAnswer = await response.Content.ReadAsStringAsync();
+        return geminiAnswer;
+    }
 }
