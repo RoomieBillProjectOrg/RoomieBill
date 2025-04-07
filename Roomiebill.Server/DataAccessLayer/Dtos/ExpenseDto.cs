@@ -30,5 +30,8 @@ namespace Roomiebill.Server.DataAccessLayer.Dtos
         public DateTime? StartMonth { get; set; } // Start month for recurring expenses
         public DateTime? EndMonth { get; set; } // End month for recurring expenses
 
+        [Required]
+        public string ReceiptString { get; set; } = "";
+        
     }
 }

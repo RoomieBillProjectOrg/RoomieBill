@@ -16,6 +16,7 @@ namespace FrontendApplication.Pages
         private readonly UserServiceApi _userService;
         private readonly GroupServiceApi _groupService;
         private readonly PaymentService _paymentService;
+        private readonly UploadServiceApi _uploadService;
         private VerifiyCodeModel _verificationCode;
 
         public RegisterPage(UserServiceApi userService, GroupServiceApi groupService, PaymentService paymentService)
@@ -91,7 +92,7 @@ namespace FrontendApplication.Pages
                 var res = await this.ShowPopupAsync(popup);
 
                 await DisplayAlert("Success", "Your account has been verified and registered successfully!", "OK");
-                await Navigation.PushAsync(new LoginPage(_userService, _groupService, _paymentService));
+                await Navigation.PushAsync(new LoginPage(_userService, _groupService, _paymentService, _uploadService));
             }
             catch (Exception ex)
             {

@@ -16,16 +16,18 @@ namespace FrontendApplication.Pages
         private readonly UserServiceApi _userService;
         private readonly GroupServiceApi _groupService;
         private readonly PaymentService _paymentService;
+        private readonly UploadServiceApi _uploadService;
         private readonly UserModel _user;
         private ObservableCollection<InviteModel> _invitations;
 
-        public InvitesPage(UserServiceApi userService, GroupServiceApi groupService, PaymentService paymentService, UserModel user)
+        public InvitesPage(UserServiceApi userService, GroupServiceApi groupService, PaymentService paymentService, UploadServiceApi uploadService, UserModel user)
         {
             InitializeComponent();
 
             _userService = userService;
             _groupService = groupService;
             _paymentService = paymentService;
+            _uploadService = uploadService;
             _user = user;
 
             _invitations = new ObservableCollection<InviteModel>();
@@ -123,7 +125,7 @@ namespace FrontendApplication.Pages
         private async void OnHomePageButtonClicked(object sender, EventArgs e)
         {
             // Navigate to UserHomePage
-            await Navigation.PushAsync(new UserHomePage(_userService, _groupService, _paymentService, _user));
+            await Navigation.PushAsync(new UserHomePage(_userService, _groupService, _paymentService, _uploadService, _user));
         }
     }
 

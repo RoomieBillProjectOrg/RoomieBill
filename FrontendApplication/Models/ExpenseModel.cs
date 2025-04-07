@@ -1,4 +1,4 @@
-﻿﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
 namespace FrontendApplication.Models
@@ -17,7 +17,6 @@ namespace FrontendApplication.Models
         public DateTime? EndMonth { get; set; } // End month for recurring expenses
         public bool HasMonths => Category != Category.Other && StartMonth.HasValue && EndMonth.HasValue; // For XAML binding
         public string CategoryName => Category.GetName();
-
-
+        public string ReceiptString { get; set; } = "";
     }
 }

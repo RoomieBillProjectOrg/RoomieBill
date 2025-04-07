@@ -34,6 +34,7 @@ builder.Services.AddScoped<GroupInviteMediatorService>();
 builder.Services.AddScoped<BillingService>();
 builder.Services.AddScoped<DatabaseSeeder>();
 builder.Services.AddScoped<IPaymentService, MockPaymentService>();
+builder.Services.AddScoped<FileUploadService>();
 
 // Register PaymentReminderService and configure update interval
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);

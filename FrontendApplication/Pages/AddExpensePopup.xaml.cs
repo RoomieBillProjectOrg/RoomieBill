@@ -5,6 +5,11 @@ using System.Collections.Generic;
 using CommunityToolkit.Maui.Views;
 using FrontendApplication.Models;
 using FrontendApplication.Services;
+using Microsoft.Maui.Storage;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace FrontendApplication.Popups
 {
@@ -14,15 +19,19 @@ namespace FrontendApplication.Popups
         public ObservableCollection<MemberViewModel> SelectedMembers => new ObservableCollection<MemberViewModel>(Members.Where(m => m.IsSelected));
 
         private readonly GroupServiceApi _groupService;
+        private readonly UploadServiceApi _uploadService;
         private readonly UserModel _payer;
         private readonly GroupModel _group;
+        private string receiptFilePath = "";
+        string receiptUrl = "";
 
-        public AddExpensePopup(GroupModel group, UserModel payer, GroupServiceApi groupService)
+        public AddExpensePopup(GroupModel group, UserModel payer, GroupServiceApi groupService, UploadServiceApi uploadService)
         {
             InitializeComponent();
             BindingContext = this;
             _payer = payer;
             _groupService = groupService;
+            _uploadService = uploadService;
             _group = group;
 
             // Initialize category picker and handle selection changes
@@ -68,6 +77,41 @@ namespace FrontendApplication.Popups
                 CustomAmountLayout.IsVisible = false;
             }
         }
+
+        private async void OnUploadReceiptClicked(object sender, EventArgs e)
+        {
+            try
+            {
+                var result = await FilePicker.PickAsync(new PickOptions
+                {
+                    PickerTitle = "Select a Receipt",
+                    FileTypes = FilePickerFileType.Images
+                });
+
+                if (result != null)
+                {
+                    receiptFilePath = result.FullPath;
+
+                    // ✅ Update button UI to indicate success
+                    UploadedReceiptLabel.Text = "[Click to select another file]";
+                    UploadedReceiptLabel.IsVisible = true;
+                    // UploadedReceiptLabel.BackgroundColor = Colors.Green;
+                    UploadedReceiptLabel.TextColor = Colors.White;
+
+                    // Optional: show the uploaded filename
+                    UploadReceiptButton.Text = "Receipt Chosen ✔";
+                    UploadReceiptButton.BackgroundColor = Colors.BlueViolet;
+                    
+
+                    //await Application.Current.MainPage.DisplayAlert("Success", "Receipt uploaded successfully!", "OK");
+                }
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", $"Receipt choose failed: {ex.Message}", "OK");
+            }
+        }
+
 
         // Command for adding an expense
         public Command AddExpenseCommand => new Command(async () =>
@@ -140,6 +184,17 @@ namespace FrontendApplication.Popups
                 }).ToList();
             }
 
+            // Try to upload receipt
+            try{
+                if(receiptFilePath != ""){
+                    receiptUrl = await _uploadService.UploadReceiptAsync(receiptFilePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                Close($"Error: {ex.Message}");
+                return;
+            }
             // Set the expense dto
             // Validate dates for non-Other categories
             if (selectedCategory != Category.Other)
@@ -169,9 +224,10 @@ namespace FrontendApplication.Popups
                 Category = selectedCategory,
                 ExpenseSplits = expenseSplitsDtos,
                 StartMonth = selectedCategory != Category.Other ? StartMonthPicker.Date : null,
-                EndMonth = selectedCategory != Category.Other ? EndMonthPicker.Date : null
+                EndMonth = selectedCategory != Category.Other ? EndMonthPicker.Date : null,
+                ReceiptString = receiptUrl
             };
-
+            
             try
             {
                 await _groupService.addExpenseAsync(expense);

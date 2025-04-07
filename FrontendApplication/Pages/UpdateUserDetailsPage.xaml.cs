@@ -8,14 +8,16 @@ public partial class UpdateUserDetailsPage : ContentPage
     private readonly UserServiceApi _userService;
     private readonly GroupServiceApi _groupService;
     private readonly PaymentService _paymentService;
+    private readonly UploadServiceApi _uploadService;
     private UserModel _user;
 
-    public UpdateUserDetailsPage(UserServiceApi userService, GroupServiceApi groupServiceApi, PaymentService paymentService, UserModel user)
+    public UpdateUserDetailsPage(UserServiceApi userService, GroupServiceApi groupServiceApi, PaymentService paymentService, UploadServiceApi uploadService, UserModel user)
     {
         InitializeComponent();
         _userService = userService;
         _groupService = groupServiceApi;
         _paymentService = paymentService;
+        _uploadService = uploadService;
         _user = user;
     }
 
@@ -61,7 +63,7 @@ public partial class UpdateUserDetailsPage : ContentPage
             await DisplayAlert("Success", "Password updated successfully.", "OK");
 
             // Navigate to the user's home page after success
-            await Navigation.PushAsync(new UserHomePage(_userService, _groupService, _paymentService, updatedUser));
+            await Navigation.PushAsync(new UserHomePage(_userService, _groupService, _paymentService, _uploadService, updatedUser));
         }
         catch (Exception ex)
         {
@@ -72,6 +74,6 @@ public partial class UpdateUserDetailsPage : ContentPage
     private async void OnHomePageButtonClicked(object sender, EventArgs e)
     {
         // Navigate to UserHomePage
-        await Navigation.PushAsync(new UserHomePage(_userService, _groupService, _paymentService, _user));
+        await Navigation.PushAsync(new UserHomePage(_userService, _groupService, _paymentService, _uploadService, _user));
     }
 }

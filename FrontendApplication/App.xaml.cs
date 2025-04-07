@@ -11,7 +11,8 @@ namespace FrontendApplication
             MainPage = new NavigationPage(new MainPage(
                 serviceProvider.GetService<UserServiceApi>(),
                 serviceProvider.GetService<GroupServiceApi>(),
-                serviceProvider.GetService<PaymentService>()));
+                serviceProvider.GetService<PaymentService>(),
+                serviceProvider.GetService<UploadServiceApi>()));
         }
     }
 }

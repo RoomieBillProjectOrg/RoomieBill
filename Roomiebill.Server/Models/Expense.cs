@@ -1,4 +1,4 @@
-﻿﻿using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
@@ -44,5 +44,6 @@ namespace Roomiebill.Server.Models
         public DateTime? StartMonth { get; set; }
 
         public DateTime? EndMonth { get; set; }
+        public string ReceiptString { get; set; } = ""; 
     }
 }

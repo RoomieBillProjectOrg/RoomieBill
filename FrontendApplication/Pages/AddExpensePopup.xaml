@@ -102,6 +102,25 @@
                             Margin="0,5,0,0" />
                     </VerticalStackLayout>
 
+                    <!-- Receipt Upload Button -->
+                    <VerticalStackLayout>
+                        <Button x:Name="UploadReceiptButton"
+                                Text="Upload Receipt"
+                                Clicked="OnUploadReceiptClicked"
+                                BackgroundColor="#2196F3"
+                                TextColor="White"
+                                CornerRadius="20"
+                                FontSize="18"
+                                Padding="10" />
+                                
+                        <!-- Display Uploaded File Name -->
+                        <Label x:Name="UploadedReceiptLabel"
+                            Text="No file uploaded"
+                            FontSize="14"
+                            TextColor="White"
+                            IsVisible="False"/>
+                    </VerticalStackLayout>
+
                     <!-- Divide Dropdown -->
                     <VerticalStackLayout>
                         <Label Text="Divide:"
