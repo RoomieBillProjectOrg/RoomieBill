@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Refit;
+using Roomiebill.Server.Common;
 using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Facades;
@@ -12,12 +13,14 @@ namespace Roomiebill.Server.Services
         public readonly GroupFacade _groupFacade;
         private readonly UserFacade _userFacade;
         private readonly ILogger<GroupFacade> _groupFacadeLogger;
+        private readonly GeminiService _geminiService;
 
-        public GroupService(IApplicationDbContext groupsDb, ILogger<GroupFacade> groupFacadeLogger, UserService userService)
+        public GroupService(IApplicationDbContext groupsDb, ILogger<GroupFacade> groupFacadeLogger, UserService userService, GeminiService geminiService)
         {
             _userFacade = userService._userFacade;
             _groupFacade = new GroupFacade(groupsDb, groupFacadeLogger, _userFacade);
             _groupFacadeLogger = groupFacadeLogger;
+            _geminiService = geminiService;
         }
 
         public async Task<Group> CreateNewGroupAsync(CreateNewGroupDto group)
@@ -93,6 +96,10 @@ namespace Roomiebill.Server.Services
         public async Task SnoozeMemberToPayAsync(SnoozeToPayDto snoozeInfo)
         {
             await _groupFacade.snoozeToUsernameAsync(snoozeInfo.snoozeToUsername, snoozeInfo.snoozeInfo);
+        }
+        public async Task<string> GetFeedbackFromGeminiAsync(string prompt)
+        {
+            return await _geminiService.GetFeedbackFromGeminiAsync(prompt);
         }
     }
 }
