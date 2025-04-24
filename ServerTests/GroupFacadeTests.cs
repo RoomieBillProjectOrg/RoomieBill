@@ -375,6 +375,101 @@ namespace ServerTests
 
         #endregion
 
+        # region ExitGroupAsync
+        
+        [Fact]
+        public async Task ExitGroup_UserHasNoDebts_ShouldSucceed()
+        {
+            // Arrange
+            var mockLogger = new Mock<ILogger<GroupFacade>>();
+            var mockUserFacade = new Mock<IUserFacade>();
+            var mockDbContext = new Mock<IApplicationDbContext>();
+
+            var user = new User { Id = 1, Username = "testUser" };
+            var admin = new User { Id = 2, Username = "admin" };
+            var group = new Group("TestGroup", admin, new List<User> { admin, user });
+
+            mockDbContext.Setup(db => db.GetGroupByIdAsync(1))
+                .ReturnsAsync(group);
+            mockUserFacade.Setup(uf => uf.GetUserByIdAsync(1))
+                .ReturnsAsync(user);
+
+            var groupFacade = new GroupFacade(mockDbContext.Object, mockLogger.Object, mockUserFacade.Object);
+
+            // Act
+            await groupFacade.ExitGroupAsync(1, 1);
+
+            // Assert
+            mockDbContext.Verify(db => db.UpdateGroupAsync(It.IsAny<Group>()), Times.Once);
+            Assert.DoesNotContain(user, group.Members);
+        }
+
+        [Fact]
+        public async Task ExitGroup_UserHasDebts_ShouldThrowException()
+        {
+            // Arrange
+            var mockLogger = new Mock<ILogger<GroupFacade>>();
+            var mockUserFacade = new Mock<IUserFacade>();
+            var mockDbContext = new Mock<IApplicationDbContext>();
+
+            var user = new User { Id = 1, Username = "testUser" };
+            var admin = new User { Id = 2, Username = "admin" };
+            var group = new Group("TestGroup", admin, new List<User> { admin, user });
+
+            // Add a debt to the user
+            var expense = new Expense
+            {
+                Amount = 100,
+                PayerId = admin.Id,
+                Payer = admin,
+                GroupId = 1,
+                Group = group,
+                ExpenseSplits = new List<ExpenseSplit>
+                {
+                    new ExpenseSplit { UserId = user.Id, User = user, Amount = 50 },
+                    new ExpenseSplit { UserId = admin.Id, User = admin, Amount = 50 }
+                },
+                Category = Category.Other,
+                Description = "Test expense"
+            };
+            group.AddExpense(expense);
+
+            mockDbContext.Setup(db => db.GetGroupByIdAsync(1))
+                .ReturnsAsync(group);
+            mockUserFacade.Setup(uf => uf.GetUserByIdAsync(1))
+                .ReturnsAsync(user);
+
+            var groupFacade = new GroupFacade(mockDbContext.Object, mockLogger.Object, mockUserFacade.Object);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<Exception>(() => groupFacade.ExitGroupAsync(1, 1));
+        }
+
+        [Fact]
+        public async Task ExitGroup_AdminAttempt_ShouldThrowException()
+        {
+            // Arrange
+            var mockLogger = new Mock<ILogger<GroupFacade>>();
+            var mockUserFacade = new Mock<IUserFacade>();
+            var mockDbContext = new Mock<IApplicationDbContext>();
+
+            var admin = new User { Id = 1, Username = "admin" };
+            var group = new Group("TestGroup", admin, new List<User> { admin });
+
+            mockDbContext.Setup(db => db.GetGroupByIdAsync(1))
+                .ReturnsAsync(group);
+            mockUserFacade.Setup(uf => uf.GetUserByIdAsync(1))
+                .ReturnsAsync(admin);
+
+            var groupFacade = new GroupFacade(mockDbContext.Object, mockLogger.Object, mockUserFacade.Object);
+
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<Exception>(() => groupFacade.ExitGroupAsync(1, 1));
+            Assert.Equal("Admin cannot exit the group. Transfer admin role first or delete the group.", exception.Message);
+        }
+
+        # endregion
+
         #region Helper Methods
 
         private Expense MapToEntity(ExpenseDto dto)

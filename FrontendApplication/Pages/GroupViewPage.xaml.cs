@@ -25,6 +25,7 @@ public partial class GroupViewPage : ContentPage
     public ObservableCollection<PaymentReminderModel> PaymentReminders { get; set; } = new ObservableCollection<PaymentReminderModel>();
     public bool HasPaymentReminders => PaymentReminders.Count > 0;
     public ICommand DeleteReminderCommand { get; }
+    public bool IsNotAdmin => _group?.Admin?.Id != _currentUser?.Id;
 
     public GroupModel _group { get; set; }
     public UserModel _currentUser { get; }
@@ -286,6 +287,27 @@ public partial class GroupViewPage : ContentPage
         catch (Exception ex)
         {
             await DisplayAlert("Error", $"Failed to get feedback: {ex.Message}", "OK");
+        }
+    }
+
+    private async void OnExitGroupClicked(object sender, EventArgs e)
+    {
+        bool confirm = await DisplayAlert("Confirm Exit", 
+            "Are you sure you want to exit the group? You won't be able to rejoin unless invited again.", 
+            "Yes", "No");
+
+        if (confirm)
+        {
+            try
+            {
+                await _groupService.ExitGroupAsync(_currentUser.Id, _group.Id);
+                await DisplayAlert("Success", "Successfully left the group", "OK");
+                await Navigation.PopAsync(); // Go back to previous page
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", ex.Message, "OK");
+            }
         }
     }
 
