@@ -341,6 +341,50 @@ namespace Roomiebill.Server.Facades
             return (List<Expense>)group.Expenses;
         }
 
+        public async Task ExitGroupAsync(int userId, int groupId)
+        {
+            // Get user and group
+            User? user = await _userFacade.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                _logger.LogError($"Error when trying to exit group: user with id {userId} does not exist.");
+                throw new Exception($"User with id {userId} does not exist.");
+            }
+
+            Group? group = await GetGroupByIdAsync(groupId);
+            if (group == null)
+            {
+                _logger.LogError($"Error when trying to exit group: group with id {groupId} does not exist.");
+                throw new Exception($"Group with id {groupId} does not exist.");
+            }
+
+            // Check if user is in group
+            if (!IsUserInGroup(user, group))
+            {
+                _logger.LogError($"Error when trying to exit group: user with id {userId} is not a member of group with id {groupId}.");
+                throw new Exception($"User is not a member of this group.");
+            }
+
+            // Check if user is admin
+            if (group.Admin.Id == userId)
+            {
+                _logger.LogError($"Error when trying to exit group: user with id {userId} is the admin of group with id {groupId}.");
+                throw new Exception($"Admin cannot exit the group. Transfer admin role first or delete the group.");
+            }
+
+            // Check if user can exit (no debts)
+            if (!group.CanUserExitGroup(userId))
+            {
+                _logger.LogError($"Error when trying to exit group: user with id {userId} has unsettled debts in group with id {groupId}.");
+                throw new Exception($"Cannot exit group with unsettled debts.");
+            }
+
+            // Remove user from group
+            await RemoveMemberAsync(user, groupId);
+
+            _logger.LogInformation($"User with id {userId} exited group with id {groupId} successfully.");
+        }
+
         #endregion
     }
 }

@@ -153,6 +153,20 @@ namespace Roomiebill.Server.Controllers
             }
         }
 
+        [HttpPost("exitGroup")]
+        public async Task<IActionResult> ExitGroup([FromQuery] int userId, [FromQuery] int groupId)
+        {
+            try
+            {
+                await _groupService.ExitGroupAsync(userId, groupId);
+                return Ok(new { Message = "Successfully left the group" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
     }
 
 }
