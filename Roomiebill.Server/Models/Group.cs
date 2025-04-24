@@ -243,5 +243,14 @@ namespace Roomiebill.Server.Models
             }
             return Members.FirstOrDefault(m => m.Id == userId);
         }
+
+        public bool CanUserExitGroup(int userId)
+        {
+            // Check if user has any debts or is owed any money
+            var debtsOwed = GetDebtsOwedByUser(userId);
+            var debtsToReceive = GetDebtsForUser(userId);
+
+            return debtsOwed.Count == 0 && debtsToReceive.Count == 0;
+        }
     }
 }

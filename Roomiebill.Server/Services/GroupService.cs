@@ -101,5 +101,10 @@ namespace Roomiebill.Server.Services
         {
             return await _geminiService.GetFeedbackFromGeminiAsync(prompt);
         }
+
+        public async Task ExitGroupAsync(int userId, int groupId)
+        {
+            await _groupFacade.ExitGroupAsync(userId, groupId);
+        }
     }
 }

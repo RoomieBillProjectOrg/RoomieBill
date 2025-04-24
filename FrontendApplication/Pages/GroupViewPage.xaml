@@ -236,6 +236,19 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
+
+                <!-- Exit Group Button -->
+                <Button Text="Exit Group"
+                        BackgroundColor="#DC3545"
+                        TextColor="#FFFFFF"
+                        FontSize="16"
+                        CornerRadius="10"
+                        WidthRequest="200"
+                        HeightRequest="50"
+                        HorizontalOptions="Center"
+                        Margin="0,20,0,0"
+                        IsVisible="{Binding IsNotAdmin}"
+                        Clicked="OnExitGroupClicked" />
             </VerticalStackLayout>
 
         </VerticalStackLayout>

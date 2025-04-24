@@ -99,4 +99,14 @@ public class GroupServiceApi
         var geminiAnswer = await response.Content.ReadAsStringAsync();
         return geminiAnswer;
     }
+
+    public async Task ExitGroupAsync(int userId, int groupId) {
+        var response = await _httpClient.PostAsync($"{_httpClient.BaseAddress}/Groups/exitGroup?userId={userId}&groupId={groupId}", null);
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorContent = await response.Content.ReadAsStringAsync();
+            var errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(errorContent);
+            throw new Exception(errorResponse.Message);
+        }
+    }
 }
