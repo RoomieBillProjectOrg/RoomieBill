@@ -1,3 +1,4 @@
+using Roomiebill.Server.Common.Enums;
 using Roomiebill.Server.Models;
 using Xunit;
 
@@ -39,7 +40,9 @@ namespace ServerTests
                 ExpenseSplits = new List<ExpenseSplit>
                 {
                     new ExpenseSplit { UserId = user.Id, User = user, Amount = 50 }
-                }
+                },
+                Category = Category.Other,
+                Description = "Test expense"
             };
             group.AddExpense(expense);
 
@@ -69,7 +72,9 @@ namespace ServerTests
                 ExpenseSplits = new List<ExpenseSplit>
                 {
                     new ExpenseSplit { UserId = admin.Id, User = admin, Amount = 50 }
-                }
+                },
+                Category = Category.Other,
+                Description = "Test expense"
             };
             group.AddExpense(expense);
 
@@ -99,7 +104,9 @@ namespace ServerTests
                 ExpenseSplits = new List<ExpenseSplit>
                 {
                     new ExpenseSplit { UserId = user.Id, User = user, Amount = 50 }
-                }
+                },
+                Category = Category.Other,
+                Description = "Test expense"
             };
             group.AddExpense(expense);
 
