@@ -426,7 +426,8 @@ namespace ServerTests
                 Group = group,
                 ExpenseSplits = new List<ExpenseSplit>
                 {
-                    new ExpenseSplit { UserId = user.Id, User = user, Amount = 50 }
+                    new ExpenseSplit { UserId = user.Id, User = user, Amount = 50 },
+                    new ExpenseSplit { UserId = admin.Id, User = admin, Amount = 50 }
                 },
                 Category = Category.Other,
                 Description = "Test expense"
