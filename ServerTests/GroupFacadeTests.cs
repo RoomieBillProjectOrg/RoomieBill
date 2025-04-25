@@ -180,7 +180,7 @@ namespace ServerTests
             double debt20 = group.getDebtBetweenUsers(2, 0);//0
             double debt21 = group.getDebtBetweenUsers(2, 1);//30
 
-            Assert.Equal(50, debt01 + debt21);
+            Assert.Equal(60, debt01 + debt21);
             Assert.Equal(0, debt10 + debt20 + debt02);
             Assert.Equal(20, debt01);
             Assert.Equal(30, debt21);
