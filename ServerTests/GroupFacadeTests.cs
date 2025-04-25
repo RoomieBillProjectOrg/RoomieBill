@@ -182,7 +182,7 @@ namespace ServerTests
 
             Assert.Equal(60, debt01 + debt21);
             Assert.Equal(0, debt10 + debt20 + debt02);
-            Assert.Equal(20, debt01);
+            Assert.Equal(30, debt01);
             Assert.Equal(30, debt21);
             Assert.Equal(expenseDto.Amount, addedExpense.Amount);
             Assert.Equal(expenseDto.Description, addedExpense.Description);
