@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using Microsoft.Extensions.Logging;
+﻿﻿using Microsoft.Extensions.Logging;
 using Moq;
 using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.DataAccessLayer.Dtos;
@@ -375,8 +375,107 @@ namespace ServerTests
 
         #endregion
 
-        # region ExitGroupAsync
-        
+        #region DeleteGroupAsync
+
+        [Fact]
+        public async Task DeleteGroup_WithPendingInvites_ShouldDeleteInvites()
+        {
+            // Arrange
+            var mockLogger = new Mock<ILogger<GroupFacade>>();
+            var mockUserFacade = new Mock<IUserFacade>();
+            var mockDbContext = new Mock<IApplicationDbContext>();
+
+            var admin = new User { Id = 1, Username = "admin" };
+            var member = new User { Id = 2, Username = "member" };
+            var group = new Group("TestGroup", admin, new List<User> { admin, member });
+            group.Id = 1;
+
+            mockDbContext.Setup(db => db.GetGroupByIdAsync(1))
+                .ReturnsAsync(group);
+
+            var groupFacade = new GroupFacade(mockDbContext.Object, mockLogger.Object, mockUserFacade.Object);
+
+            // Act
+            await groupFacade.DeleteGroupAsync(1, admin.Id);
+
+            // Assert
+            mockDbContext.Verify(db => db.DeleteInvitesByGroupIdAsync(1), Times.Once);
+            mockDbContext.Verify(db => db.DeleteGroupAsync(1), Times.Once);
+        }
+
+        [Fact]
+        public async Task DeleteGroup_WithoutPendingInvites_ShouldDeleteGroup()
+        {
+            // Arrange
+            var mockLogger = new Mock<ILogger<GroupFacade>>();
+            var mockUserFacade = new Mock<IUserFacade>();
+            var mockDbContext = new Mock<IApplicationDbContext>();
+            var admin = new User { Id = 1, Username = "admin" };
+            var group = new Group("TestGroup", admin, new List<User> { admin });
+            group.Id = 1;
+            mockDbContext.Setup(db => db.GetGroupByIdAsync(1))
+                .ReturnsAsync(group);
+            var groupFacade = new GroupFacade(mockDbContext.Object, mockLogger.Object, mockUserFacade.Object);
+            // Act
+            await groupFacade.DeleteGroupAsync(1, admin.Id);
+            // Assert
+            mockDbContext.Verify(db => db.DeleteGroupAsync(1), Times.Once);
+        }
+
+        [Fact]
+        public async Task DeleteGroup_GroupNotFound_ShouldThrowException()
+        {
+            // Arrange
+            var mockLogger = new Mock<ILogger<GroupFacade>>();
+            var mockUserFacade = new Mock<IUserFacade>();
+            var mockDbContext = new Mock<IApplicationDbContext>();
+            var admin = new User { Id = 1, Username = "admin" };
+            mockDbContext.Setup(db => db.GetGroupByIdAsync(1))
+                .ReturnsAsync((Group?)null);
+            var groupFacade = new GroupFacade(mockDbContext.Object, mockLogger.Object, mockUserFacade.Object);
+            // Act & Assert
+            await Assert.ThrowsAsync<Exception>(() => groupFacade.DeleteGroupAsync(1, admin.Id));
+        }
+
+        [Fact]
+        public async Task DeleteGroup_GroupHasDebts_ShouldThrowException()
+        {
+            // Arrange
+            var mockLogger = new Mock<ILogger<GroupFacade>>();
+            var mockUserFacade = new Mock<IUserFacade>();
+            var mockDbContext = new Mock<IApplicationDbContext>();
+            var admin = new User { Id = 1, Username = "admin" };
+            var user = new User { Id = 2, Username = "user" };
+            var group = new Group("TestGroup", admin, new List<User> { admin, user });
+            group.Id = 1;
+            // Add a debt to the user
+            var expense = new Expense
+            {
+                Amount = 100,
+                PayerId = admin.Id,
+                Payer = admin,
+                GroupId = 1,
+                Group = group,
+                ExpenseSplits = new List<ExpenseSplit>
+                {
+                    new ExpenseSplit { UserId = user.Id, User = user, Amount = 60 },
+                    new ExpenseSplit { UserId = admin.Id, User = admin, Amount = 40 }
+                },
+                Category = Category.Other,
+                Description = "Test expense"
+            };
+            group.AddExpense(expense);
+            mockDbContext.Setup(db => db.GetGroupByIdAsync(1))
+                .ReturnsAsync(group);
+            var groupFacade = new GroupFacade(mockDbContext.Object, mockLogger.Object, mockUserFacade.Object);
+            // Act & Assert
+            await Assert.ThrowsAsync<Exception>(() => groupFacade.DeleteGroupAsync(1, admin.Id));
+        }
+
+        #endregion
+
+        #region ExitGroupAsync
+
         [Fact]
         public async Task ExitGroup_UserHasNoDebts_ShouldSucceed()
         {
@@ -426,8 +525,8 @@ namespace ServerTests
                 Group = group,
                 ExpenseSplits = new List<ExpenseSplit>
                 {
-                    new ExpenseSplit { UserId = user.Id, User = user, Amount = 50 },
-                    new ExpenseSplit { UserId = admin.Id, User = admin, Amount = 50 }
+                    new ExpenseSplit { UserId = user.Id, User = user, Amount = 60 },
+                    new ExpenseSplit { UserId = admin.Id, User = admin, Amount = 40 }
                 },
                 Category = Category.Other,
                 Description = "Test expense"
