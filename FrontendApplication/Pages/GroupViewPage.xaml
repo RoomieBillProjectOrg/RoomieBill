@@ -249,6 +249,27 @@
                         Margin="0,20,0,0"
                         IsVisible="{Binding IsNotAdmin}"
                         Clicked="OnExitGroupClicked" />
+
+                <!-- Delete Group Button - Admin Only -->
+                <Button Text="Delete Group"
+                        BackgroundColor="#FF0000"
+                        TextColor="#FFFFFF"
+                        FontSize="16"
+                        FontAttributes="Bold"
+                        CornerRadius="10"
+                        WidthRequest="200"
+                        HeightRequest="50"
+                        HorizontalOptions="Center"
+                        Margin="0,20,0,0"
+                        IsVisible="{Binding IsAdmin}"
+                        Clicked="OnDeleteGroupClicked">
+                    <Button.Shadow>
+                        <Shadow Brush="#FF0000"
+                               Offset="0,2"
+                               Opacity="0.5"
+                               Radius="4"/>
+                    </Button.Shadow>
+                </Button>
             </VerticalStackLayout>
 
         </VerticalStackLayout>

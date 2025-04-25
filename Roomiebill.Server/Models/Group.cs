@@ -252,5 +252,17 @@ namespace Roomiebill.Server.Models
 
             return debtsOwed.Count == 0 && debtsToReceive.Count == 0;
         }
+
+        public bool CanDeleteGroup()
+        {
+            // Check for any debts between any members
+            foreach (var member in Members)
+            {
+                // If any member has debts or is owed money, group cannot be deleted
+                if (!CanUserExitGroup(member.Id))
+                    return false;
+            }
+            return true;
+        }
     }
 }
