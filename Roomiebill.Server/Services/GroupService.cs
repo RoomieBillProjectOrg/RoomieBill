@@ -106,5 +106,10 @@ namespace Roomiebill.Server.Services
         {
             await _groupFacade.ExitGroupAsync(userId, groupId);
         }
+
+        public async Task DeleteGroupAsync(int groupId, int requestingUserId)
+        {
+            await _groupFacade.DeleteGroupAsync(groupId, requestingUserId);
+        }
     }
 }

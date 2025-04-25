@@ -153,6 +153,20 @@ namespace Roomiebill.Server.Controllers
             }
         }
 
+        [HttpPost("deleteGroup")]
+        public async Task<IActionResult> DeleteGroup([FromQuery] int groupId, [FromQuery] int userId)
+        {
+            try
+            {
+                await _groupService.DeleteGroupAsync(groupId, userId);
+                return Ok(new { Message = "Group successfully deleted" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
         [HttpPost("exitGroup")]
         public async Task<IActionResult> ExitGroup([FromQuery] int userId, [FromQuery] int groupId)
         {
