@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿using Microsoft.EntityFrameworkCore;
+﻿﻿﻿using Microsoft.EntityFrameworkCore;
 using Roomiebill.Server.Facades;
 using Roomiebill.Server.Models;
 
@@ -257,6 +257,26 @@ namespace Roomiebill.Server.DataAccessLayer
                 .Include(r => r.User)
                 .Include(r => r.Group)
                 .FirstOrDefaultAsync(r => r.Id == reminderId);
+        }
+
+        public async Task DeleteGroupAsync(int groupId)
+        {
+            var group = await Groups.FindAsync(groupId);
+            if (group != null)
+            {
+                Groups.Remove(group);
+                await SaveChangesAsync();
+            }
+        }
+
+        public async Task DeleteInvitesByGroupIdAsync(int groupId)
+        {
+            var invites = await Invites.Where(i => i.Group.Id == groupId).ToListAsync();
+            if (invites.Any())
+            {
+                Invites.RemoveRange(invites);
+                await SaveChangesAsync();
+            }
         }
     }
 }

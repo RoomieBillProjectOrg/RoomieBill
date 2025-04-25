@@ -26,6 +26,7 @@ public partial class GroupViewPage : ContentPage
     public bool HasPaymentReminders => PaymentReminders.Count > 0;
     public ICommand DeleteReminderCommand { get; }
     public bool IsNotAdmin => _group?.Admin?.Id != _currentUser?.Id;
+    public bool IsAdmin => _group?.Admin?.Id == _currentUser?.Id;
 
     public GroupModel _group { get; set; }
     public UserModel _currentUser { get; }
@@ -287,6 +288,27 @@ public partial class GroupViewPage : ContentPage
         catch (Exception ex)
         {
             await DisplayAlert("Error", $"Failed to get feedback: {ex.Message}", "OK");
+        }
+    }
+
+    private async void OnDeleteGroupClicked(object sender, EventArgs e)
+    {
+        bool confirm = await DisplayAlert("Delete Group", 
+            "Are you sure you want to delete this group? This action cannot be undone, and all members will be notified.", 
+            "Yes", "No");
+
+        if (confirm)
+        {
+            try
+            {
+                await _groupService.DeleteGroupAsync(_group.Id, _currentUser.Id);
+                await DisplayAlert("Success", "Group successfully deleted", "OK");
+                await Navigation.PopAsync(); // Go back to previous page
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", ex.Message, "OK");
+            }
         }
     }
 

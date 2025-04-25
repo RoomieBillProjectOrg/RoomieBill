@@ -294,6 +294,34 @@ namespace Roomiebill.Server.Facades
             NotificationsHandle.SendNotificationByTokenAsync("Pay Reminder", snoozeInfo, userToSnooze.FirebaseToken);
         }
 
+        public async Task DeleteGroupAsync(int groupId, int requestingUserId)
+        {
+            // Get the group
+            Group? group = await GetGroupByIdAsync(groupId);
+            
+            // Check if requesting user is admin
+            if (group.Admin.Id != requestingUserId)
+            {
+                _logger.LogError($"Error when trying to delete group: user with id {requestingUserId} is not the admin of group with id {groupId}.");
+                throw new Exception($"Only the group admin can delete the group.");
+            }
+
+            // Check if group can be deleted (no debts)
+            if (!group.CanDeleteGroup())
+            {
+                _logger.LogError($"Error when trying to delete group: group with id {groupId} has unsettled debts.");
+                throw new Exception($"Cannot delete group while there are unsettled debts.");
+            }
+
+            // Delete any pending invites for the group
+            await _applicationDbs.DeleteInvitesByGroupIdAsync(groupId);
+
+            // Delete the group
+            await _applicationDbs.DeleteGroupAsync(groupId);
+
+            _logger.LogInformation($"Group with id {groupId} and all its pending invites deleted successfully by admin (id: {requestingUserId}).");
+        }
+
         #region Help functions
 
         private async Task<Expense> MapToEntity(ExpenseDto dto)
