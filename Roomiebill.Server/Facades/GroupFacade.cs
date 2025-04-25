@@ -313,23 +313,6 @@ namespace Roomiebill.Server.Facades
                 throw new Exception($"Cannot delete group while there are unsettled debts.");
             }
 
-            // Get all members except admin for notifications
-            var membersToNotify = group.GetAllMembersExceptAdmin();
-
-            // Send notifications to all members
-            foreach (var member in membersToNotify)
-            {
-                // Send mobile notification
-                NotificationsHandle.SendNotificationByTokenAsync(
-                    "Group Deleted",
-                    $"The group '{group.GroupName}' has been deleted by the admin.",
-                    member.FirebaseToken
-                );
-
-                // Send email notification - assuming you have an email service
-                // TODO: Add email notification implementation
-            }
-
             // Delete any pending invites for the group
             await _applicationDbs.DeleteInvitesByGroupIdAsync(groupId);
 

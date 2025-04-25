@@ -264,10 +264,5 @@ namespace Roomiebill.Server.Models
             }
             return true;
         }
-
-        public List<User> GetAllMembersExceptAdmin()
-        {
-            return Members.Where(m => m.Id != Admin.Id).ToList();
-        }
     }
 }

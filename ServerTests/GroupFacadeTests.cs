@@ -151,7 +151,7 @@ namespace ServerTests
                     new ExpenseSplitDto { UserId = 1, Amount = 40.0 },
                     new ExpenseSplitDto { UserId = 2, Amount = 30.0 }
                 },
-                Category = Category.Electricity
+                Category = Category.Other
             };
             User payer = new User("payer", "payer@bgu.ac.il", "payerPassword!1","https://bit-demo-link.com");
             User user1 = new User("user1", "user1@bgu.ac.il", "user1Password!1","https://bit-demo-link.com");
