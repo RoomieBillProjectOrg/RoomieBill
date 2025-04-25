@@ -1,4 +1,4 @@
-﻿﻿using Microsoft.Extensions.Logging;
+﻿﻿﻿using Microsoft.Extensions.Logging;
 using Moq;
 using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.DataAccessLayer.Dtos;
@@ -147,11 +147,11 @@ namespace ServerTests
                 GroupId = groupId,
                 ExpenseSplits = new List<ExpenseSplitDto>
                 {
-                    new ExpenseSplitDto { UserId = 0, Amount = 20.0 },
-                    new ExpenseSplitDto { UserId = 1, Amount = 50.0 },
+                    new ExpenseSplitDto { UserId = 0, Amount = 30.0 },
+                    new ExpenseSplitDto { UserId = 1, Amount = 40.0 },
                     new ExpenseSplitDto { UserId = 2, Amount = 30.0 }
                 },
-                Category = Category.Other
+                Category = Category.Electricity
             };
             User payer = new User("payer", "payer@bgu.ac.il", "payerPassword!1","https://bit-demo-link.com");
             User user1 = new User("user1", "user1@bgu.ac.il", "user1Password!1","https://bit-demo-link.com");
@@ -385,8 +385,18 @@ namespace ServerTests
             var mockUserFacade = new Mock<IUserFacade>();
             var mockDbContext = new Mock<IApplicationDbContext>();
 
-            var admin = new User { Id = 1, Username = "admin" };
-            var member = new User { Id = 2, Username = "member" };
+            var admin = new User 
+            { 
+                Id = 1, 
+                Username = "admin",
+                FirebaseToken = "valid_firebase_token_1" 
+            };
+            var member = new User 
+            { 
+                Id = 2, 
+                Username = "member",
+                FirebaseToken = "valid_firebase_token_2"
+            };
             var group = new Group("TestGroup", admin, new List<User> { admin, member });
             group.Id = 1;
 
@@ -410,7 +420,12 @@ namespace ServerTests
             var mockLogger = new Mock<ILogger<GroupFacade>>();
             var mockUserFacade = new Mock<IUserFacade>();
             var mockDbContext = new Mock<IApplicationDbContext>();
-            var admin = new User { Id = 1, Username = "admin" };
+            var admin = new User 
+            { 
+                Id = 1, 
+                Username = "admin",
+                FirebaseToken = "valid_firebase_token_1"
+            };
             var group = new Group("TestGroup", admin, new List<User> { admin });
             group.Id = 1;
             mockDbContext.Setup(db => db.GetGroupByIdAsync(1))
@@ -429,7 +444,12 @@ namespace ServerTests
             var mockLogger = new Mock<ILogger<GroupFacade>>();
             var mockUserFacade = new Mock<IUserFacade>();
             var mockDbContext = new Mock<IApplicationDbContext>();
-            var admin = new User { Id = 1, Username = "admin" };
+            var admin = new User 
+            { 
+                Id = 1, 
+                Username = "admin",
+                FirebaseToken = "valid_firebase_token_1"
+            };
             mockDbContext.Setup(db => db.GetGroupByIdAsync(1))
                 .ReturnsAsync((Group?)null);
             var groupFacade = new GroupFacade(mockDbContext.Object, mockLogger.Object, mockUserFacade.Object);
@@ -444,8 +464,18 @@ namespace ServerTests
             var mockLogger = new Mock<ILogger<GroupFacade>>();
             var mockUserFacade = new Mock<IUserFacade>();
             var mockDbContext = new Mock<IApplicationDbContext>();
-            var admin = new User { Id = 1, Username = "admin" };
-            var user = new User { Id = 2, Username = "user" };
+            var admin = new User 
+            { 
+                Id = 1, 
+                Username = "admin", 
+                FirebaseToken = "valid_firebase_token_1"
+            };
+            var user = new User 
+            { 
+                Id = 2, 
+                Username = "user",
+                FirebaseToken = "valid_firebase_token_2"
+            };
             var group = new Group("TestGroup", admin, new List<User> { admin, user });
             group.Id = 1;
             // Add a debt to the user
