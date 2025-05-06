@@ -1,3 +1,4 @@
+using Google.Cloud.DocumentAI.V1;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Roomiebill.Server.Services;
@@ -51,6 +52,27 @@ namespace Roomiebill.Server.Controllers{
                 if (extension == ".pdf") contentType = "application/pdf";
 
                 return File(receiptBytes, contentType, fileName);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error downloading file: {ex.Message}");
+            }
+        }
+
+        [HttpGet("extract/{fileName}")]
+        public async Task<IActionResult> ExtractData(string fileName)
+        {
+            try
+            {
+                // Get the content type based on the file extension (optional)
+                string contentType = "application/octet-stream"; // Default
+                string extension = Path.GetExtension(fileName).ToLower();
+                if (extension == ".jpg" || extension == ".jpeg") contentType = "image/jpeg";
+                if (extension == ".png") contentType = "image/png";
+                if (extension == ".pdf") contentType = "application/pdf";
+
+                Document document = _fileStorageService.ExtractDataWithProcessor(fileName, contentType);
+                return Ok(document.Text);
             }
             catch (Exception ex)
             {

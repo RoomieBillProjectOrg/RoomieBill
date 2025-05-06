@@ -92,6 +92,14 @@ namespace FrontendApplication.Popups
                 if (result != null)
                 {
                     receiptFilePath = result.FullPath;
+                    receiptUrl = await _uploadService.UploadReceiptAsync(receiptFilePath);
+
+                    // Extract Info from file
+                    var selectedCategory = (Category)Enum.Parse(typeof(Category), CategoryPicker.SelectedItem.ToString());
+                    if (selectedCategory != Category.Other){
+                        // Try to extract the data using uploadService
+                        var data = await _uploadService.ExtractData(receiptUrl);
+                    }
 
                     // ✅ Update button UI to indicate success
                     UploadedReceiptLabel.Text = "[Click to select another file]";
