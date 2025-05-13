@@ -62,6 +62,7 @@ public class FileUploadService
             }.Build();
 
         // Read in local file
+        filePath = Path.Combine(_storagePath, filePath);
         using var fileStream = File.OpenRead(filePath);
         var rawDocument = new RawDocument
         {

@@ -86,7 +86,11 @@ namespace FrontendApplication.Popups
                 var result = await FilePicker.PickAsync(new PickOptions
                 {
                     PickerTitle = "Select a Receipt",
-                    FileTypes = FilePickerFileType.Images
+                    FileTypes = new FilePickerFileType(new Dictionary<DevicePlatform, IEnumerable<string>>
+                    {
+                        //{ DevicePlatform.iOS, new[] { "public.image", "com.adobe.pdf" } }, // Only if we decide to support ios later.
+                        { DevicePlatform.Android, new[] { "image/*", "application/pdf" } }
+                    })
                 });
 
                 if (result != null)
