@@ -71,7 +71,7 @@ namespace Roomiebill.Server.Controllers{
                 if (extension == ".png") contentType = "image/png";
                 if (extension == ".pdf") contentType = "application/pdf";
 
-                Document document = _fileStorageService.ExtractDataWithProcessor(fileName, contentType);
+                Document document = await _fileStorageService.ExtractDataWithProcessor(fileName, contentType);
                 return Ok(document.Text);
             }
             catch (Exception ex)
