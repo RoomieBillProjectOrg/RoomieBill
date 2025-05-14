@@ -111,5 +111,9 @@ namespace Roomiebill.Server.Services
         {
             await _groupFacade.DeleteGroupAsync(groupId, requestingUserId);
         }
+        public async Task<string> ExtractDataFromTextWithGeminiAsync(string prompt)
+        {
+            return await _geminiService.ExtractDataFromTextWithGeminiAsync(prompt);
+        }
     }
 }

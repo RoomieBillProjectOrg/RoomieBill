@@ -12,10 +12,27 @@ public class FileUploadService
     private readonly string _storagePath;
     private const string PROJECT_ID = "august-craft-457418-g9";
     private const string LOCATION_ID = "eu";
-    private const string PROCESSOR_ID = "ce7ccb1a42598988";
+    private const string PROCESSOR_ID = "51ae6bdef6326124";
 
-    public FileUploadService()
+    private const string GEMINI_PROMPT = 
+    """
+    I will now send you the text of a bill (sometimes in Hebrew). I want you to analyze this text and extract the start date, the end date, and the total amount. Then, return this information to me in the following JSON structure: 
+    json
     {
+        "start_date": "YYYY-MM-DD",
+        "end_date": "YYYY-MM-DD",
+        "total_price": NUMBER
+    }
+    Here is the text:
+    """;
+
+    private readonly GroupService _groupService;
+
+    public FileUploadService(GroupService groupService)
+    {
+        // Set the group service
+        _groupService = groupService;
+
         // Change this path later when moving to the server
         _storagePath = Path.Combine(Directory.GetCurrentDirectory(), "StoredFiles");
 
@@ -53,7 +70,7 @@ public class FileUploadService
 	}
 
     // Extract data with processor
-    public Document ExtractDataWithProcessor(string filePath, string mimeType){
+    public async Task<Document> ExtractDataWithProcessor(string filePath, string mimeType){
         // Create client
         try{
             var client = new DocumentProcessorServiceClientBuilder
@@ -61,28 +78,31 @@ public class FileUploadService
                 Endpoint = $"{LOCATION_ID}-documentai.googleapis.com"
             }.Build();
 
-        // Read in local file
-        filePath = Path.Combine(_storagePath, filePath);
-        using var fileStream = File.OpenRead(filePath);
-        var rawDocument = new RawDocument
-        {
-            Content = ByteString.FromStream(fileStream),
-            MimeType = mimeType
-        };
+            // Read in local file
+            filePath = Path.Combine(_storagePath, filePath);
+            using var fileStream = File.OpenRead(filePath);
+            var rawDocument = new RawDocument
+            {
+                Content = ByteString.FromStream(fileStream),
+                MimeType = mimeType
+            };
 
-        // Initialize request argument(s)
-        var request = new ProcessRequest
-        {
-            Name = ProcessorName.FromProjectLocationProcessor(PROJECT_ID, LOCATION_ID, PROCESSOR_ID).ToString(),
-            RawDocument = rawDocument
-        };
+            // Initialize request argument(s)
+            var request = new ProcessRequest
+            {
+                Name = ProcessorName.FromProjectLocationProcessor(PROJECT_ID, LOCATION_ID, PROCESSOR_ID).ToString(),
+                RawDocument = rawDocument
+            };
 
-        // Make the request
-        var response = client.ProcessDocument(request);
+            // Make the request
+            var response = client.ProcessDocument(request);
 
-        var document = response.Document;
-        Console.WriteLine(document.Text);
-        return document;
+            var document = response.Document;
+            var prompt = GEMINI_PROMPT + document.Text;
+            Console.WriteLine(prompt);
+            var extracted_data = await _groupService.ExtractDataFromTextWithGeminiAsync(prompt);
+            return document;
+            
         }catch(Exception e){
             Console.Write(e.Message);
             return new Document();
