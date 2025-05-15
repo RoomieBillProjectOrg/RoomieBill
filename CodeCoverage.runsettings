@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="Code Coverage" uri="datacollector://Microsoft/CodeCoverage/2.0">
+        <Configuration>
+          <CodeCoverage>
+            <ModulePaths>
+              <Exclude>
+                <ModulePath>.*Roomiebill.Server\Migrations.*</ModulePath>
+                <ModulePath>.*Roomiebill.Server\Services\\.*\.cs</ModulePath>
+                <ModulePath>.*FrontendApplication.*</ModulePath>
+                <ModulePath>.*Program\.cs</ModulePath>
+              </Exclude>
+            </ModulePaths>
+            <Functions>
+              <Exclude>
+                <Function>.*Roomiebill.Server\Migrations.*</Function>
+                <Function>.*Roomiebill.Server\Services\\.*\.cs</Function>
+                <Function>.*FrontendApplication.*</Function>
+                <Function>.*Program\.cs</Function>
+              </Exclude>
+            </Functions>
+          </CodeCoverage>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

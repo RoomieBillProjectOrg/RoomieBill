@@ -65,9 +65,9 @@ namespace Roomiebill.Server.Common.Validators
         /// Generates a random 6-digit verification code.
         /// </summary>
         /// <returns>A string containing the 6-digit verification code.</returns>
+        private static readonly Random random = new Random();
         public static string GenerateVerificationCode()
         {
-            var random = new Random();
             return random.Next(CODE_MIN, CODE_MAX).ToString();
         }
 
