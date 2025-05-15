@@ -7,20 +7,22 @@
           <CodeCoverage>
             <ModulePaths>
               <Exclude>
-                <ModulePath>.*Roomiebill.Server\Migrations.*</ModulePath>
-                <ModulePath>.*Roomiebill.Server\Services\\.*\.cs</ModulePath>
                 <ModulePath>.*FrontendApplication.*</ModulePath>
-                <ModulePath>.*Program\.cs</ModulePath>
+                <ModulePath>.*Roomiebill.Server.Services.*</ModulePath>
               </Exclude>
             </ModulePaths>
-            <Functions>
+            <Sources>
               <Exclude>
-                <Function>.*Roomiebill.Server\Migrations.*</Function>
-                <Function>.*Roomiebill.Server\Services\\.*\.cs</Function>
-                <Function>.*FrontendApplication.*</Function>
-                <Function>.*Program\.cs</Function>
+                <Source>.*[/\\]Program\.cs</Source>
+                <Source>.*[/\\]Migrations[/\\].*\.cs$</Source>
+                <Source>.*\.Migrations\..*</Source>
               </Exclude>
-            </Functions>
+            </Sources>
+            <Attributes>
+              <Exclude>
+                <Attribute>.*Migrations.*</Attribute>
+              </Exclude>
+            </Attributes>
           </CodeCoverage>
         </Configuration>
       </DataCollector>
