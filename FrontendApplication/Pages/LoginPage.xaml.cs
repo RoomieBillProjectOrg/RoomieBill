@@ -132,11 +132,8 @@ public partial class LoginPage : ContentPage
     {
         try
         {
-            bool isValid = await CrossFirebaseCloudMessaging.Current.CheckIfValidAsync();
-            if (!isValid)
-            {
-                throw new Exception("Firebase messaging is not properly configured.");
-            }
+            await CrossFirebaseCloudMessaging.Current.CheckIfValidAsync();
+            // If CheckIfValidAsync() completes without throwing an exception, Firebase is valid
             var token = await CrossFirebaseCloudMessaging.Current.GetTokenAsync();
             if (string.IsNullOrWhiteSpace(token))
             {
