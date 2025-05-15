@@ -3,8 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Roomiebill.Server.Controllers;
 using Roomiebill.Server.Services;
+using Roomiebill.Server.Services.Interfaces;
+using System;
 using System.IO;
 using System.Text;
+using System.Text.Json;
+using System.Collections.Generic;
 using Xunit;
 
 namespace ServerTests
@@ -14,12 +18,12 @@ namespace ServerTests
     /// </summary>
     public class FileUploadControllerTests
     {
-        private readonly Mock<FileUploadService> _mockFileService;
+        private readonly Mock<IFileUploadService> _mockFileService;
         private readonly UploadController _controller;
 
         public FileUploadControllerTests()
         {
-            _mockFileService = new Mock<FileUploadService>();
+            _mockFileService = new Mock<IFileUploadService>();
             _controller = new UploadController(_mockFileService.Object);
         }
 
@@ -42,15 +46,36 @@ namespace ServerTests
 
             IActionResult result = await _controller.UploadReceipt(file);
 
-            OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
-            dynamic resultValue = okResult.Value;
-            Assert.Equal(expectedFileName, resultValue.FileName.ToString());
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var resultDict = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(
+                System.Text.Json.JsonSerializer.Serialize(okResult.Value));
+            Assert.Equal(expectedFileName, resultDict["FileName"]);
         }
 
         /// <summary>
-        /// - Tests file upload failure handling.
-        /// - Verifies appropriate error response when service throws exception.
+        /// - Tests null file upload handling.
+        /// - Verifies appropriate error response.
         /// </summary>
+        [Fact]
+        public async Task TestThatWhenNullFileThenReturnsBadRequest()
+        {
+            IActionResult result = await _controller.UploadReceipt(null);
+
+            var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Upload failed: File is null", badRequest.Value);
+        }
+
+        [Fact]
+        public async Task TestThatWhenEmptyFileThenReturnsBadRequest()
+        {
+            var emptyFile = new FormFile(Stream.Null, 0, 0, null, "test.jpg");
+
+            IActionResult result = await _controller.UploadReceipt(emptyFile);
+
+            var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Upload failed: File is empty", badRequest.Value);
+        }
+
         [Fact]
         public async Task TestThatWhenUploadFailsThenReturnsBadRequest()
         {
@@ -60,9 +85,8 @@ namespace ServerTests
 
             IActionResult result = await _controller.UploadReceipt(file);
 
-            BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
-            dynamic errorValue = badRequest.Value;
-            Assert.Contains("Upload failed", errorValue.Message.ToString());
+            var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Upload failed: File is empty", badRequest.Value);
         }
 
         /// <summary>
@@ -97,7 +121,8 @@ namespace ServerTests
 
             IActionResult result = await _controller.DownloadReceipt(fileName);
 
-            Assert.IsType<NotFoundObjectResult>(result);
+            var notFound = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Equal("File not found.", notFound.Value);
         }
 
         /// <summary>
@@ -137,9 +162,8 @@ namespace ServerTests
 
             IActionResult result = await _controller.DownloadReceipt(fileName);
 
-            BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
-            dynamic errorValue = badRequest.Value;
-            Assert.Contains(errorMessage, errorValue.Message.ToString());
+            var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal($"Error downloading file: {errorMessage}", badRequest.Value);
         }
     }
 }

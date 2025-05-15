@@ -4,6 +4,7 @@ using Roomiebill.Server.Common;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Models;
 using Roomiebill.Server.Services;
+using Roomiebill.Server.Services.Interfaces;
 
 namespace Roomiebill.Server.Controllers
 {
@@ -14,10 +15,10 @@ namespace Roomiebill.Server.Controllers
     [Route("api/[controller]")]
     public class GroupsController : ControllerBase
     {
-        private readonly GroupService _groupService;
-        private readonly GroupInviteMediatorService _groupInviteMediatorService;
+        private readonly IGroupService _groupService;
+        private readonly IGroupInviteMediatorService _groupInviteMediatorService;
 
-        public GroupsController(GroupService groupService, GroupInviteMediatorService groupInviteMediatorService, GeminiService geminiService)
+        public GroupsController(IGroupService groupService, IGroupInviteMediatorService groupInviteMediatorService, GeminiService geminiService)
         {
             _groupService = groupService;
             _groupInviteMediatorService = groupInviteMediatorService;
@@ -36,7 +37,7 @@ namespace Roomiebill.Server.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new MessageResponse { Message = ex.Message });
             }
         }
 
@@ -53,7 +54,7 @@ namespace Roomiebill.Server.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new MessageResponse { Message = ex.Message });
             }
         }
 
@@ -70,7 +71,7 @@ namespace Roomiebill.Server.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new MessageResponse { Message = ex.Message });
             }
         }
 
@@ -87,7 +88,7 @@ namespace Roomiebill.Server.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new MessageResponse { Message = ex.Message });
             }
         }
 
@@ -104,7 +105,7 @@ namespace Roomiebill.Server.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new MessageResponse { Message = ex.Message });
             }
         }
 
@@ -116,12 +117,12 @@ namespace Roomiebill.Server.Controllers
         {
             try
             {
-                await _groupService.AddExpenseAsync(expenseDto);
-                return Ok();
+                var expense = await _groupService.AddExpenseAsync(expenseDto);
+                return Ok(expense);
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new MessageResponse { Message = ex.Message });
             }
         }
 
@@ -138,7 +139,7 @@ namespace Roomiebill.Server.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new MessageResponse { Message = ex.Message });
             }
         }
 
@@ -155,7 +156,7 @@ namespace Roomiebill.Server.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new MessageResponse { Message = ex.Message });
             }
         }
 
@@ -179,7 +180,7 @@ namespace Roomiebill.Server.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new MessageResponse { Message = ex.Message });
             }
         }
 
@@ -192,11 +193,11 @@ namespace Roomiebill.Server.Controllers
             try
             {
                 await _groupService.DeleteGroupAsync(groupId, userId);
-                return Ok(new { Message = "Group successfully deleted" });
+                return Ok(new MessageResponse { Message = "Group successfully deleted" });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new MessageResponse { Message = ex.Message });
             }
         }
 
@@ -209,11 +210,11 @@ namespace Roomiebill.Server.Controllers
             try
             {
                 await _groupService.ExitGroupAsync(userId, groupId);
-                return Ok(new { Message = "Successfully left the group" });
+                return Ok(new MessageResponse { Message = "Successfully left the group" });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new MessageResponse { Message = ex.Message });
             }
         }
     }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Roomiebill.Server.Services;
+using Roomiebill.Server.Services.Interfaces;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -14,9 +15,9 @@ namespace Roomiebill.Server.Controllers
     [Route("api/[controller]")]
     public class UploadController : ControllerBase
     {
-        private readonly FileUploadService _fileStorageService;
+        private readonly IFileUploadService _fileStorageService;
 
-        public UploadController(FileUploadService fileStorageService)
+        public UploadController(IFileUploadService fileStorageService)
         {
             _fileStorageService = fileStorageService;
         }
@@ -33,6 +34,16 @@ namespace Roomiebill.Server.Controllers
         {
             try
             {
+                if (file == null)
+                {
+                    return BadRequest("Upload failed: File is null");
+                }
+
+                if (file.Length == 0)
+                {
+                    return BadRequest("Upload failed: File is empty");
+                }
+
                 string fileNameWithGuid = await _fileStorageService.SaveFileAsync(file);
                 return Ok(new { FileName = fileNameWithGuid });
             }

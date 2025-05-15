@@ -4,20 +4,21 @@ using Roomiebill.Server.Controllers;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Models;
 using Roomiebill.Server.Services;
+using Roomiebill.Server.Services.Interfaces;
 using Xunit;
 
 namespace ServerTests
 {
     public class GroupsControllerTests
     {
-        private readonly Mock<GroupService> _mockGroupService;
-        private readonly Mock<GroupInviteMediatorService> _mockMediatorService;
+        private readonly Mock<IGroupService> _mockGroupService;
+        private readonly Mock<IGroupInviteMediatorService> _mockMediatorService;
         private readonly GroupsController _controller;
 
         public GroupsControllerTests()
         {
-            _mockGroupService = new Mock<GroupService>();
-            _mockMediatorService = new Mock<GroupInviteMediatorService>();
+            _mockGroupService = new Mock<IGroupService>();
+            _mockMediatorService = new Mock<IGroupInviteMediatorService>();
             _controller = new GroupsController(_mockGroupService.Object, _mockMediatorService.Object, null);
         }
 
@@ -183,7 +184,9 @@ namespace ServerTests
             IActionResult result = await _controller.DeleteGroup(groupId, userId);
             
             OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Contains("successfully", (okResult.Value as dynamic).Message.ToString());
+            var response = okResult.Value as MessageResponse;
+            Assert.NotNull(response);
+            Assert.Contains("successfully", response.Message);
         }
 
         [Fact]
@@ -198,7 +201,9 @@ namespace ServerTests
             IActionResult result = await _controller.ExitGroup(userId, groupId);
             
             OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Contains("successfully", (okResult.Value as dynamic).Message.ToString());
+            var response = okResult.Value as MessageResponse;
+            Assert.NotNull(response);
+            Assert.Contains("Successfully left the group", response.Message);
         }
 
         [Fact]
@@ -235,7 +240,9 @@ namespace ServerTests
             IActionResult result = await _controller.GetExpensesForGroup(groupId);
             
             BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal(errorMessage, (badRequest.Value as dynamic).Message);
+            var response = badRequest.Value as MessageResponse;
+            Assert.NotNull(response);
+            Assert.Equal(errorMessage, response.Message);
         }
     }
 }

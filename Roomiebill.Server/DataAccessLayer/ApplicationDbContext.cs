@@ -1,9 +1,11 @@
 ﻿﻿﻿using Microsoft.EntityFrameworkCore;
 using Roomiebill.Server.Facades;
 using Roomiebill.Server.Models;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Roomiebill.Server.DataAccessLayer
 {
+    [ExcludeFromCodeCoverage]
     public class ApplicationDbContext : DbContext, IApplicationDbContext
     {
         // Empty constructor for tests

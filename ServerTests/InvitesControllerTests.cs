@@ -1,21 +1,24 @@
+using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Roomiebill.Server.Controllers;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Models;
 using Roomiebill.Server.Services;
+using Roomiebill.Server.Services.Interfaces;
 using Xunit;
 
 namespace ServerTests
 {
     public class InvitesControllerTests
     {
-        private readonly Mock<InviteService> _mockInviteService;
+        private readonly Mock<IInviteService> _mockInviteService;
         private readonly InvitesController _controller;
 
         public InvitesControllerTests()
         {
-            _mockInviteService = new Mock<InviteService>();
+            _mockInviteService = new Mock<IInviteService>();
             _controller = new InvitesController(_mockInviteService.Object);
         }
 
@@ -34,7 +37,9 @@ namespace ServerTests
 
             IActionResult result = await _controller.AnswerInvite(inviteAnswer);
             OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Contains("successfully", (okResult.Value as dynamic).Message.ToString());
+            var response = okResult.Value as MessageResponse;
+            Assert.NotNull(response);
+            Assert.Equal("Invite accepted successfully", response.Message);
         }
 
         [Fact]
@@ -48,7 +53,9 @@ namespace ServerTests
 
             IActionResult result = await _controller.AnswerInvite(inviteAnswer);
             BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal(errorMessage, (badRequest.Value as dynamic).Message);
+            var response = badRequest.Value as MessageResponse;
+            Assert.NotNull(response);
+            Assert.Equal(errorMessage, response.Message);
         }
 
         [Fact]
@@ -66,7 +73,9 @@ namespace ServerTests
 
             IActionResult result = await _controller.InviteToGroupByEmail(inviteDetails);
             OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Contains("successfully", (okResult.Value as dynamic).Message.ToString());
+            var response = okResult.Value as MessageResponse;
+            Assert.NotNull(response);
+            Assert.Equal("Invite sent successfully", response.Message);
         }
 
         [Fact]
@@ -80,7 +89,9 @@ namespace ServerTests
 
             IActionResult result = await _controller.InviteToGroupByEmail(inviteDetails);
             BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal(errorMessage, (badRequest.Value as dynamic).Message);
+            var response = badRequest.Value as MessageResponse;
+            Assert.NotNull(response);
+            Assert.Equal(errorMessage, response.Message);
         }
 
         [Fact]
@@ -98,7 +109,9 @@ namespace ServerTests
 
             IActionResult result = await _controller.InviteToGroupByEmail(inviteDetails);
             BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Contains("Invalid email", (badRequest.Value as dynamic).Message);
+            var response = badRequest.Value as MessageResponse;
+            Assert.NotNull(response);
+            Assert.Contains("Invalid email", response.Message);
         }
 
         [Fact]
@@ -116,7 +129,19 @@ namespace ServerTests
 
             IActionResult result = await _controller.InviteToGroupByEmail(inviteDetails);
             BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Contains("Group not found", (badRequest.Value as dynamic).Message);
+            var response = badRequest.Value as MessageResponse;
+            Assert.NotNull(response);
+            Assert.Contains("Group not found", response.Message);
+        }
+
+        [Fact]
+        public async Task TestThatWhenNullInputThenReturnsBadRequest()
+        {
+            IActionResult result = await _controller.AnswerInvite(null);
+            BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
+            var response = badRequest.Value as MessageResponse;
+            Assert.NotNull(response);
+            Assert.Contains("Invalid request", response.Message);
         }
 
         [Fact]
@@ -134,7 +159,9 @@ namespace ServerTests
 
             IActionResult result = await _controller.InviteToGroupByEmail(inviteDetails);
             BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Contains("not a member", (badRequest.Value as dynamic).Message);
+            var response = badRequest.Value as MessageResponse;
+            Assert.NotNull(response);
+            Assert.Contains("not a member", response.Message);
         }
     }
 }

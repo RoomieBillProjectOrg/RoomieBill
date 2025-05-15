@@ -11,13 +11,13 @@ namespace ServerTests
     public class PaymentControllerTests
     {
         private readonly Mock<IPaymentService> _mockPaymentService;
-        private readonly Mock<GroupService> _mockGroupService;
+        private readonly Mock<IGroupService> _mockGroupService;
         private readonly PaymentController _controller;
 
         public PaymentControllerTests()
         {
             _mockPaymentService = new Mock<IPaymentService>();
-            _mockGroupService = new Mock<GroupService>();
+            _mockGroupService = new Mock<IGroupService>();
             _controller = new PaymentController(_mockPaymentService.Object, _mockGroupService.Object);
         }
 
@@ -44,7 +44,8 @@ namespace ServerTests
             IActionResult result = await _controller.ProcessPayment(request);
 
             OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Contains("successfully", (okResult.Value as dynamic).Message.ToString());
+            var response = okResult.Value;
+            Assert.Contains("successfully", response.GetType().GetProperty("Message").GetValue(response).ToString());
         }
 
         [Fact]
@@ -66,11 +67,12 @@ namespace ServerTests
             IActionResult result = await _controller.ProcessPayment(request);
 
             BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal("Payment failed.", (badRequest.Value as dynamic).Message);
+            var response = badRequest.Value;
+            Assert.Equal("Payment failed.", response.GetType().GetProperty("Message").GetValue(response).ToString());
         }
 
         [Fact]
-        public async Task TestThatWhenPaymentSucceedsButDebtSettlementFailsThenReturnsSuccess()
+        public async Task TestThatWhenPaymentSucceedsButDebtSettlementFailsThenReturnsBadRequest()
         {
             User payer = new User { Username = "payer" };
             User payee = new User { Username = "payee" };
@@ -91,8 +93,9 @@ namespace ServerTests
 
             IActionResult result = await _controller.ProcessPayment(request);
 
-            OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Contains("successfully", (okResult.Value as dynamic).Message.ToString());
+            BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
+            var response = badRequest.Value;
+            Assert.Equal("Payment failed: Unable to settle debt.", response.GetType().GetProperty("Message").GetValue(response).ToString());
         }
 
         [Fact]
@@ -101,8 +104,9 @@ namespace ServerTests
             PaymentRequest request = new PaymentRequest
             {
                 Amount = 0,
-                PayerInfo = new User(),
-                PayeeInfo = new User()
+                PayerInfo = new User { Username = "payer" },
+                PayeeInfo = new User { Username = "payee" },
+                GroupId = 1
             };
             string errorMessage = "Payment processing error";
 
@@ -112,7 +116,8 @@ namespace ServerTests
             IActionResult result = await _controller.ProcessPayment(request);
 
             BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal("Payment failed.", (badRequest.Value as dynamic).Message);
+            var response = badRequest.Value;
+            Assert.Equal("Payment failed.", response.GetType().GetProperty("Message").GetValue(response).ToString());
         }
     }
 }
