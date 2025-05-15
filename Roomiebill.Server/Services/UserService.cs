@@ -3,16 +3,17 @@ using Roomiebill.Server.Models;
 using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Facades;
+using Roomiebill.Server.Services.Interfaces;
 
 namespace Roomiebill.Server.Services
 {
-    public class UserService
+    public class UserService : IUserService
     {
         public UserFacade _userFacade { get; }
 
-        public UserService(IApplicationDbContext usersDb, IPasswordHasher<User> passwordHasher, ILogger<UserFacade> userFacadeLogger)
+        public UserService(UserFacade userFacade)
         {
-            _userFacade = new UserFacade(usersDb, passwordHasher, userFacadeLogger);
+            _userFacade = userFacade;
         }
 
         public async Task<User> RegisterUserAsync(RegisterUserDto registerUserDto)
@@ -58,6 +59,21 @@ namespace Roomiebill.Server.Services
         public async Task<User> GetUserByIdAsync(int userId)
         {
             return await _userFacade.GetUserByIdAsync(userId);
+        }
+
+        public async Task<User> GetUserByEmailAsync(string email)
+        {
+            return await _userFacade.GetUserByEmailAsync(email);
+        }
+
+        public async Task AddGroupToUser(string username, int groupId)
+        {
+            await _userFacade.AddGroupToUser(username, groupId);
+        }
+
+        public UserFacade GetUserFacade()
+        {
+            return _userFacade;
         }
     }
 }

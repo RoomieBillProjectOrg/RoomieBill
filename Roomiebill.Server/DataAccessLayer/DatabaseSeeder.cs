@@ -3,21 +3,20 @@ using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Models;
 using Roomiebill.Server.Services;
 using System.Diagnostics.CodeAnalysis;
+using Roomiebill.Server.Services.Interfaces;
 
 namespace Roomiebill.Server.DataAccessLayer
 {
     [ExcludeFromCodeCoverage]
     public class DatabaseSeeder
     {
-        private UserService _userService;
-        private GroupService _groupService;
-        private InviteService _inviteService;
-        private GroupInviteMediatorService _groupInviteMediatorService;
+        private IUserService _userService;
+        private IInviteService _inviteService;
+        private IGroupInviteMediatorService _groupInviteMediatorService;
         private ApplicationDbContext _context;
-        public DatabaseSeeder(UserService userService, GroupService groupService, InviteService inviteService, GroupInviteMediatorService groupInviteMediatorService, ApplicationDbContext context)
+        public DatabaseSeeder(IUserService userService, IInviteService inviteService, IGroupInviteMediatorService groupInviteMediatorService, ApplicationDbContext context)
         {
             _userService = userService;
-            _groupService = groupService;
             _inviteService = inviteService;
             _groupInviteMediatorService = groupInviteMediatorService;
             _context = context;

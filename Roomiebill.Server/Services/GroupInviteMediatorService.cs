@@ -1,20 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Roomiebill.Server.DataAccessLayer.Dtos;
-using Roomiebill.Server.Facades;
 using Roomiebill.Server.Models;
+using Roomiebill.Server.Services.Interfaces;
 
 namespace Roomiebill.Server.Services
 {
-    public class GroupInviteMediatorService
+    public class GroupInviteMediatorService : IGroupInviteMediatorService
     {
         
-        private readonly GroupService _groupService;
-        private readonly InviteService _inviteService;
+        private readonly IGroupService _groupService;
+        private readonly IInviteService _inviteService;
 
-        public GroupInviteMediatorService(GroupService groupService, InviteService inviteService)
+        public GroupInviteMediatorService(IGroupService groupService, IInviteService inviteService)
         {
             _groupService = groupService;
             _inviteService = inviteService;

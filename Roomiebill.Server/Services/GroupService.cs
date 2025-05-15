@@ -5,19 +5,20 @@ using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Facades;
 using Roomiebill.Server.Models;
+using Roomiebill.Server.Services.Interfaces;
 
 namespace Roomiebill.Server.Services
 {
-    public class GroupService
+    public class GroupService : IGroupService
     {
-        public readonly GroupFacade _groupFacade;
+        private readonly GroupFacade _groupFacade;
         private readonly UserFacade _userFacade;
         private readonly ILogger<GroupFacade> _groupFacadeLogger;
         private readonly GeminiService _geminiService;
 
-        public GroupService(IApplicationDbContext groupsDb, ILogger<GroupFacade> groupFacadeLogger, UserService userService, GeminiService geminiService)
-        {
-            _userFacade = userService._userFacade;
+    public GroupService(IApplicationDbContext groupsDb, ILogger<GroupFacade> groupFacadeLogger, UserFacade userFacade, GeminiService geminiService)
+    {
+        _userFacade = userFacade;
             _groupFacade = new GroupFacade(groupsDb, groupFacadeLogger, _userFacade);
             _groupFacadeLogger = groupFacadeLogger;
             _geminiService = geminiService;
@@ -114,6 +115,11 @@ namespace Roomiebill.Server.Services
         public async Task<string> ExtractDataFromTextWithGeminiAsync(string prompt)
         {
             return await _geminiService.ExtractDataFromTextWithGeminiAsync(prompt);
+        }
+
+        public GroupFacade GetGroupFacade()
+        {
+            return _groupFacade;
         }
     }
 }
