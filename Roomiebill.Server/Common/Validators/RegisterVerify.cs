@@ -36,8 +36,13 @@ namespace Roomiebill.Server.Common.Validators
 
             var verificationCode = GenerateVerificationCode();
             var emailMessage = new MimeMessage();
+            
+            // Format sender with display name and email
             emailMessage.From.Add(new MailboxAddress(SENDER_NAME, SENDER_EMAIL));
-            emailMessage.To.Add(new MailboxAddress("", recipientEmail));
+            
+            // Add recipient email (without display name)
+            emailMessage.To.Add(new MailboxAddress(string.Empty, recipientEmail.Trim()));
+            
             emailMessage.Subject = "Verify Your Email";
             emailMessage.Body = new TextPart("plain")
             {

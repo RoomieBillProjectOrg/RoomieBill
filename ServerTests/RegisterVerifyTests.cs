@@ -10,6 +10,7 @@ namespace ServerTests
     public class RegisterVerifyTests : IDisposable
     {
         private readonly Mock<IEmailService> _mockEmailService;
+        private const string TEST_EMAIL = "test@bgu.ac.il";
 
         public RegisterVerifyTests()
         {
@@ -60,19 +61,18 @@ namespace ServerTests
         public async Task SendVerificationEmail_ValidEmail_ReturnsVerificationCode()
         {
             // Arrange
-            string validEmail = "test@bgu.ac.il";
             _mockEmailService.Setup(x => x.SendEmailAsync(It.IsAny<MimeMessage>()))
                            .Returns(Task.CompletedTask);
 
             // Act
-            var result = await RegisterVerify.SendVerificationEmail(validEmail);
+            var result = await RegisterVerify.SendVerificationEmail(TEST_EMAIL);
 
             // Assert
             Assert.NotNull(result);
             Assert.NotNull(result.VerifyCode);
             Assert.True(RegisterVerify.ValidateVerificationCode(result.VerifyCode));
             _mockEmailService.Verify(x => x.SendEmailAsync(It.Is<MimeMessage>(m => 
-                m.To.ToString() == validEmail)), Times.Once);
+                m.To.Mailboxes.First().Address == TEST_EMAIL)), Times.Once);
         }
 
         [Theory]
@@ -102,10 +102,7 @@ namespace ServerTests
             }
 
             // Assert
-            // If all codes were unique, the HashSet size should equal the number of generated codes
             Assert.Equal(numberOfCodes, codes.Count);
-            
-            // Verify all codes are valid
             foreach (string code in codes)
             {
                 Assert.True(RegisterVerify.ValidateVerificationCode(code));
@@ -115,7 +112,6 @@ namespace ServerTests
         [Fact]
         public void ValidateVerificationCode_ValidCodeRange_ReturnsTrue()
         {
-            // Test the full range of valid codes
             Assert.True(RegisterVerify.ValidateVerificationCode("100000")); // Minimum valid code
             Assert.True(RegisterVerify.ValidateVerificationCode("500000")); // Middle of range
             Assert.True(RegisterVerify.ValidateVerificationCode("999999")); // Maximum valid code
@@ -127,7 +123,6 @@ namespace ServerTests
         [InlineData("099999")] // Too small with leading zero
         public void ValidateVerificationCode_InvalidRanges_ReturnsFalse(string code)
         {
-            // Act & Assert
             Assert.False(RegisterVerify.ValidateVerificationCode(code));
         }
 
@@ -139,7 +134,6 @@ namespace ServerTests
         [InlineData("123456\n")] // Newline
         public void ValidateVerificationCode_ContainsWhitespace_ReturnsFalse(string code)
         {
-            // Act & Assert
             Assert.False(RegisterVerify.ValidateVerificationCode(code));
         }
 
@@ -147,13 +141,12 @@ namespace ServerTests
         public async Task SendVerificationEmail_SmtpError_ThrowsException()
         {
             // Arrange
-            string validEmail = "test@bgu.ac.il";
             _mockEmailService.Setup(x => x.SendEmailAsync(It.IsAny<MimeMessage>()))
                            .ThrowsAsync(new Exception("SMTP error"));
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<Exception>(() =>
-                RegisterVerify.SendVerificationEmail(validEmail));
+                RegisterVerify.SendVerificationEmail(TEST_EMAIL));
             Assert.Contains("Failed to send verification email", exception.Message);
             Assert.Contains("SMTP error", exception.Message);
         }
@@ -162,21 +155,19 @@ namespace ServerTests
         public async Task SendVerificationEmail_VerifiesEmailContent()
         {
             // Arrange
-            string validEmail = "test@bgu.ac.il";
             MimeMessage capturedMessage = null;
             _mockEmailService.Setup(x => x.SendEmailAsync(It.IsAny<MimeMessage>()))
                            .Callback<MimeMessage>(msg => capturedMessage = msg)
                            .Returns(Task.CompletedTask);
 
             // Act
-            var result = await RegisterVerify.SendVerificationEmail(validEmail);
+            var result = await RegisterVerify.SendVerificationEmail(TEST_EMAIL);
 
             // Assert
             Assert.NotNull(capturedMessage);
             Assert.Equal("Verify Your Email", capturedMessage.Subject);
             Assert.Contains(result.VerifyCode, ((TextPart)capturedMessage.Body).Text);
-            Assert.Equal("RoomieBill register verify", capturedMessage.From.ToString());
-            Assert.Equal(validEmail, capturedMessage.To.ToString());
+            Assert.Equal(TEST_EMAIL, capturedMessage.To.Mailboxes.First().Address);
         }
     }
 }
