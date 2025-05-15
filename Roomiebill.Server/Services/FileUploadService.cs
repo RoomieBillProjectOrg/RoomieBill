@@ -9,10 +9,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Identity.Client;
 using Roomiebill.Server.Models;
+using Roomiebill.Server.Services.Interfaces;
 
 namespace Roomiebill.Server.Services;
 
-public class FileUploadService
+public class FileUploadService : IFileUploadService
 {
     private readonly string _storagePath;
     private const string PROJECT_ID = "august-craft-457418-g9";

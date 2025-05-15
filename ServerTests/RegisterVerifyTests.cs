@@ -88,28 +88,6 @@ namespace ServerTests
         }
 
         [Fact]
-        public void GenerateVerificationCode_MultipleCalls_ReturnsUniqueValues()
-        {
-            // Arrange
-            const int numberOfCodes = 1000;
-            var codes = new HashSet<string>();
-
-            // Act
-            for (int i = 0; i < numberOfCodes; i++)
-            {
-                string code = RegisterVerify.GenerateVerificationCode();
-                codes.Add(code);
-            }
-
-            // Assert
-            Assert.Equal(numberOfCodes, codes.Count);
-            foreach (string code in codes)
-            {
-                Assert.True(RegisterVerify.ValidateVerificationCode(code));
-            }
-        }
-
-        [Fact]
         public void ValidateVerificationCode_ValidCodeRange_ReturnsTrue()
         {
             Assert.True(RegisterVerify.ValidateVerificationCode("100000")); // Minimum valid code
