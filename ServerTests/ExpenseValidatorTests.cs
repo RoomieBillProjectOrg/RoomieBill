@@ -11,6 +11,7 @@ namespace ServerTests
         [Fact]
         public void ValidateExpenseFields_OtherCategory_WithNullDates_AndDescription_Success()
         {
+            // Arrange
             var expense = new Expense
             {
                 Category = Category.Other,
@@ -19,12 +20,14 @@ namespace ServerTests
                 Description = "Valid description"
             };
 
+            // Act & Assert
             ExpenseValidator.ValidateExpenseFields(expense); // Should not throw
         }
 
         [Fact]
         public void ValidateExpenseFields_OtherCategory_WithoutDescription_ThrowsException()
         {
+            // Arrange
             var expense = new Expense
             {
                 Category = Category.Other,
@@ -33,6 +36,25 @@ namespace ServerTests
                 Description = ""  // Empty description
             };
 
+            // Act & Assert
+            var exception = Assert.Throws<InvalidOperationException>(() => 
+                ExpenseValidator.ValidateExpenseFields(expense));
+            Assert.Equal("Description is required for 'Other' category expenses.", exception.Message);
+        }
+
+        [Fact]
+        public void ValidateExpenseFields_OtherCategory_WithWhitespaceDescription_ThrowsException()
+        {
+            // Arrange
+            var expense = new Expense
+            {
+                Category = Category.Other,
+                StartMonth = null,
+                EndMonth = null,
+                Description = "   "  // Whitespace only
+            };
+
+            // Act & Assert
             var exception = Assert.Throws<InvalidOperationException>(() => 
                 ExpenseValidator.ValidateExpenseFields(expense));
             Assert.Equal("Description is required for 'Other' category expenses.", exception.Message);
@@ -41,6 +63,7 @@ namespace ServerTests
         [Fact]
         public void ValidateExpenseFields_OtherCategory_WithDates_ThrowsException()
         {
+            // Arrange
             var expense = new Expense
             {
                 Category = Category.Other,
@@ -49,6 +72,7 @@ namespace ServerTests
                 Description = "Valid description"
             };
 
+            // Act & Assert
             var exception = Assert.Throws<InvalidOperationException>(() => 
                 ExpenseValidator.ValidateExpenseFields(expense));
             Assert.Equal("Start and end months must be null for 'Other' category expenses.", exception.Message);
@@ -57,6 +81,7 @@ namespace ServerTests
         [Fact]
         public void ValidateExpenseFields_NonOtherCategory_WithValidDates_Success()
         {
+            // Arrange
             var expense = new Expense
             {
                 Category = Category.Electricity,
@@ -65,12 +90,14 @@ namespace ServerTests
                 Description = null  // Description not required
             };
 
+            // Act & Assert
             ExpenseValidator.ValidateExpenseFields(expense); // Should not throw
         }
 
         [Fact]
         public void ValidateExpenseFields_NonOtherCategory_WithNullDates_ThrowsException()
         {
+            // Arrange
             var expense = new Expense
             {
                 Category = Category.Gas,
@@ -78,6 +105,7 @@ namespace ServerTests
                 EndMonth = null
             };
 
+            // Act & Assert
             var exception = Assert.Throws<InvalidOperationException>(() => 
                 ExpenseValidator.ValidateExpenseFields(expense));
             Assert.Equal($"Start and end months are required for {expense.Category} category expenses.", exception.Message);
@@ -86,6 +114,7 @@ namespace ServerTests
         [Fact]
         public void ValidateExpenseFields_NonOtherCategory_WithOnlyStartDate_ThrowsException()
         {
+            // Arrange
             var expense = new Expense
             {
                 Category = Category.Water,
@@ -93,6 +122,7 @@ namespace ServerTests
                 EndMonth = null
             };
 
+            // Act & Assert
             var exception = Assert.Throws<InvalidOperationException>(() => 
                 ExpenseValidator.ValidateExpenseFields(expense));
             Assert.Equal($"Start and end months are required for {expense.Category} category expenses.", exception.Message);
@@ -101,6 +131,7 @@ namespace ServerTests
         [Fact]
         public void ValidateExpenseFields_NonOtherCategory_EndBeforeStart_ThrowsException()
         {
+            // Arrange
             var expense = new Expense
             {
                 Category = Category.Water,
@@ -108,6 +139,7 @@ namespace ServerTests
                 EndMonth = new DateTime(2025, 1, 1)
             };
 
+            // Act & Assert
             var exception = Assert.Throws<InvalidOperationException>(() => 
                 ExpenseValidator.ValidateExpenseFields(expense));
             Assert.Equal("End month must be after start month.", exception.Message);
@@ -116,6 +148,7 @@ namespace ServerTests
         [Fact]
         public void ValidateExpenseFields_NonOtherCategory_SameMonth_ThrowsException()
         {
+            // Arrange
             var expense = new Expense
             {
                 Category = Category.PropertyTaxes,
@@ -123,6 +156,7 @@ namespace ServerTests
                 EndMonth = new DateTime(2025, 1, 1)
             };
 
+            // Act & Assert
             var exception = Assert.Throws<InvalidOperationException>(() => 
                 ExpenseValidator.ValidateExpenseFields(expense));
             Assert.Equal("Start and end months cannot be the same.", exception.Message);
@@ -131,6 +165,7 @@ namespace ServerTests
         [Fact]
         public void ValidateExpenseFields_NonOtherCategory_NonFirstDayOfMonth_ThrowsException()
         {
+            // Arrange
             var expense = new Expense
             {
                 Category = Category.PropertyTaxes,
@@ -138,6 +173,7 @@ namespace ServerTests
                 EndMonth = new DateTime(2025, 2, 1)
             };
 
+            // Act & Assert
             var exception = Assert.Throws<InvalidOperationException>(() => 
                 ExpenseValidator.ValidateExpenseFields(expense));
             Assert.Equal("Dates must be set to the first day of the month.", exception.Message);
@@ -146,6 +182,7 @@ namespace ServerTests
         [Fact]
         public void ValidateExpenseFields_NonOtherCategory_EmptyDescription_Success()
         {
+            // Arrange
             var expense = new Expense
             {
                 Category = Category.Electricity,
@@ -154,7 +191,81 @@ namespace ServerTests
                 Description = string.Empty  // Empty description should be allowed for non-Other categories
             };
 
+            // Act & Assert
             ExpenseValidator.ValidateExpenseFields(expense); // Should not throw
+        }
+
+        [Fact]
+        public void ValidateExpenseFields_NonOtherCategory_LastDayOfMonth_ThrowsException()
+        {
+            // Arrange
+            var expense = new Expense
+            {
+                Category = Category.Electricity,
+                StartMonth = new DateTime(2025, 1, 1),
+                EndMonth = new DateTime(2025, 2, 28)
+            };
+
+            // Act & Assert
+            var exception = Assert.Throws<InvalidOperationException>(() => 
+                ExpenseValidator.ValidateExpenseFields(expense));
+            Assert.Equal("Dates must be set to the first day of the month.", exception.Message);
+        }
+
+        [Fact]
+        public void ValidateExpenseFields_NonOtherCategory_DifferentYears_Success()
+        {
+            // Arrange
+            var expense = new Expense
+            {
+                Category = Category.PropertyTaxes,
+                StartMonth = new DateTime(2025, 12, 1),
+                EndMonth = new DateTime(2026, 1, 1)
+            };
+
+            // Act & Assert
+            ExpenseValidator.ValidateExpenseFields(expense); // Should not throw
+        }
+
+        [Fact]
+        public void ValidateExpenseFields_NonOtherCategory_MultiYearSpan_Success()
+        {
+            // Arrange
+            var expense = new Expense
+            {
+                Category = Category.PropertyTaxes,
+                StartMonth = new DateTime(2025, 1, 1),
+                EndMonth = new DateTime(2027, 1, 1)
+            };
+
+            // Act & Assert
+            ExpenseValidator.ValidateExpenseFields(expense); // Should not throw
+        }
+
+        [Fact]
+        public void ValidateExpenseFields_NonOtherCategory_EndDateLastDayPreviousMonth_ThrowsException()
+        {
+            // Arrange
+            var expense = new Expense
+            {
+                Category = Category.PropertyTaxes,
+                StartMonth = new DateTime(2025, 2, 1),
+                EndMonth = new DateTime(2025, 1, 31)  // Last day of previous month
+            };
+
+            // Act & Assert
+            var exception = Assert.Throws<InvalidOperationException>(() => 
+                ExpenseValidator.ValidateExpenseFields(expense));
+            Assert.Equal("End month must be after start month.", exception.Message);
+        }
+
+        [Fact]
+        public void ValidateExpenseFields_Null_ThrowsArgumentNullException()
+        {
+            // Act & Assert
+            var exception = Assert.Throws<ArgumentNullException>(() => 
+                ExpenseValidator.ValidateExpenseFields(null));
+            Assert.Equal("Expense cannot be null. (Parameter 'expense')", exception.Message);
         }
     }
 }

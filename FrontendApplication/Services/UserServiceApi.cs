@@ -1,11 +1,12 @@
 ﻿using System.Net.Http.Json;
 using FrontendApplication.Models;
+using FrontendApplication.Services.Interfaces;
 using Newtonsoft.Json;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 
 namespace FrontendApplication.Services
 {
-    public class UserServiceApi
+    public class UserServiceApi : IUserServiceApi
     {
         private readonly HttpClient _httpClient;
 
