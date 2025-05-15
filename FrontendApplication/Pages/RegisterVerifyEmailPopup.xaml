@@ -13,8 +13,10 @@
            HorizontalOptions="Center"
            HasShadow="True">
 
-        <Grid RowDefinitions="*, Auto">
-            <!-- Scrollable Content -->
+        <Grid>
+            <!-- Main Content -->
+            <Grid RowDefinitions="*, Auto">
+                <!-- Scrollable Content -->
             <ScrollView Grid.Row="0">
                 <VerticalStackLayout Spacing="20">
                     <!-- Title -->
@@ -34,16 +36,36 @@
                            TextColor="White"
                            PlaceholderColor="#A9A9A9"
                            HeightRequest="40" />
-                    <Button Text="Verify Code"
-                            BackgroundColor="Black"
-                            TextColor="White"
-                            BorderColor="White"
-                            BorderWidth="2"
-                            HeightRequest="50"
-                            CornerRadius="25"
-                            Clicked="OnVerifyCodeClicked" />
-                    </VerticalStackLayout>
+                    <Button x:Name="VerifyButton"
+                           Text="Verify Code"
+                           BackgroundColor="Black"
+                           TextColor="White"
+                           BorderColor="White"
+                           BorderWidth="2"
+                           HeightRequest="50"
+                           CornerRadius="25"
+                           Clicked="OnVerifyCodeClicked" />
+                </VerticalStackLayout>
             </ScrollView>
+            </Grid>
+
+            <!-- Loading Overlay -->
+            <Grid x:Name="LoadingOverlay"
+                  IsVisible="False"
+                  BackgroundColor="#80000000">
+                <VerticalStackLayout HorizontalOptions="Center"
+                                   VerticalOptions="Center"
+                                   Spacing="10">
+                    <ActivityIndicator x:Name="LoadingIndicator"
+                                     IsRunning="False"
+                                     Color="White"
+                                     HeightRequest="50"
+                                     WidthRequest="50" />
+                    <Label x:Name="LoadingMessage"
+                          TextColor="White"
+                          HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </Grid>
         </Grid>
     </Frame>
 </popup:Popup>
