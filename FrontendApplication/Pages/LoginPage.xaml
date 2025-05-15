@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="FrontendApplication.Pages.LoginPage"
              BackgroundColor="Black">
-    <ContentPage.Content>
+    <Grid>
+        <!-- Main Content -->
         <VerticalStackLayout Spacing="20" Padding="30">
 
             <!-- Title -->
@@ -47,7 +48,8 @@
             </VerticalStackLayout>
 
             <!-- Login Button -->
-            <Button Text="login"
+            <Button x:Name="LoginButton"
+                    Text="login"
                     BackgroundColor="Black"
                     TextColor="White"
                     BorderColor="White"
@@ -56,5 +58,23 @@
                     CornerRadius="25"
                     Clicked="OnLoginClicked" />
         </VerticalStackLayout>
-    </ContentPage.Content>
+
+        <!-- Loading Overlay -->
+        <Grid x:Name="LoadingOverlay"
+              IsVisible="False"
+              BackgroundColor="#80000000">
+            <VerticalStackLayout HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               Spacing="10">
+                <ActivityIndicator x:Name="LoadingIndicator"
+                                 IsRunning="False"
+                                 Color="White"
+                                 HeightRequest="50"
+                                 WidthRequest="50" />
+                <Label x:Name="LoadingMessage"
+                      TextColor="White"
+                      HorizontalOptions="Center" />
+            </VerticalStackLayout>
+        </Grid>
+    </Grid>
 </ContentPage>

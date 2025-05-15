@@ -35,30 +35,67 @@ public partial class UserHomePage : ContentPage
 
     protected override async void OnAppearing()
     {
-        base.OnAppearing();
-        await InitializeAsync();
+        try
+        {
+            base.OnAppearing();
+            ShowLoading("Loading your groups...");
+            await InitializeAsync();
+        }
+        catch (Exception)
+        {
+            await DisplayAlert("Error", "Something went wrong while loading the page. Please try again.", "OK");
+        }
+        finally
+        {
+            HideLoading();
+        }
     }
 
     private async Task InitializeAsync()
     {
         try
         {
-            // Fetch the group list
-            var groups = await _groupService.GetUserGroups(User);
-            Groups.Clear();
-            foreach (var group in groups)
+            if (User == null)
             {
-                Groups.Add(group);
+                throw new InvalidOperationException("User session not found. Please log in again.");
             }
 
-            // Update UI based on whether groups exist
-            UpdateUI();
+            // Fetch the group list
+            var groups = await _groupService.GetUserGroups(User);
+            
+            await MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                Groups.Clear();
+                foreach (var group in groups)
+                {
+                    Groups.Add(group);
+                }
+                UpdateUI();
+            });
+        }
+        catch (HttpRequestException)
+        {
+            await DisplayAlert("Connection Error", 
+                "We couldn't load your groups. Please check your internet connection and try again.", "OK");
+            await MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                Groups.Clear();
+                UpdateUI();
+            });
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", $"An error occurred while fetching user groups: {ex.Message}", "OK");
-            Groups.Clear();
-            UpdateUI(); // Ensure UI is updated even if there's an error
+            string message = "Unable to load your groups at this time. ";
+            if (ex is InvalidOperationException)
+            {
+                message = ex.Message;
+            }
+            await DisplayAlert("Error", message + "Please try again later.", "OK");
+            await MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                Groups.Clear();
+                UpdateUI();
+            });
         }
     }
 
@@ -105,10 +142,35 @@ public partial class UserHomePage : ContentPage
 
     private async void OnGroupButtonClicked(object sender, EventArgs e)
     {
-        if (sender is Button button && button.CommandParameter is GroupModel group)
+        try
         {
+            if (sender is not Button button || button.CommandParameter is not GroupModel group)
+            {
+                throw new InvalidOperationException("Invalid group selection.");
+            }
+
+            ShowLoading("Opening group...");
             var reminderService = App.Current.Handler.MauiContext.Services.GetRequiredService<PaymentReminderService>();
-            await Navigation.PushAsync(new GroupViewPage(_userService, _groupService, _paymentService, _uploadService, reminderService, group, User));
+            
+            if (reminderService == null)
+            {
+                throw new InvalidOperationException("Required services are not available.");
+            }
+
+            await Navigation.PushAsync(new GroupViewPage(
+                _userService, _groupService, _paymentService, _uploadService, reminderService, group, User));
+        }
+        catch (InvalidOperationException ex)
+        {
+            await DisplayAlert("Error", "Unable to open the group: " + ex.Message, "OK");
+        }
+        catch (Exception)
+        {
+            await DisplayAlert("Error", "Something went wrong while opening the group. Please try again.", "OK");
+        }
+        finally
+        {
+            HideLoading();
         }
     }
 
@@ -116,30 +178,124 @@ public partial class UserHomePage : ContentPage
     {
         try
         {
+            bool confirm = await DisplayAlert("Confirm Logout", 
+                "Are you sure you want to log out?", "Yes", "No");
+
+            if (!confirm) return;
+
+            ShowLoading("Logging out...");
             await _userService.LogoutUserAsync(User.Username);
-            await DisplayAlert("Success", "User logged out successfully!", "OK");
             
             // Navigate to the main page
             await Navigation.PushAsync(new MainPage(_userService, _groupService, _paymentService, _uploadService));
         }
-        catch (Exception ex)
+        catch (HttpRequestException)
         {
-            await DisplayAlert("Error", ex.Message, "OK");
+            await DisplayAlert("Connection Error", 
+                "Unable to complete logout. Please check your internet connection.", "OK");
+        }
+        catch (Exception)
+        {
+            await DisplayAlert("Error", 
+                "Something went wrong during logout. Your session might still be active.", "OK");
+        }
+        finally
+        {
+            HideLoading();
         }
     }
 
     private async Task OnUpdateUserDetails()
     {
-        await Navigation.PushAsync(new UpdateUserDetailsPage(_userService, _groupService, _paymentService, _uploadService, User));
+        try
+        {
+            ShowLoading("Loading settings...");
+            await Navigation.PushAsync(new UpdateUserDetailsPage(
+                _userService, _groupService, _paymentService, _uploadService, User));
+        }
+        catch (Exception)
+        {
+            await DisplayAlert("Error", 
+                "Unable to open settings page. Please try again.", "OK");
+        }
+        finally
+        {
+            HideLoading();
+        }
     }
 
     private async Task OnAddGroup()
     {
-        await Navigation.PushAsync(new CreateGroupPage(_userService, _groupService, _paymentService, _uploadService, User));
+        try
+        {
+            ShowLoading("Opening create group page...");
+            await Navigation.PushAsync(new CreateGroupPage(
+                _userService, _groupService, _paymentService, _uploadService, User));
+        }
+        catch (Exception)
+        {
+            await DisplayAlert("Error", 
+                "Unable to open group creation page. Please try again.", "OK");
+        }
+        finally
+        {
+            HideLoading();
+        }
     }
 
     private async Task OnInvites()
     {
-        await Navigation.PushAsync(new InvitesPage(_userService, _groupService, _paymentService, _uploadService, User));
+        try
+        {
+            ShowLoading("Loading invites...");
+            await Navigation.PushAsync(new InvitesPage(
+                _userService, _groupService, _paymentService, _uploadService, User));
+        }
+        catch (Exception)
+        {
+            await DisplayAlert("Error", 
+                "Unable to load invites. Please try again.", "OK");
+        }
+        finally
+        {
+            HideLoading();
+        }
+    }
+
+    private void ShowLoading(string message)
+    {
+        try
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                LoadingOverlay.IsVisible = true;
+                LoadingIndicator.IsRunning = true;
+                LoadingIndicator.IsVisible = true;
+                LoadingLabel.Text = message;
+                LoadingLabel.IsVisible = true;
+            });
+        }
+        catch
+        {
+            // Fail silently if UI update fails
+        }
+    }
+
+    private void HideLoading()
+    {
+        try
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                LoadingOverlay.IsVisible = false;
+                LoadingIndicator.IsRunning = false;
+                LoadingIndicator.IsVisible = false;
+                LoadingLabel.IsVisible = false;
+            });
+        }
+        catch
+        {
+            // Fail silently if UI update fails
+        }
     }
 }
