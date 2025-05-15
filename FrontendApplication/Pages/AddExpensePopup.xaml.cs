@@ -102,7 +102,9 @@ namespace FrontendApplication.Popups
                     var selectedCategory = (Category)Enum.Parse(typeof(Category), CategoryPicker.SelectedItem.ToString());
                     if (selectedCategory != Category.Other){
                         // Try to extract the data using uploadService
+                        ShowLoading();
                         BillData data = await _uploadService.ExtractData(receiptUrl);
+                        HideLoading();
                         if (data != null)
                         {
                             string message = $"📅 Start Date: {data.StartDate:yyyy-MM-dd}\n" +
@@ -352,7 +354,27 @@ namespace FrontendApplication.Popups
             ErrorLabel.Text = message;
             ErrorLabel.IsVisible = true;
         }
+
+        private void ShowLoading()
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                LoadingOverlay.IsVisible = true;
+                RootGrid.InputTransparent = true;
+            });
+        }
+
+        private void HideLoading()
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                LoadingOverlay.IsVisible = false;
+                RootGrid.InputTransparent = false;
+            });
+        }
     }
+
+    
 
     public class MemberViewModel
     {
