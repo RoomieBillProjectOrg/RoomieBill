@@ -2,6 +2,9 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using FrontendApplication.Services.Interfaces;
+using FrontendApplication.Models;
+using System.Net.Http.Json;
+using Google.Cloud.DocumentAI.V1;
 using Newtonsoft.Json;
 
 
@@ -48,9 +51,16 @@ public class UploadServiceApi : IUploadServiceApi
         return await response.Content.ReadAsStreamAsync();
     }
 
-
+    public async Task<BillData> ExtractData(string fileName)
+    {   
+        var response = await _httpClient.GetAsync($"{_httpClient.BaseAddress}/Upload/extract/{fileName}");
+        response.EnsureSuccessStatusCode();
+        var bill = await response.Content.ReadFromJsonAsync<BillData>();
+        return bill;
+    }
     private class UploadResponse
     {
         public string FileName { get; set; }
     }
+
 }

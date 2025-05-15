@@ -3,186 +3,198 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:popup="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="FrontendApplication.Popups.AddExpensePopup">
+    <Grid x:Name="RootGrid"
+        InputTransparent="False">
+        
+        <Frame BackgroundColor="#2A2A2A"
+            CornerRadius="20"
+            Padding="20"
+            WidthRequest="350"
+            HeightRequest="650"
+            VerticalOptions="Center"
+            HorizontalOptions="Center"
+            HasShadow="True">
 
-    <Frame BackgroundColor="#2A2A2A"
-           CornerRadius="20"
-           Padding="20"
-           WidthRequest="350"
-           HeightRequest="650"
-           VerticalOptions="Center"
-           HorizontalOptions="Center"
-           HasShadow="True">
+            <Grid RowDefinitions="*, Auto">
+                <!-- Scrollable Content -->
+                <ScrollView Grid.Row="0">
+                    <VerticalStackLayout Spacing="20">
+                        <!-- Title -->
+                        <Label Text="Add Expense"
+                            FontSize="22"
+                            HorizontalOptions="Center"
+                            FontAttributes="Bold"
+                            TextColor="White" />
 
-        <Grid RowDefinitions="*, Auto">
-            <!-- Scrollable Content -->
-            <ScrollView Grid.Row="0">
-                <VerticalStackLayout Spacing="20">
-                    <!-- Title -->
-                    <Label Text="Add Expense"
-                        FontSize="22"
-                        HorizontalOptions="Center"
-                        FontAttributes="Bold"
-                        TextColor="White" />
+                        <!-- Category Picker -->
+                        <VerticalStackLayout>
+                            <Label Text="Category:"
+                                FontSize="16"
+                                TextColor="White"
+                                FontAttributes="Bold" />
+                            <Picker x:Name="CategoryPicker"
+                                    Title="Select expense category"
+                                    FontSize="16"
+                                    BackgroundColor="#3E3E3E"
+                                    TextColor="White"
+                                    HeightRequest="40"
+                                    Margin="0,5,0,0" />
+                        </VerticalStackLayout>
 
-                    <!-- Category Picker -->
-                    <VerticalStackLayout>
-                        <Label Text="Category:"
-                               FontSize="16"
-                               TextColor="White"
-                               FontAttributes="Bold" />
-                        <Picker x:Name="CategoryPicker"
-                                Title="Select expense category"
+                        <!-- Month Selection (for non-Other categories) -->
+                        <VerticalStackLayout x:Name="MonthsLayout" IsVisible="False">
+                            <Label Text="Months:"
+                                FontSize="16"
+                                TextColor="White"
+                                FontAttributes="Bold" />
+                            <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, Auto" Margin="0,5,0,0">
+                                <Label Text="Start Month:"
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    TextColor="White"
+                                    FontSize="14" />
+                                <DatePicker x:Name="StartMonthPicker"
+                                        Grid.Row="1"
+                                        Grid.Column="0"
+                                        Format="MMM yyyy"
+                                        BackgroundColor="#3E3E3E"
+                                        TextColor="White" />
+                                <Label Text="End Month:"
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    TextColor="White"
+                                    FontSize="14" />
+                                <DatePicker x:Name="EndMonthPicker"
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        Format="MMM yyyy"
+                                        BackgroundColor="#3E3E3E"
+                                        TextColor="White" />
+                            </Grid>
+                        </VerticalStackLayout>
+
+                        <!-- Description Entry (only for Other category) -->
+                        <VerticalStackLayout x:Name="DescriptionLayout">
+                            <Label Text="Description:"
+                                FontSize="16"
+                                TextColor="White"
+                                FontAttributes="Bold" />
+                            <Entry x:Name="DescriptionEntry"
+                                Placeholder="Enter description (required for Other category)"
                                 FontSize="16"
                                 BackgroundColor="#3E3E3E"
                                 TextColor="White"
                                 HeightRequest="40"
                                 Margin="0,5,0,0" />
-                    </VerticalStackLayout>
+                        </VerticalStackLayout>
 
-                    <!-- Month Selection (for non-Other categories) -->
-                    <VerticalStackLayout x:Name="MonthsLayout" IsVisible="False">
-                        <Label Text="Months:"
-                               FontSize="16"
-                               TextColor="White"
-                               FontAttributes="Bold" />
-                        <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, Auto" Margin="0,5,0,0">
-                            <Label Text="Start Month:"
-                                   Grid.Row="0"
-                                   Grid.Column="0"
-                                   TextColor="White"
-                                   FontSize="14" />
-                            <DatePicker x:Name="StartMonthPicker"
-                                      Grid.Row="1"
-                                      Grid.Column="0"
-                                      Format="MMM yyyy"
-                                      BackgroundColor="#3E3E3E"
-                                      TextColor="White" />
-                            <Label Text="End Month:"
-                                   Grid.Row="0"
-                                   Grid.Column="1"
-                                   TextColor="White"
-                                   FontSize="14" />
-                            <DatePicker x:Name="EndMonthPicker"
-                                      Grid.Row="1"
-                                      Grid.Column="1"
-                                      Format="MMM yyyy"
-                                      BackgroundColor="#3E3E3E"
-                                      TextColor="White" />
-                        </Grid>
-                    </VerticalStackLayout>
-
-                    <!-- Description Entry (only for Other category) -->
-                    <VerticalStackLayout x:Name="DescriptionLayout">
-                        <Label Text="Description:"
-                            FontSize="16"
-                            TextColor="White"
-                            FontAttributes="Bold" />
-                        <Entry x:Name="DescriptionEntry"
-                            Placeholder="Enter description (required for Other category)"
-                            FontSize="16"
-                            BackgroundColor="#3E3E3E"
-                            TextColor="White"
-                            HeightRequest="40"
-                            Margin="0,5,0,0" />
-                    </VerticalStackLayout>
-
-                    <!-- Amount Entry -->
-                    <VerticalStackLayout>
-                        <Label Text="Amount:"
-                            FontSize="16"
-                            TextColor="White"
-                            FontAttributes="Bold" />
-                        <Entry x:Name="AmountEntry"
-                            Placeholder="Enter amount"
-                            Keyboard="Numeric"
-                            FontSize="16"
-                            BackgroundColor="#3E3E3E"
-                            TextColor="White"
-                            HeightRequest="40"
-                            Margin="0,5,0,0" />
-                    </VerticalStackLayout>
-
-                    <!-- Receipt Upload Button -->
-                    <VerticalStackLayout>
-                        <Button x:Name="UploadReceiptButton"
-                                Text="Upload Receipt"
-                                Clicked="OnUploadReceiptClicked"
-                                BackgroundColor="#2196F3"
+                        <!-- Amount Entry -->
+                        <VerticalStackLayout>
+                            <Label Text="Amount:"
+                                FontSize="16"
                                 TextColor="White"
-                                CornerRadius="20"
-                                FontSize="18"
-                                Padding="10" />
-                                
-                        <!-- Display Uploaded File Name -->
-                        <Label x:Name="UploadedReceiptLabel"
-                            Text="No file uploaded"
-                            FontSize="14"
-                            TextColor="White"
-                            IsVisible="False"/>
-                    </VerticalStackLayout>
-
-                    <!-- Divide Dropdown -->
-                    <VerticalStackLayout>
-                        <Label Text="Divide:"
-                            FontSize="16"
-                            TextColor="White"
-                            FontAttributes="Bold" />
-                        <Picker x:Name="DividePicker"
-                                Title="Select division type"
+                                FontAttributes="Bold" />
+                            <Entry x:Name="AmountEntry"
+                                Placeholder="Enter amount"
+                                Keyboard="Numeric"
                                 FontSize="16"
                                 BackgroundColor="#3E3E3E"
                                 TextColor="White"
                                 HeightRequest="40"
-                                SelectedIndexChanged="OnDividePickerChanged">
-                            <Picker.Items>
-                                <x:String>Equally, between all group members</x:String>
-                                <x:String>Custom</x:String>
-                            </Picker.Items>
-                        </Picker>
+                                Margin="0,5,0,0" />
+                        </VerticalStackLayout>
+
+                        <!-- Receipt Upload Button -->
+                        <VerticalStackLayout>
+                            <Button x:Name="UploadReceiptButton"
+                                    Text="Upload Receipt"
+                                    Clicked="OnUploadReceiptClicked"
+                                    BackgroundColor="#2196F3"
+                                    TextColor="White"
+                                    CornerRadius="20"
+                                    FontSize="18"
+                                    Padding="10" />
+                                    
+                            <!-- Display Uploaded File Name -->
+                            <Label x:Name="UploadedReceiptLabel"
+                                Text="No file uploaded"
+                                FontSize="14"
+                                TextColor="White"
+                                IsVisible="False"/>
+                            <ActivityIndicator x:Name="LoadingOverlay"
+                                IsRunning="True"
+                                Color="White"
+                                VerticalOptions="Center"
+                                HorizontalOptions="Center"
+                                WidthRequest="60"
+                                HeightRequest="60"
+                                IsVisible="False"
+                                />
+                        </VerticalStackLayout>
+
+                        <!-- Divide Dropdown -->
+                        <VerticalStackLayout>
+                            <Label Text="Divide:"
+                                FontSize="16"
+                                TextColor="White"
+                                FontAttributes="Bold" />
+                            <Picker x:Name="DividePicker"
+                                    Title="Select division type"
+                                    FontSize="16"
+                                    BackgroundColor="#3E3E3E"
+                                    TextColor="White"
+                                    HeightRequest="40"
+                                    SelectedIndexChanged="OnDividePickerChanged">
+                                <Picker.Items>
+                                    <x:String>Equally, between all group members</x:String>
+                                    <x:String>Custom</x:String>
+                                </Picker.Items>
+                            </Picker>
+                        </VerticalStackLayout>
+
+                        <Label x:Name="ErrorLabel" TextColor="Red" IsVisible="False" />
+
+                        <!-- Custom Amounts -->
+                        <VerticalStackLayout x:Name="CustomAmountLayout" IsVisible="False">
+                            <Label Text="Custom Amounts:"
+                                FontSize="16"
+                                TextColor="White"
+                                FontAttributes="Bold" />
+                            <CollectionView ItemsSource="{Binding Members}">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Padding="10" ColumnDefinitions="*, Auto">
+                                            <Label Text="{Binding Member.Username}" FontSize="16" TextColor="White" />
+                                            <Entry Placeholder="0.00" Keyboard="Numeric" WidthRequest="80"
+                                                Text="{Binding CustomAmount}" BackgroundColor="#3E3E3E" TextColor="White"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </VerticalStackLayout>
                     </VerticalStackLayout>
+                </ScrollView>
 
-                    <Label x:Name="ErrorLabel" TextColor="Red" IsVisible="False" />
-
-                    <!-- Custom Amounts -->
-                    <VerticalStackLayout x:Name="CustomAmountLayout" IsVisible="False">
-                        <Label Text="Custom Amounts:"
-                            FontSize="16"
+                <!-- Fixed Buttons at the Bottom -->
+                <HorizontalStackLayout Grid.Row="1" Spacing="10" HorizontalOptions="Center">
+                    <Button Text="Cancel"
+                            Command="{Binding CancelCommand}"
+                            BackgroundColor="Transparent"
+                            TextColor="DarkRed"
+                            FontAttributes="Bold"
+                            BorderColor="DarkRed"
+                            BorderWidth="2"
+                            CornerRadius="25"
+                            HeightRequest="50" />
+                    <Button Text="Submit"
+                            Command="{Binding AddExpenseCommand}"
+                            BackgroundColor="LightSeaGreen"
                             TextColor="White"
-                            FontAttributes="Bold" />
-                        <CollectionView ItemsSource="{Binding Members}">
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid Padding="10" ColumnDefinitions="*, Auto">
-                                        <Label Text="{Binding Member.Username}" FontSize="16" TextColor="White" />
-                                        <Entry Placeholder="0.00" Keyboard="Numeric" WidthRequest="80"
-                                            Text="{Binding CustomAmount}" BackgroundColor="#3E3E3E" TextColor="White"/>
-                                    </Grid>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
-                    </VerticalStackLayout>
-                </VerticalStackLayout>
-            </ScrollView>
-
-            <!-- Fixed Buttons at the Bottom -->
-            <HorizontalStackLayout Grid.Row="1" Spacing="10" HorizontalOptions="Center">
-                <Button Text="Cancel"
-                        Command="{Binding CancelCommand}"
-                        BackgroundColor="Transparent"
-                        TextColor="DarkRed"
-                        FontAttributes="Bold"
-                        BorderColor="DarkRed"
-                        BorderWidth="2"
-                        CornerRadius="25"
-                        HeightRequest="50" />
-                <Button Text="Submit"
-                        Command="{Binding AddExpenseCommand}"
-                        BackgroundColor="LightSeaGreen"
-                        TextColor="White"
-                        FontAttributes="Bold"
-                        CornerRadius="25"
-                        HeightRequest="50" />
-            </HorizontalStackLayout>
-        </Grid>
-    </Frame>
+                            FontAttributes="Bold"
+                            CornerRadius="25"
+                            HeightRequest="50" />
+                </HorizontalStackLayout>
+            </Grid>
+        </Frame>
+    </Grid>
 </popup:Popup>
