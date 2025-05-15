@@ -1,4 +1,5 @@
 using Roomiebill.Server.DataAccessLayer.Dtos;
+using Roomiebill.Server.Facades;
 using Roomiebill.Server.Models;
 
 namespace Roomiebill.Server.Services.Interfaces
@@ -16,7 +17,9 @@ namespace Roomiebill.Server.Services.Interfaces
         Task<List<Expense>> GetExpensesForGroupAsync(int groupId);
         Task SnoozeMemberToPayAsync(SnoozeToPayDto snoozeInfo);
         Task<string> GetFeedbackFromGeminiAsync(string prompt);
+        Task<string> ExtractDataFromTextWithGeminiAsync(string prompt);
         Task ExitGroupAsync(int userId, int groupId);
         Task DeleteGroupAsync(int groupId, int requestingUserId);
+        public GroupFacade GetGroupFacade();
     }
 }

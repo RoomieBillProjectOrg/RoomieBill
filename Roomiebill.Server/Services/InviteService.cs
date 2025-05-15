@@ -6,18 +6,19 @@ using Roomiebill.Server.Common.Notification;
 using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Facades;
+using Roomiebill.Server.Services.Interfaces;
 
 namespace Roomiebill.Server.Services
 {
-    public class InviteService
+    public class InviteService : IInviteService
     {
         private readonly InviteFacade _inviteFacade;
         private readonly IUserFacade _userFacade;
 
-        public InviteService(IApplicationDbContext inviteDb, IUserFacade userFacade, GroupService groupService, ILogger<InviteFacade> _logger)
+        public InviteService(IApplicationDbContext inviteDb, IUserService userService, IGroupService groupService, ILogger<InviteFacade> _logger)
         {
-            _inviteFacade = new InviteFacade(inviteDb, _logger, userFacade, groupService._groupFacade);
-            _userFacade = userFacade;
+            _userFacade = userService.GetUserFacade();
+            _inviteFacade = new InviteFacade(inviteDb, _logger, _userFacade, groupService.GetGroupFacade());
         }
 
         public async Task InviteToGroupByEmail(InviteToGroupByEmailDto inviteDetails)

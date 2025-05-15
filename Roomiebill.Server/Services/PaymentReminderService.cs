@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using Roomiebill.Server.Common.Notification;
 using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.Models;
