@@ -14,10 +14,10 @@ namespace Roomiebill.Server.Services
         private readonly InviteFacade _inviteFacade;
         private readonly IUserFacade _userFacade;
 
-        public InviteService(IApplicationDbContext inviteDb, UserService userService, GroupService groupService, ILogger<InviteFacade> _logger)
+        public InviteService(IApplicationDbContext inviteDb, IUserFacade userFacade, GroupService groupService, ILogger<InviteFacade> _logger)
         {
-            _inviteFacade = new InviteFacade(inviteDb, _logger, userService._userFacade, groupService._groupFacade);
-            _userFacade = userService._userFacade;
+            _inviteFacade = new InviteFacade(inviteDb, _logger, userFacade, groupService._groupFacade);
+            _userFacade = userFacade;
         }
 
         public async Task InviteToGroupByEmail(InviteToGroupByEmailDto inviteDetails)
