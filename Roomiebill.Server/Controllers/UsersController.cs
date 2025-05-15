@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Roomiebill.Server.Models;
 using Roomiebill.Server.Services;
+using Roomiebill.Server.Services.Interfaces;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Common.Validators;
 
@@ -13,9 +14,9 @@ namespace Roomiebill.Server.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private UserService _userService;
+        private readonly IUserService _userService;
 
-        public UsersController(UserService userService)
+        public UsersController(IUserService userService)
         {
             _userService = userService;
         }
@@ -33,11 +34,11 @@ namespace Roomiebill.Server.Controllers
             try
             {
                 await _userService.RegisterUserAsync(user);
-                return Ok(new { Message = "User registered successfully" });
+                return Ok(new MessageResponse { Message = "User registered successfully" });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new MessageResponse { Message = ex.Message });
             }
         }
 
@@ -59,7 +60,7 @@ namespace Roomiebill.Server.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new MessageResponse { Message = ex.Message });
             }
         }
 
@@ -80,7 +81,7 @@ namespace Roomiebill.Server.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = ex.Message});
+                return BadRequest(new MessageResponse { Message = ex.Message });
             }
         }
 
@@ -101,7 +102,7 @@ namespace Roomiebill.Server.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new MessageResponse { Message = ex.Message });
             }
         }
 
@@ -118,11 +119,11 @@ namespace Roomiebill.Server.Controllers
             try
             {
                 await _userService.LogoutAsync(username);
-                return Ok(new { Message = "User logged out successfully" });
+                return Ok(new MessageResponse { Message = "User logged out successfully" });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new MessageResponse { Message = ex.Message });
             }
         }
 
@@ -143,7 +144,7 @@ namespace Roomiebill.Server.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new MessageResponse { Message = ex.Message });
             }
         }
     }

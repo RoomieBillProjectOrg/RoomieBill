@@ -4,18 +4,19 @@ using Roomiebill.Server.Controllers;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Models;
 using Roomiebill.Server.Services;
+using Roomiebill.Server.Services.Interfaces;
 using Xunit;
 
 namespace ServerTests
 {
     public class UsersControllerTests
     {
-        private readonly Mock<UserService> _mockUserService;
+        private readonly Mock<IUserService> _mockUserService;
         private readonly UsersController _controller;
 
         public UsersControllerTests()
         {
-            _mockUserService = new Mock<UserService>();
+            _mockUserService = new Mock<IUserService>();
             _controller = new UsersController(_mockUserService.Object);
         }
 
@@ -35,7 +36,9 @@ namespace ServerTests
 
             IActionResult result = await _controller.RegisterUser(userDto);
             OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Equal("User registered successfully", (okResult.Value as dynamic).Message);
+            var response = okResult.Value as MessageResponse;
+            Assert.NotNull(response);
+            Assert.Equal("User registered successfully", response.Message);
         }
 
         [Fact]
@@ -48,7 +51,9 @@ namespace ServerTests
 
             IActionResult result = await _controller.RegisterUser(userDto);
             BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal(errorMessage, (badRequest.Value as dynamic).Message);
+            var response = badRequest.Value as MessageResponse;
+            Assert.NotNull(response);
+            Assert.Equal(errorMessage, response.Message);
         }
 
         [Fact]
@@ -79,7 +84,9 @@ namespace ServerTests
 
             IActionResult result = await _controller.VerifyUserRegisterDetails(userDto);
             BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal(errorMessage, (badRequest.Value as dynamic).Message);
+            var response = badRequest.Value as MessageResponse;
+            Assert.NotNull(response);
+            Assert.Equal(errorMessage, response.Message);
         }
 
         [Fact]
@@ -111,7 +118,9 @@ namespace ServerTests
 
             IActionResult result = await _controller.UpdatePassword(updateDto);
             BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal(errorMessage, (badRequest.Value as dynamic).Message);
+            var response = badRequest.Value as MessageResponse;
+            Assert.NotNull(response);
+            Assert.Equal(errorMessage, response.Message);
         }
 
         [Fact]
@@ -142,7 +151,9 @@ namespace ServerTests
 
             IActionResult result = await _controller.Login(loginDto);
             BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal(errorMessage, (badRequest.Value as dynamic).Message);
+            var response = badRequest.Value as MessageResponse;
+            Assert.NotNull(response);
+            Assert.Equal(errorMessage, response.Message);
         }
 
         [Fact]
@@ -154,7 +165,9 @@ namespace ServerTests
 
             IActionResult result = await _controller.Logout(username);
             OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Equal("User logged out successfully", (okResult.Value as dynamic).Message);
+            var response = okResult.Value as MessageResponse;
+            Assert.NotNull(response);
+            Assert.Equal("User logged out successfully", response.Message);
         }
 
         [Fact]
@@ -167,7 +180,9 @@ namespace ServerTests
 
             IActionResult result = await _controller.Logout(username);
             BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal(errorMessage, (badRequest.Value as dynamic).Message);
+            var response = badRequest.Value as MessageResponse;
+            Assert.NotNull(response);
+            Assert.Equal(errorMessage, response.Message);
         }
 
         [Fact]
@@ -198,7 +213,9 @@ namespace ServerTests
 
             IActionResult result = await _controller.GetUserGroups(username);
             BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal(errorMessage, (badRequest.Value as dynamic).Message);
+            var response = badRequest.Value as MessageResponse;
+            Assert.NotNull(response);
+            Assert.Equal(errorMessage, response.Message);
         }
     }
 }

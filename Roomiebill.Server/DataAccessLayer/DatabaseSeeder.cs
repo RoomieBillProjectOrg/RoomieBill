@@ -2,9 +2,11 @@ using Roomiebill.Server.Common.Enums;
 using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Models;
 using Roomiebill.Server.Services;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Roomiebill.Server.DataAccessLayer
 {
+    [ExcludeFromCodeCoverage]
     public class DatabaseSeeder
     {
         private UserService _userService;
