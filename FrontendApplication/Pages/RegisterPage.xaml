@@ -4,8 +4,9 @@
              x:Class="FrontendApplication.Pages.RegisterPage"
              BackgroundColor="Black">
 
-    <ScrollView>
-        <VerticalStackLayout Spacing="20" Padding="30">
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Spacing="20" Padding="30">
 
             <!-- Title -->
             <Label Text="Create new Account" 
@@ -121,8 +122,28 @@
                     BorderWidth="2"
                     HeightRequest="50"
                     CornerRadius="25"
+                    x:Name="RegisterButton"
                     Clicked="OnRegisterClicked" />
 
-        </VerticalStackLayout>
-    </ScrollView>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Loading Overlay -->
+        <Grid x:Name="LoadingOverlay"
+              IsVisible="False"
+              BackgroundColor="#80000000">
+            <VerticalStackLayout HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               Spacing="10">
+                <ActivityIndicator x:Name="LoadingIndicator"
+                                 IsRunning="False"
+                                 Color="White"
+                                 HeightRequest="50"
+                                 WidthRequest="50" />
+                <Label x:Name="LoadingMessage"
+                      TextColor="White"
+                      HorizontalOptions="Center" />
+            </VerticalStackLayout>
+        </Grid>
+    </Grid>
 </ContentPage>
