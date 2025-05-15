@@ -1,11 +1,12 @@
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using FrontendApplication.Services.Interfaces;
 using Newtonsoft.Json;
 
 
 namespace FrontendApplication.Services;
-public class UploadServiceApi
+public class UploadServiceApi : IUploadServiceApi
 {
     private readonly HttpClient _httpClient;
 
@@ -53,4 +54,3 @@ public class UploadServiceApi
         public string FileName { get; set; }
     }
 }
-

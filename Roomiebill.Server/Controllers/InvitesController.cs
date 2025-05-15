@@ -8,6 +8,9 @@ using Roomiebill.Server.Services;
 
 namespace Roomiebill.Server.Controllers
 {
+    /// <summary>
+    /// Handles group invitation operations including sending and responding to invites.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class InvitesController : ControllerBase
@@ -19,6 +22,13 @@ namespace Roomiebill.Server.Controllers
             _inviteService = inviteService;
         }
 
+        /// <summary>
+        /// Processes a user's response to a group invitation.
+        /// </summary>
+        /// <param name="inviteAnswer">The user's response to the invitation.</param>
+        /// <returns>Success message if the invite was processed successfully.</returns>
+        /// <response code="200">When the invite is processed successfully.</response>
+        /// <response code="400">If there's an error processing the invite.</response>
         [HttpPost("answerInvite")]
         public async Task<IActionResult> AnswerInvite([FromBody] AnswerInviteByUserDto inviteAnswer)
         {
@@ -33,6 +43,13 @@ namespace Roomiebill.Server.Controllers
             }
         }
 
+        /// <summary>
+        /// Sends a group invitation to a user via email.
+        /// </summary>
+        /// <param name="inviteDetails">Details of the invitation including recipient email and group info.</param>
+        /// <returns>Success message if the invite was sent successfully.</returns>
+        /// <response code="200">When the invite is sent successfully.</response>
+        /// <response code="400">If there's an error sending the invite.</response>
         [HttpPost("inviteUserToGroupByEmail")]
         public async Task<IActionResult> InviteToGroupByEmail([FromBody] InviteToGroupByEmailDto inviteDetails)
         {

@@ -5,8 +5,11 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Roomiebill.Server.Controllers{
-
+namespace Roomiebill.Server.Controllers
+{
+    /// <summary>
+    /// Handles file upload and download operations for expense receipts.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class UploadController : ControllerBase
@@ -18,6 +21,13 @@ namespace Roomiebill.Server.Controllers{
             _fileStorageService = fileStorageService;
         }
 
+        /// <summary>
+        /// Uploads a receipt file and returns the generated unique filename.
+        /// </summary>
+        /// <param name="file">The receipt file to upload.</param>
+        /// <returns>The generated unique filename for the uploaded file.</returns>
+        /// <response code="200">Returns the generated filename.</response>
+        /// <response code="400">If the file upload fails.</response>
         [HttpPost("upload")]
         public async Task<IActionResult> UploadReceipt(IFormFile file)
         {
@@ -32,6 +42,14 @@ namespace Roomiebill.Server.Controllers{
             }
         }
 
+        /// <summary>
+        /// Downloads a receipt file by its filename.
+        /// </summary>
+        /// <param name="fileName">The unique filename of the receipt to download.</param>
+        /// <returns>The receipt file content.</returns>
+        /// <response code="200">Returns the file content.</response>
+        /// <response code="404">If the file is not found.</response>
+        /// <response code="400">If the file download fails.</response>
         [HttpGet("download/{fileName}")]
         public async Task<IActionResult> DownloadReceipt(string fileName)
         {
@@ -43,7 +61,7 @@ namespace Roomiebill.Server.Controllers{
                     return NotFound("File not found.");
                 }
 
-                // Get the content type based on the file extension (optional)
+                // Get the content type based on the file extension
                 string contentType = "application/octet-stream"; // Default
                 string extension = Path.GetExtension(fileName).ToLower();
                 if (extension == ".jpg" || extension == ".jpeg") contentType = "image/jpeg";
@@ -59,4 +77,3 @@ namespace Roomiebill.Server.Controllers{
         }
     }
 }
-

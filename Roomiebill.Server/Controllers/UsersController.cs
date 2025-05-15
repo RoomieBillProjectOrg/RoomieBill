@@ -6,6 +6,9 @@ using Roomiebill.Server.Common.Validators;
 
 namespace Roomiebill.Server.Controllers
 {
+    /// <summary>
+    /// Manages user operations including registration, authentication, and profile management.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -17,13 +20,19 @@ namespace Roomiebill.Server.Controllers
             _userService = userService;
         }
 
+        /// <summary>
+        /// Registers a new user in the system.
+        /// </summary>
+        /// <param name="user">User registration details.</param>
+        /// <returns>Success message if registration is completed.</returns>
+        /// <response code="200">When registration is successful.</response>
+        /// <response code="400">If registration fails due to invalid data or existing user.</response>
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDto user)
         {
             try
             {
                 await _userService.RegisterUserAsync(user);
-
                 return Ok(new { Message = "User registered successfully" });
             }
             catch (Exception ex)
@@ -32,6 +41,13 @@ namespace Roomiebill.Server.Controllers
             }
         }
 
+        /// <summary>
+        /// Verifies user registration details and sends a verification email.
+        /// </summary>
+        /// <param name="user">User registration details to verify.</param>
+        /// <returns>Verification code for email confirmation.</returns>
+        /// <response code="200">Returns the verification code.</response>
+        /// <response code="400">If verification fails or email sending fails.</response>
         [HttpPost("verifyUserRegisterDetails")]
         public async Task<IActionResult> VerifyUserRegisterDetails([FromBody] RegisterUserDto user)
         {
@@ -39,7 +55,6 @@ namespace Roomiebill.Server.Controllers
             {
                 await _userService.VerifyRegisterUserDetailsAsync(user);
                 VerifiyCodeModel verifyCode = await RegisterVerify.SendVerificationEmail(user.Email);
-
                 return Ok(verifyCode);
             }
             catch (Exception ex)
@@ -48,13 +63,19 @@ namespace Roomiebill.Server.Controllers
             }
         }
 
+        /// <summary>
+        /// Updates a user's password.
+        /// </summary>
+        /// <param name="updatePasswordDto">Password update details.</param>
+        /// <returns>Updated user information.</returns>
+        /// <response code="200">Returns the updated user.</response>
+        /// <response code="400">If password update fails.</response>
         [HttpPut("updatePassword")]
         public async Task<IActionResult> UpdatePassword([FromBody] UpdatePasswordDto updatePasswordDto)
         {
             try
             {
                 var user = await _userService.UpdatePasswordAsync(updatePasswordDto);
-
                 return Ok(user);
             }
             catch (Exception ex)
@@ -63,6 +84,13 @@ namespace Roomiebill.Server.Controllers
             }
         }
 
+        /// <summary>
+        /// Authenticates a user and creates a session.
+        /// </summary>
+        /// <param name="loginDto">Login credentials.</param>
+        /// <returns>User information and session details.</returns>
+        /// <response code="200">Returns the authenticated user.</response>
+        /// <response code="400">If login fails.</response>
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
@@ -77,6 +105,13 @@ namespace Roomiebill.Server.Controllers
             }
         }
 
+        /// <summary>
+        /// Ends a user's session.
+        /// </summary>
+        /// <param name="username">Username of the user to log out.</param>
+        /// <returns>Success message.</returns>
+        /// <response code="200">When logout is successful.</response>
+        /// <response code="400">If logout fails.</response>
         [HttpPost("logout")]
         public async Task<IActionResult> Logout([FromBody] string username)
         {
@@ -91,6 +126,13 @@ namespace Roomiebill.Server.Controllers
             }
         }
 
+        /// <summary>
+        /// Gets all pending invites for a user.
+        /// </summary>
+        /// <param name="username">Username of the user.</param>
+        /// <returns>List of pending invites.</returns>
+        /// <response code="200">Returns the list of invites.</response>
+        /// <response code="400">If retrieval fails.</response>
         [HttpGet("getUserInvites")]
         public async Task<IActionResult> GetUserGroups([FromQuery] string username)
         {

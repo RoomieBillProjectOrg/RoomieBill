@@ -1,10 +1,11 @@
 using FrontendApplication.Models;
+using FrontendApplication.Services.Interfaces;
 using System.Net.Http.Json;
 using Newtonsoft.Json;
 
 namespace FrontendApplication.Services
 {
-    public class PaymentReminderService
+    public class PaymentReminderService : IPaymentReminderService
     {
         private readonly HttpClient _httpClient;
 
