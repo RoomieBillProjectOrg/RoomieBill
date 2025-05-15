@@ -1,8 +1,7 @@
 ﻿namespace Roomiebill.Server.Common.Validators
 {
     /// <summary>
-    /// This class confirms that an email meets the requirements for a valid email.
-    /// The email of the users in the app should be a BGU University email: means that the email should end with @bgu.ac.il or @post.bgu.ac.il.
+    /// Validates that email addresses conform to BGU University format (@bgu.ac.il or @post.bgu.ac.il).
     /// </summary>
     public class EmailValidator
     {
@@ -16,13 +15,16 @@
             Error = "";
         }
         
+        /// <summary>
+        /// Validates if an email address is a valid BGU University email.
+        /// </summary>
+        /// <returns>True if email is valid, false otherwise with Error property set.</returns>
         public bool ValidateEmail(string email)
         {
-            Error = "Email should be a BGU University email";
-
             // Check for null or empty
             if (string.IsNullOrWhiteSpace(email))
             {
+                Error = "Email should be a BGU University email";
                 return false;
             }
 
@@ -32,18 +34,21 @@
             // Check for minimum length and @ symbol
             if (email.Length < BGU_DOMAIN.Length || !email.Contains("@"))
             {
+                Error = "Email should be a BGU University email";
                 return false;
             }
 
             // Check for valid BGU domains
             if (!email.EndsWith(BGU_DOMAIN.ToLower()) && !email.EndsWith(POST_BGU_DOMAIN.ToLower()))
             {
+                Error = "Email should be a BGU University email";
                 return false;
             }
 
             // Check for spaces after trimming (which would indicate spaces in the middle)
             if (email.Contains(" "))
             {
+                Error = "Email should be a BGU University email";
                 return false;
             }
 
@@ -52,6 +57,7 @@
             string domain = email.Substring(atIndex);
             if (domain.Any(c => !char.IsLetterOrDigit(c) && c != '@' && c != '.'))
             {
+                Error = "Email should be a BGU University email";
                 return false;
             }
 
