@@ -1,6 +1,7 @@
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using FrontendApplication.Services.Interfaces;
 using FrontendApplication.Models;
 using System.Net.Http.Json;
 using Google.Cloud.DocumentAI.V1;
@@ -8,7 +9,7 @@ using Newtonsoft.Json;
 
 
 namespace FrontendApplication.Services;
-public class UploadServiceApi
+public class UploadServiceApi : IUploadServiceApi
 {
     private readonly HttpClient _httpClient;
 
@@ -63,4 +64,3 @@ public class UploadServiceApi
     }
 
 }
-

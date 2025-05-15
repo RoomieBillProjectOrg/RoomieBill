@@ -7,6 +7,7 @@ using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using System.Net;
 using Roomiebill.Server.Common;
+using Roomiebill.Server.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,7 +35,7 @@ builder.Services.AddScoped<GroupInviteMediatorService>();
 builder.Services.AddScoped<BillingService>();
 builder.Services.AddScoped<DatabaseSeeder>();
 builder.Services.AddScoped<IPaymentService, MockPaymentService>();
-builder.Services.AddScoped<FileUploadService>();
+builder.Services.AddScoped<IFileUploadService, FileUploadService>();
 
 // Register PaymentReminderService and configure update interval
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);

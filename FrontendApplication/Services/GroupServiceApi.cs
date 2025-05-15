@@ -1,11 +1,12 @@
 using System;
 using System.Net.Http.Json;
 using FrontendApplication.Models;
+using FrontendApplication.Services.Interfaces;
 using Newtonsoft.Json;
 
 namespace FrontendApplication.Services;
 
-public class GroupServiceApi
+public class GroupServiceApi : IGroupServiceApi
 {
     private readonly HttpClient _httpClient;
 

@@ -5,12 +5,18 @@ using Roomiebill.Server.Models;
 
 namespace Roomiebill.Server.Controllers
 {
+    /// <summary>
+    /// Manages recurring payment reminders for group expenses.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class PaymentRemindersController : ControllerBase
     {
         private readonly IApplicationDbContext _dbContext;
 
+        /// <summary>
+        /// Request model for creating a new payment reminder.
+        /// </summary>
         public class CreateReminderRequest
         {
             public int UserId { get; set; }
@@ -20,6 +26,9 @@ namespace Roomiebill.Server.Controllers
             public int DayOfMonth { get; set; }
         }
 
+        /// <summary>
+        /// Request model for updating an existing payment reminder.
+        /// </summary>
         public class UpdateReminderRequest
         {
             public int Id { get; set; }
@@ -34,6 +43,14 @@ namespace Roomiebill.Server.Controllers
             _dbContext = dbContext;
         }
 
+        /// <summary>
+        /// Creates a new payment reminder for a user in a group.
+        /// </summary>
+        /// <param name="request">Details for creating the reminder.</param>
+        /// <returns>The created reminder.</returns>
+        /// <response code="200">Returns the created reminder.</response>
+        /// <response code="400">If the request is invalid or user is not in group.</response>
+        /// <response code="404">If the user or group is not found.</response>
         [HttpPost("CreateReminder")]
         public async Task<IActionResult> CreateReminder(CreateReminderRequest request)
         {
@@ -80,6 +97,14 @@ namespace Roomiebill.Server.Controllers
             }
         }
 
+        /// <summary>
+        /// Updates an existing payment reminder.
+        /// </summary>
+        /// <param name="request">Details for updating the reminder.</param>
+        /// <returns>The updated reminder.</returns>
+        /// <response code="200">Returns the updated reminder.</response>
+        /// <response code="400">If the request is invalid.</response>
+        /// <response code="404">If the reminder is not found.</response>
         [HttpPut("UpdateReminder/{id}")]
         public async Task<IActionResult> UpdateReminder(UpdateReminderRequest request)
         {
@@ -112,6 +137,13 @@ namespace Roomiebill.Server.Controllers
             }
         }
 
+        /// <summary>
+        /// Gets all active payment reminders for a user.
+        /// </summary>
+        /// <param name="userId">ID of the user.</param>
+        /// <returns>List of active reminders for the user.</returns>
+        /// <response code="200">Returns the list of reminders.</response>
+        /// <response code="500">If there's a server error.</response>
         [HttpGet("GetUserReminders/user/{userId}")]
         public async Task<IActionResult> GetUserReminders(int userId)
         {
@@ -127,6 +159,14 @@ namespace Roomiebill.Server.Controllers
             }
         }
 
+        /// <summary>
+        /// Soft-deletes a payment reminder by marking it as inactive.
+        /// </summary>
+        /// <param name="id">ID of the reminder to delete.</param>
+        /// <returns>Success status.</returns>
+        /// <response code="200">If the reminder was successfully deactivated.</response>
+        /// <response code="404">If the reminder is not found.</response>
+        /// <response code="500">If there's a server error.</response>
         [HttpDelete("DeleteReminder/{id}")]
         public async Task<IActionResult> DeleteReminder(int id)
         {
