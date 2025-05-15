@@ -8,6 +8,7 @@ using Google.Apis.Auth.OAuth2;
 using System.Net;
 using Roomiebill.Server.Common;
 using Roomiebill.Server.Services.Interfaces;
+using Roomiebill.Server.Facades;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +37,7 @@ builder.Services.AddScoped<BillingService>();
 builder.Services.AddScoped<DatabaseSeeder>();
 builder.Services.AddScoped<IPaymentService, MockPaymentService>();
 builder.Services.AddScoped<IFileUploadService, FileUploadService>();
+builder.Services.AddScoped<IUserFacade, UserFacade>();
 
 // Register PaymentReminderService and configure update interval
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
