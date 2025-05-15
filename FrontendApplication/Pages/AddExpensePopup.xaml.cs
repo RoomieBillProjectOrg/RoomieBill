@@ -49,7 +49,7 @@ namespace FrontendApplication.Popups
             StartMonthPicker.Date = new DateTime(today.Year, today.Month, 1);
             EndMonthPicker.Date = StartMonthPicker.Date.AddMonths(1);
             
-            StartMonthPicker.MinimumDate = new DateTime(today.Year, today.Month, 1);
+            StartMonthPicker.MinimumDate = new DateTime(today.Year-1, 1, 1);
             EndMonthPicker.MinimumDate = StartMonthPicker.Date.AddMonths(1);
             
             // Add handlers for date changes
@@ -102,7 +102,28 @@ namespace FrontendApplication.Popups
                     var selectedCategory = (Category)Enum.Parse(typeof(Category), CategoryPicker.SelectedItem.ToString());
                     if (selectedCategory != Category.Other){
                         // Try to extract the data using uploadService
-                        var data = await _uploadService.ExtractData(receiptUrl);
+                        BillData data = await _uploadService.ExtractData(receiptUrl);
+                        if (data != null)
+                        {
+                            string message = $"📅 Start Date: {data.StartDate:yyyy-MM-dd}\n" +
+                                            $"📅 End Date: {data.EndDate:yyyy-MM-dd}\n" +
+                                            $"💰 Total Price: {data.TotalPrice:C}\n\n" +
+                                            $"Do you want to apply this data?";
+
+                            bool apply = await Application.Current.MainPage.DisplayAlert("Data Extracted", message, "Yes", "No");
+
+                            if (apply)
+                            {
+                                // Apply the extracted data to your UI or model
+                                StartMonthPicker.Date = new DateTime(data.StartDate.Year, data.StartDate.Month, data.StartDate.Day);
+                                EndMonthPicker.Date = new DateTime(data.EndDate.Year, data.EndDate.Month, data.EndDate.Day);
+                                AmountEntry.Text = data.TotalPrice.ToString("F2");;
+                            }
+                        }
+                        else
+                        {
+                            await Application.Current.MainPage.DisplayAlert("Note", $"Couldn't extract your data. You can try again if you want :)", "OK");
+                        }
                     }
 
                     // ✅ Update button UI to indicate success
