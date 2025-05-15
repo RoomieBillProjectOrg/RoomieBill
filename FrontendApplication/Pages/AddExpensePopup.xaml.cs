@@ -24,6 +24,7 @@ namespace FrontendApplication.Popups
         private readonly GroupModel _group;
         private string receiptFilePath = "";
         string receiptUrl = "";
+        const string OCR_PROCESSOR_MSG = "Data extracted automaticlly when uploaded!";
 
         public AddExpensePopup(GroupModel group, UserModel payer, GroupServiceApi groupService, UploadServiceApi uploadService)
         {
@@ -48,7 +49,7 @@ namespace FrontendApplication.Popups
             StartMonthPicker.Date = new DateTime(today.Year, today.Month, 1);
             EndMonthPicker.Date = StartMonthPicker.Date.AddMonths(1);
             
-            StartMonthPicker.MinimumDate = new DateTime(today.Year, today.Month, 1);
+            StartMonthPicker.MinimumDate = new DateTime(today.Year-1, 1, 1);
             EndMonthPicker.MinimumDate = StartMonthPicker.Date.AddMonths(1);
             
             // Add handlers for date changes
@@ -85,12 +86,49 @@ namespace FrontendApplication.Popups
                 var result = await FilePicker.PickAsync(new PickOptions
                 {
                     PickerTitle = "Select a Receipt",
-                    FileTypes = FilePickerFileType.Images
+                    FileTypes = new FilePickerFileType(new Dictionary<DevicePlatform, IEnumerable<string>>
+                    {
+                        //{ DevicePlatform.iOS, new[] { "public.image", "com.adobe.pdf" } }, // Only if we decide to support ios later.
+                        { DevicePlatform.Android, new[] { "image/*", "application/pdf" } }
+                    })
                 });
 
                 if (result != null)
                 {
                     receiptFilePath = result.FullPath;
+                    receiptUrl = await _uploadService.UploadReceiptAsync(receiptFilePath);
+
+                    // Extract Info from file
+                    var selectedCategory = (Category)Enum.Parse(typeof(Category), CategoryPicker.SelectedItem.ToString());
+                    if (selectedCategory != Category.Other){
+                        // Try to extract the data using uploadService
+                        ShowLoading();
+                        BillData data = await _uploadService.ExtractData(receiptUrl);
+                        HideLoading();
+                        if (data != null)
+                        {
+                            string message = $"📅 Start Date: {data.StartDate:yyyy-MM-dd}\n" +
+                                            $"📅 End Date: {data.EndDate:yyyy-MM-dd}\n" +
+                                            $"📝 Description: {data.Description}\n" +
+                                            $"💰 Total Price: {data.TotalPrice:F2} ILS\n\n" +
+                                            $"Do you want to apply this data?";
+
+                            bool apply = await Application.Current.MainPage.DisplayAlert("Data Extracted", message, "Yes", "No");
+
+                            if (apply)
+                            {
+                                // Apply the extracted data to your UI or model
+                                StartMonthPicker.Date = new DateTime(data.StartDate.Year, data.StartDate.Month, data.StartDate.Day);
+                                EndMonthPicker.Date = new DateTime(data.EndDate.Year, data.EndDate.Month, data.EndDate.Day);
+                                AmountEntry.Text = data.TotalPrice.ToString("F2");
+                                DescriptionEntry.Text = data.Description;
+                            }
+                        }
+                        else
+                        {
+                            await Application.Current.MainPage.DisplayAlert("Note", $"Couldn't extract your data. You can try again if you want :)", "OK");
+                        }
+                    }
 
                     // ✅ Update button UI to indicate success
                     UploadedReceiptLabel.Text = "[Click to select another file]";
@@ -292,6 +330,12 @@ namespace FrontendApplication.Popups
             if (category != Category.Other)
             {
                 DescriptionEntry.Text = string.Empty;
+                // Notify the user that he can upload the bill and the data will be filled automaticlly
+                UploadedReceiptLabel.Text = OCR_PROCESSOR_MSG;
+                UploadedReceiptLabel.IsVisible = true;
+                UploadedReceiptLabel.TextColor = Colors.Red;
+            }else{
+                UploadedReceiptLabel.IsVisible = false;
             }
 
             // Ensure EndMonthPicker is always at least one month after StartMonthPicker
@@ -312,7 +356,27 @@ namespace FrontendApplication.Popups
             ErrorLabel.Text = message;
             ErrorLabel.IsVisible = true;
         }
+
+        private void ShowLoading()
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                LoadingOverlay.IsVisible = true;
+                RootGrid.InputTransparent = true;
+            });
+        }
+
+        private void HideLoading()
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                LoadingOverlay.IsVisible = false;
+                RootGrid.InputTransparent = false;
+            });
+        }
     }
+
+    
 
     public class MemberViewModel
     {

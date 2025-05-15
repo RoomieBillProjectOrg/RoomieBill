@@ -4,6 +4,7 @@ using CommunityToolkit.Maui.Views;
 using FrontendApplication.Models;
 using FrontendApplication.Services;
 using System.Diagnostics;
+using FrontendApplication.Pages;
 
 namespace FrontendApplication.Popups{
     public partial class ViewHistoryTransactionsPopup : Popup
@@ -16,6 +17,8 @@ namespace FrontendApplication.Popups{
         private readonly UploadServiceApi _uploadService;
         private readonly GroupModel _group;
         private byte[] imageBytes { get; set; }
+
+        private string _pdfTempFilePath;
 
         public ViewHistoryTransactionsPopup(GroupModel group, GroupServiceApi groupService, UploadServiceApi uploadService)
         {
@@ -115,24 +118,49 @@ namespace FrontendApplication.Popups{
                         Debug.WriteLine("Downloaded stream is null.");
                         return;
                     }
-                    
-                    var ms = new MemoryStream();
-                    await stream.CopyToAsync(ms);
-                    imageBytes = ms.ToArray(); 
 
-                    var streamSource = new StreamImageSource();
-                    MainThread.BeginInvokeOnMainThread(() =>
+                    // Determine if it's a PDF
+                    var isPdf = expense.ReceiptString.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase);
+
+                    MainThread.BeginInvokeOnMainThread(async () =>
                     {
-                        if (TransactionListView != null && ReceiptImage != null && ReceiptView != null)
+                        if (TransactionListView != null && ReceiptImage != null && ReceiptView != null && PdfSection != null && PdfLabel != null && PdfButton != null)
                         {
                             TransactionListView.IsVisible = false;
-                            streamSource = new StreamImageSource
-                            {
-                                Stream = token => Task.FromResult<Stream>(new MemoryStream(imageBytes))
-                            };
-                            ReceiptImage.Source = streamSource;
-                            ReceiptImage.IsVisible = true;
                             ReceiptView.IsVisible = true;
+
+                            if (isPdf)
+                            {
+                                // Save PDF to temporary local path
+                                var tempPath = Path.Combine(FileSystem.CacheDirectory, expense.ReceiptString);
+                                using (var fileStream = File.Create(tempPath))
+                                {
+                                    stream.Seek(0, SeekOrigin.Begin);
+                                    await stream.CopyToAsync(fileStream);
+                                }
+
+                                _pdfTempFilePath = tempPath;
+
+                                // Show PDF section
+                                ReceiptImage.IsVisible = false;
+                                PdfSection.IsVisible = true;
+                            }
+                            else
+                            {
+                                // Show image
+                                var ms = new MemoryStream();
+                                await stream.CopyToAsync(ms);
+                                imageBytes = ms.ToArray();
+
+                                var streamSource = new StreamImageSource
+                                {
+                                    Stream = token => Task.FromResult<Stream>(new MemoryStream(imageBytes))
+                                };
+
+                                ReceiptImage.Source = streamSource;
+                                ReceiptImage.IsVisible = true;
+                                PdfSection.IsVisible = false;
+                            }
                         }
                         else
                         {
@@ -147,13 +175,33 @@ namespace FrontendApplication.Popups{
                 }
             }
         }
+
+    private async void OnOpenPdfClicked(object sender, EventArgs e)
+    {
+        // if (!string.IsNullOrEmpty(_pdfTempFilePath))
+        // {
+        //     Close(); // closes the current popup
+        //     await App.Current.MainPage.Navigation.PushAsync(new PdfViewerPage(_pdfTempFilePath));
+        // }
+        string localFilePath = _pdfTempFilePath/* your full local file path to the PDF */;
+
+        if (File.Exists(localFilePath))
+        {
+            await Launcher.OpenAsync(new OpenFileRequest
+            {
+                File = new ReadOnlyFile(localFilePath)
+            });
+        }
+        else
+        {
+            await Shell.Current.DisplayAlert("Error", $"File not found: {_pdfTempFilePath}", "OK");
+        }
+    }
         private void OnCloseReceiptClicked(object sender, EventArgs e)
         {
             // Switch back to Transaction List View
             TransactionListView.IsVisible = true;
             ReceiptView.IsVisible = false;
-            
-            PdfLabel.IsVisible = false;
         }
     }
 }
