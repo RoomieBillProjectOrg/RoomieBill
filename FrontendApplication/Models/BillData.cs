@@ -3,7 +3,8 @@ using System.Text.Json.Serialization;
 
 namespace FrontendApplication.Models;
 
-public class BillData {
+public class BillData
+{
     [JsonPropertyName("start_date")]
     public DateTime StartDate { get; set; }
 
@@ -12,5 +13,8 @@ public class BillData {
 
     [JsonPropertyName("total_price")]
     public decimal TotalPrice { get; set; }
+    
+    [JsonPropertyName("description")]
+    public string Description { get; set; }
 }
 

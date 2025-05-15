@@ -25,7 +25,8 @@ public class FileUploadService
     {
         "start_date": "YYYY-MM-DD",
         "end_date": "YYYY-MM-DD",
-        "total_price": NUMBER
+        "total_price": NUMBER,
+        "description": Free text description of the bill, no more than 1 sentence
     }
     Here is the text:
     """;

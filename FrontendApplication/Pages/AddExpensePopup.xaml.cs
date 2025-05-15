@@ -109,7 +109,8 @@ namespace FrontendApplication.Popups
                         {
                             string message = $"📅 Start Date: {data.StartDate:yyyy-MM-dd}\n" +
                                             $"📅 End Date: {data.EndDate:yyyy-MM-dd}\n" +
-                                            $"💰 Total Price: {data.TotalPrice:C}\n\n" +
+                                            $"📝 Description: {data.Description}\n" +
+                                            $"💰 Total Price: {data.TotalPrice:F2} ILS\n\n" +
                                             $"Do you want to apply this data?";
 
                             bool apply = await Application.Current.MainPage.DisplayAlert("Data Extracted", message, "Yes", "No");
@@ -119,7 +120,8 @@ namespace FrontendApplication.Popups
                                 // Apply the extracted data to your UI or model
                                 StartMonthPicker.Date = new DateTime(data.StartDate.Year, data.StartDate.Month, data.StartDate.Day);
                                 EndMonthPicker.Date = new DateTime(data.EndDate.Year, data.EndDate.Month, data.EndDate.Day);
-                                AmountEntry.Text = data.TotalPrice.ToString("F2");;
+                                AmountEntry.Text = data.TotalPrice.ToString("F2");
+                                DescriptionEntry.Text = data.Description;
                             }
                         }
                         else
