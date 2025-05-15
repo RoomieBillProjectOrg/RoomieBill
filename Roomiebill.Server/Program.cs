@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.Services;
 using Roomiebill.Server.Models;
+using Roomiebill.Server.Facades;
 using Microsoft.AspNetCore.Identity;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
@@ -23,25 +24,37 @@ builder.Services.AddApplicationInsightsTelemetry(builder.Configuration["Applicat
 
 // Configure the connection string for SQL Server using the settings from appsettings.json
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("ServerConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("InbarLocalConnection")));
 builder.Services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
 
 
-// Add other services like UserService, GroupService, and BillingService
+// Register configuration and singletons first
+builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+builder.Services.AddSingleton<GeminiService>();
+
+// Register core services
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
-builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<GroupService>();
-builder.Services.AddScoped<InviteService>();
-builder.Services.AddScoped<GroupInviteMediatorService>();
-builder.Services.AddScoped<BillingService>();
-builder.Services.AddScoped<DatabaseSeeder>();
+
+// Register facades
+builder.Services.AddScoped<UserFacade>(provider => {
+    var dbContext = provider.GetRequiredService<IApplicationDbContext>();
+    var passwordHasher = provider.GetRequiredService<IPasswordHasher<User>>();
+    var logger = provider.GetRequiredService<ILogger<UserFacade>>();
+    return new UserFacade(dbContext, passwordHasher, logger);
+});
+
+// Register services in dependency order
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IGroupService, GroupService>();
+builder.Services.AddScoped<IInviteService, InviteService>();
+builder.Services.AddScoped<IBillingService, BillingService>();
+builder.Services.AddScoped<IGroupInviteMediatorService, GroupInviteMediatorService>();
 builder.Services.AddScoped<IPaymentService, MockPaymentService>();
 builder.Services.AddScoped<IFileUploadService, FileUploadService>();
 builder.Services.AddScoped<IUserFacade, UserFacade>();
 
-// Register PaymentReminderService and configure update interval
-builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
-builder.Services.AddSingleton<GeminiService>();
+// Register database seeder last since it depends on other services
+builder.Services.AddScoped<DatabaseSeeder>();
 builder.Services.AddHostedService<PaymentReminderService>();
 builder.Services.Configure<HostOptions>(opts => 
 {

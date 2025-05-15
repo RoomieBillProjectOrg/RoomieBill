@@ -1,13 +1,6 @@
-using System;
-using System.IO;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using Google.Cloud.DocumentAI.V1;
 using Google.Protobuf;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.Identity.Client;
 using Roomiebill.Server.Models;
 using Roomiebill.Server.Services.Interfaces;
 
@@ -32,9 +25,9 @@ public class FileUploadService : IFileUploadService
     Here is the text:
     """;
 
-    private readonly GroupService _groupService;
+    private readonly IGroupService _groupService;
 
-    public FileUploadService(GroupService groupService)
+    public FileUploadService(IGroupService groupService)
     {
         // Set the group service
         _groupService = groupService;
