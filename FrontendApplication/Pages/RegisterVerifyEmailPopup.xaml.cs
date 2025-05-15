@@ -10,12 +10,13 @@ namespace FrontendApplication.Popups
 {
     public partial class RegisterVerifyEmailPopup : Popup
     {
-        private UserServiceApi _userService;
-        private GroupServiceApi _groupService;
-        private PaymentService _paymentService;
+        private readonly UserServiceApi _userService;
+        private readonly GroupServiceApi _groupService;
+        private readonly PaymentService _paymentService;
         private readonly UploadServiceApi _uploadService;
-        private VerifiyCodeModel _verificationCode;
-        private RegisterUserDto _user;
+        private readonly VerifiyCodeModel _verificationCode;
+        private readonly RegisterUserDto _user;
+        private bool _isLoading;
 
         public RegisterVerifyEmailPopup(UserServiceApi userService, GroupServiceApi groupService,
             PaymentService paymentService, VerifiyCodeModel verificationCode, RegisterUserDto user)
@@ -28,29 +29,122 @@ namespace FrontendApplication.Popups
             _user = user;
         }
 
+        private void ShowLoading(string message)
+        {
+            try
+            {
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    LoadingIndicator.IsRunning = true;
+                    LoadingOverlay.IsVisible = true;
+                    LoadingMessage.Text = message;
+                    LoadingMessage.IsVisible = true;
+                    VerifyButton.IsEnabled = false;
+                    VerificationCodeEntry.IsEnabled = false;
+                });
+                _isLoading = true;
+            }
+            catch
+            {
+                // Fail silently if UI update fails
+            }
+        }
+
+        private void HideLoading()
+        {
+            try
+            {
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    LoadingIndicator.IsRunning = false;
+                    LoadingOverlay.IsVisible = false;
+                    LoadingMessage.IsVisible = false;
+                    VerifyButton.IsEnabled = true;
+                    VerificationCodeEntry.IsEnabled = true;
+                });
+                _isLoading = false;
+            }
+            catch
+            {
+                // Fail silently if UI update fails
+            }
+        }
+
         private async void OnVerifyCodeClicked(object sender, EventArgs e)
         {
-            var enteredCode = VerificationCodeEntry.Text;
+            if (_isLoading) return;
 
-            if (enteredCode == _verificationCode.VerifyCode)
+            var enteredCode = VerificationCodeEntry?.Text?.Trim();
+
+            try
             {
+                // Validate input
+                if (string.IsNullOrWhiteSpace(enteredCode))
+                {
+                    Close("Error: Please enter the verification code.");
+                    return;
+                }
+
+                // Compare codes
+                if (enteredCode != _verificationCode.VerifyCode)
+                {
+                    Close("Error: The verification code is incorrect. Please check your email and try again.");
+                    return;
+                }
+
+                ShowLoading("Creating your account...");
+
                 try
                 {
                     var success = await _userService.RegisterUserAsync(_user);
+                    if (!success)
+                    {
+                        throw new Exception("Registration failed for unknown reason.");
+                    }
+                }
+                catch (HttpRequestException)
+                {
+                    Close("Error: Unable to complete registration. Please check your internet connection.");
+                    return;
                 }
                 catch (Exception ex)
                 {
                     Close($"Error: {ex.Message}");
                     return;
                 }
-            }
-            else
-            {
-                Close("Verification code is incorrect. Please try again.");
-                return;
-            }
 
-            Close();
+                Close(); // Success - close without error message
+            }
+            catch (Exception ex)
+            {
+                Close($"Error: An unexpected error occurred: {ex.Message}");
+            }
+            finally
+            {
+                HideLoading();
+            }
+        }
+
+        private void CleanupResources()
+        {
+            try
+            {
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    VerificationCodeEntry.Text = string.Empty;
+                    HideLoading();
+                });
+            }
+            catch
+            {
+                // Fail silently if cleanup fails
+            }
+        }
+
+        public new void Close(string result = null)
+        {
+            CleanupResources();
+            base.Close(result);
         }
     }
 }

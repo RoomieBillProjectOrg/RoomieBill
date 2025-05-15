@@ -10,6 +10,8 @@
         <ToolbarItem IconImageSource="home_icon.png" Text="Home" Order="Primary" Priority="0" Clicked="OnHomePageButtonClicked" />
     </ContentPage.ToolbarItems>
 
+<Grid>
+    <!-- Main Content -->
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="20">
 
@@ -274,5 +276,24 @@
 
         </VerticalStackLayout>
     </ScrollView>
+
+    <!-- Loading Overlay -->
+    <Grid x:Name="LoadingOverlay" 
+          BackgroundColor="#80000000" 
+          IsVisible="False">
+        <VerticalStackLayout HorizontalOptions="Center" 
+                           VerticalOptions="Center" 
+                           Spacing="10">
+            <ActivityIndicator x:Name="LoadingIndicator"
+                             IsRunning="False"
+                             IsVisible="False"
+                             Color="White"/>
+            <Label x:Name="LoadingLabel"
+                   TextColor="White"
+                   HorizontalOptions="Center"
+                   IsVisible="False"/>
+        </VerticalStackLayout>
+    </Grid>
+</Grid>
 
 </ContentPage>
