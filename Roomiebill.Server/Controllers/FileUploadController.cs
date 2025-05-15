@@ -1,6 +1,7 @@
 using Google.Cloud.DocumentAI.V1;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Roomiebill.Server.Models;
 using Roomiebill.Server.Services;
 using System;
 using System.IO;
@@ -71,8 +72,8 @@ namespace Roomiebill.Server.Controllers{
                 if (extension == ".png") contentType = "image/png";
                 if (extension == ".pdf") contentType = "application/pdf";
 
-                Document document = await _fileStorageService.ExtractDataWithProcessor(fileName, contentType);
-                return Ok(document.Text);
+                BillData bill = await _fileStorageService.ExtractDataWithProcessor(fileName, contentType);
+                return Ok(bill);
             }
             catch (Exception ex)
             {

@@ -1,9 +1,14 @@
 using System;
 using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Google.Cloud.DocumentAI.V1;
 using Google.Protobuf;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.Identity.Client;
+using Roomiebill.Server.Models;
 
 namespace Roomiebill.Server.Services;
 
@@ -17,7 +22,6 @@ public class FileUploadService
     private const string GEMINI_PROMPT = 
     """
     I will now send you the text of a bill (sometimes in Hebrew). I want you to analyze this text and extract the start date, the end date, and the total amount. Then, return this information to me in the following JSON structure: 
-    json
     {
         "start_date": "YYYY-MM-DD",
         "end_date": "YYYY-MM-DD",
@@ -70,7 +74,7 @@ public class FileUploadService
 	}
 
     // Extract data with processor
-    public async Task<Document> ExtractDataWithProcessor(string filePath, string mimeType){
+    public async Task<BillData> ExtractDataWithProcessor(string filePath, string mimeType){
         // Create client
         try{
             var client = new DocumentProcessorServiceClientBuilder
@@ -100,12 +104,40 @@ public class FileUploadService
             var document = response.Document;
             var prompt = GEMINI_PROMPT + document.Text;
             Console.WriteLine(prompt);
-            var extracted_data = await _groupService.ExtractDataFromTextWithGeminiAsync(prompt);
-            return document;
-            
+            string extracted_data = await _groupService.ExtractDataFromTextWithGeminiAsync(prompt);
+            if (extracted_data == null){
+                return null;
+            }
+            extracted_data = extracted_data.Trim();
+             // Remove Markdown code block delimiters
+            string cleanedJson = extracted_data.Trim();
+            if (cleanedJson.StartsWith("```json"))
+            {
+                cleanedJson = cleanedJson.Substring(7);
+            }
+            else if (cleanedJson.StartsWith("```"))
+            {
+                cleanedJson = cleanedJson.Substring(3);
+            }
+            if (cleanedJson.EndsWith("```"))
+            {
+                cleanedJson = cleanedJson.Substring(0, cleanedJson.Length - 3);
+            }
+            BillData data = JsonSerializer.Deserialize<BillData>(cleanedJson); 
+            if (!VerifyData(data)){
+                return null;
+            }
+            return data;    
         }catch(Exception e){
             Console.Write(e.Message);
-            return new Document();
+            return null;
         }
     }
+
+    public bool VerifyData(BillData data){
+        if (data == null || data.StartDate > data.EndDate || data.TotalPrice < 0)
+            return false;
+        return true;
+    }
+    
 }
