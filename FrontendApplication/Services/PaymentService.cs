@@ -1,11 +1,12 @@
 using System;
 using System.Net.Http.Json;
 using FrontendApplication.Models;
+using FrontendApplication.Services.Interfaces;
 
 namespace FrontendApplication.Services;
 
 
-public class PaymentService
+public class PaymentService : IPaymentService
 {
     private readonly HttpClient _httpClient;
 

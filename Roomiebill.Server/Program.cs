@@ -7,6 +7,7 @@ using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using System.Net;
 using Roomiebill.Server.Common;
+using Roomiebill.Server.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
