@@ -185,57 +185,75 @@
             </StackLayout>
 
             <!-- Receipt View -->
-            <StackLayout x:Name="ReceiptView" Grid.Row="0" IsVisible="False">
-                <Label Text="Receipt"
-                    FontSize="24"
-                    FontAttributes="Bold"
-                    TextColor="#FFFFFF"
-                    HorizontalOptions="Center"
-                    Margin="0,10,0,10" />
-                
-                <Frame BorderColor="#2E2E2E"
-                    BackgroundColor="#333333"
-                    Padding="10"
-                    CornerRadius="10"
-                    HasShadow="True"
-                    VerticalOptions="FillAndExpand"
-                    HorizontalOptions="FillAndExpand">
-                    <StackLayout IsVisible="True">
-                        <!-- <Image BackgroundColor="LightGray" WidthRequest="400" HeightRequest="400" HorizontalOptions="Center" VerticalOptions="Center" Source="{Binding ImageBytes, Converter = {StaticResource ByteArrayToImageSourceConverter}}"/> -->
-                        <Image x:Name="ReceiptImage"
-                            Aspect="AspectFit"
-                            HorizontalOptions="Center"
-                            VerticalOptions="Center" />
-                    </StackLayout>
-                </Frame>
-                
-                <Label x:Name="PdfLabel"
-                    Text="This is a PDF receipt. View it in a PDF viewer."
-                    IsVisible="False"
-                    TextColor="White"
-                    HorizontalOptions="Center" />
-                
-                <Button Text="Back to Transactions"
-                        BackgroundColor="#2196F3"
-                        TextColor="White"
-                        HorizontalOptions="Center"
-                        Margin="0,10,0,0"
-                        Clicked="OnCloseReceiptClicked"/>
-            </StackLayout>
+<ScrollView IsVisible="False" x:Name="ReceiptView">
+    <StackLayout Padding="10">
+        <Label Text="Receipt"
+               FontSize="24"
+               FontAttributes="Bold"
+               TextColor="#FFFFFF"
+               HorizontalOptions="Center"
+               Margin="0,10,0,10" />
 
-            <!-- Close Button -->
-            <Button Grid.Row="1"
-                    Text="CLOSE"
-                    Command="{Binding CloseCommand}"
-                    BackgroundColor="#356c67"
-                    TextColor="White"
-                    CornerRadius="25"
-                    FontSize="18"
-                    FontAttributes="Bold"
-                    HorizontalOptions="Center"
-                    WidthRequest="200"
-                    HeightRequest="50"
-                    Margin="0,15,0,0" />
+        <Frame BorderColor="#2E2E2E"
+               BackgroundColor="#333333"
+               Padding="10"
+               CornerRadius="10"
+               HasShadow="True"
+               VerticalOptions="Fill"
+               HorizontalOptions="Fill">
+
+            <Grid>
+                <!-- Scrollable image -->
+                <ScrollView Orientation="Vertical"
+                            IsVisible="True">
+                    <Image x:Name="ReceiptImage"
+                           Aspect="AspectFit"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Start"
+                           IsVisible="False" />
+                </ScrollView>
+
+                <!-- PDF section -->
+                <StackLayout x:Name="PdfSection"
+                             IsVisible="False"
+                             HorizontalOptions="Center"
+                             VerticalOptions="Center"
+                             Spacing="15">
+                    <Label x:Name="PdfLabel"
+                           Text="📄 This is a PDF receipt."
+                           TextColor="White"
+                           FontSize="16"
+                           HorizontalOptions="Center" />
+                    <Button x:Name="PdfButton"
+                            Text="Open PDF"
+                            BackgroundColor="#2196F3"
+                            TextColor="White"
+                            Clicked="OnOpenPdfClicked" />
+                </StackLayout>
+            </Grid>
+        </Frame>
+
+        <Button Text="Back to Transactions"
+                BackgroundColor="#2196F3"
+                TextColor="White"
+                HorizontalOptions="Center"
+                Margin="0,10,0,0"
+                Clicked="OnCloseReceiptClicked" />
+
+        <Button Text="CLOSE"
+                Command="{Binding CloseCommand}"
+                BackgroundColor="#356c67"
+                TextColor="White"
+                CornerRadius="25"
+                FontSize="18"
+                FontAttributes="Bold"
+                HorizontalOptions="Center"
+                WidthRequest="200"
+                HeightRequest="50"
+                Margin="0,15,0,0" />
+    </StackLayout>
+</ScrollView>
+
         </Grid>
     </Frame>
 </popup:Popup>
