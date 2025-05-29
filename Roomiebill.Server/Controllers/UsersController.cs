@@ -33,8 +33,15 @@ namespace Roomiebill.Server.Controllers
         {
             try
             {
-                await _userService.RegisterUserAsync(user);
+                // First verify the user details
+                await _userService.VerifyRegisterUserDetailsAsync(user);
+                // If verification passes, proceed with registration
+                var registeredUser = await _userService.RegisterUserAsync(user);
                 return Ok(new MessageResponse { Message = "User registered successfully" });
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(new MessageResponse { Message = ex.Message });
             }
             catch (Exception ex)
             {
@@ -118,8 +125,17 @@ namespace Roomiebill.Server.Controllers
         {
             try
             {
+                if (string.IsNullOrEmpty(username))
+                {
+                    return BadRequest(new MessageResponse { Message = "Username is required" });
+                }
+
                 await _userService.LogoutAsync(username);
                 return Ok(new MessageResponse { Message = "User logged out successfully" });
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(new MessageResponse { Message = ex.Message });
             }
             catch (Exception ex)
             {
@@ -135,7 +151,7 @@ namespace Roomiebill.Server.Controllers
         /// <response code="200">Returns the list of invites.</response>
         /// <response code="400">If retrieval fails.</response>
         [HttpGet("getUserInvites")]
-        public async Task<IActionResult> GetUserGroups([FromQuery] string username)
+        public async Task<IActionResult> GetUserInvites([FromQuery] string username)
         {
             try
             {

@@ -47,7 +47,7 @@ namespace Roomiebill.Server.Controllers
                 }
 
                 string fileNameWithGuid = await _fileStorageService.SaveFileAsync(file);
-                return Ok(new { FileName = fileNameWithGuid });
+                return Ok(new FileUploadResponse(fileNameWithGuid));
             }
             catch (Exception ex)
             {

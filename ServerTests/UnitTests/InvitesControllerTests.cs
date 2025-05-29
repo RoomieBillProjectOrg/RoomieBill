@@ -9,7 +9,7 @@ using Roomiebill.Server.Services;
 using Roomiebill.Server.Services.Interfaces;
 using Xunit;
 
-namespace ServerTests
+namespace ServerTests.UnitTests
 {
     public class InvitesControllerTests
     {
@@ -47,7 +47,7 @@ namespace ServerTests
         {
             AnswerInviteByUserDto inviteAnswer = new AnswerInviteByUserDto();
             string errorMessage = "Failed to process invite response";
-            
+
             _mockInviteService.Setup(s => s.AnswerInviteByUser(inviteAnswer))
                             .ThrowsAsync(new Exception(errorMessage));
 
@@ -83,7 +83,7 @@ namespace ServerTests
         {
             InviteToGroupByEmailDto inviteDetails = new InviteToGroupByEmailDto();
             string errorMessage = "Failed to send invite";
-            
+
             _mockInviteService.Setup(s => s.InviteToGroupByEmail(inviteDetails))
                             .ThrowsAsync(new Exception(errorMessage));
 

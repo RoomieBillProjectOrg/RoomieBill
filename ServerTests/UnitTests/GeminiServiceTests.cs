@@ -5,7 +5,7 @@ using Roomiebill.Server.Common;
 using System.Net;
 using System.Text.Json;
 
-namespace ServerTests
+namespace ServerTests.UnitTests
 {
     public class GeminiServiceTests
     {
@@ -20,9 +20,9 @@ namespace ServerTests
 
             // Create HttpClient with mocked handler
             var client = new HttpClient(_handlerMock.Object);
-            
+
             // Use reflection to set the private HttpClient field
-            var field = typeof(GeminiService).GetField("_httpClient", 
+            var field = typeof(GeminiService).GetField("_httpClient",
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             _service = new GeminiService(_configMock.Object);
             field.SetValue(_service, client);
@@ -71,7 +71,7 @@ namespace ServerTests
             _handlerMock.Protected().Verify(
                 "SendAsync",
                 Times.Once(),
-                ItExpr.Is<HttpRequestMessage>(req => 
+                ItExpr.Is<HttpRequestMessage>(req =>
                     req.Method == HttpMethod.Post &&
                     req.RequestUri.ToString().Contains("generativelanguage.googleapis.com")),
                 ItExpr.IsAny<CancellationToken>()
@@ -97,7 +97,7 @@ namespace ServerTests
                 });
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<Exception>(() => 
+            var exception = await Assert.ThrowsAsync<Exception>(() =>
                 _service.GetFeedbackFromGeminiAsync("Test prompt"));
             Assert.Equal($"Gemini API failed: {errorResponse}", exception.Message);
         }
@@ -106,7 +106,7 @@ namespace ServerTests
         public async Task GetFeedbackFromGeminiAsync_NullPrompt_ThrowsArgumentNullException()
         {
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => 
+            var exception = await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 _service.GetFeedbackFromGeminiAsync(null));
             Assert.Equal("Prompt cannot be empty. (Parameter 'prompt')", exception.Message);
         }
@@ -115,7 +115,7 @@ namespace ServerTests
         public async Task GetFeedbackFromGeminiAsync_EmptyPrompt_ThrowsArgumentNullException()
         {
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => 
+            var exception = await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 _service.GetFeedbackFromGeminiAsync(""));
             Assert.Equal("Prompt cannot be empty. (Parameter 'prompt')", exception.Message);
         }
@@ -124,7 +124,7 @@ namespace ServerTests
         public async Task GetFeedbackFromGeminiAsync_WhitespacePrompt_ThrowsArgumentNullException()
         {
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => 
+            var exception = await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 _service.GetFeedbackFromGeminiAsync("   "));
             Assert.Equal("Prompt cannot be empty. (Parameter 'prompt')", exception.Message);
         }
