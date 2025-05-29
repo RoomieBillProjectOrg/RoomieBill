@@ -7,7 +7,7 @@ using Roomiebill.Server.Services;
 using Roomiebill.Server.Services.Interfaces;
 using Xunit;
 
-namespace ServerTests
+namespace ServerTests.UnitTests
 {
     public class UsersControllerTests
     {
@@ -23,11 +23,11 @@ namespace ServerTests
         [Fact]
         public async Task TestThatWhenRegisteringValidUserThenReturnsSuccess()
         {
-            RegisterUserDto userDto = new RegisterUserDto 
-            { 
+            RegisterUserDto userDto = new RegisterUserDto
+            {
                 Username = "testuser",
                 Email = "test@example.com",
-                Password = "Password123!" 
+                Password = "Password123!"
             };
 
             User registeredUser = new User { Username = userDto.Username };
@@ -59,9 +59,9 @@ namespace ServerTests
         [Fact]
         public async Task TestThatWhenVerifyingValidUserDetailsThenReturnsVerificationCode()
         {
-            RegisterUserDto userDto = new RegisterUserDto 
-            { 
-                Email = "test@example.com" 
+            RegisterUserDto userDto = new RegisterUserDto
+            {
+                Email = "test@example.com"
             };
             VerifiyCodeModel expectedCode = new VerifiyCodeModel { VerifyCode = "123456" };
 
@@ -92,11 +92,11 @@ namespace ServerTests
         [Fact]
         public async Task TestThatWhenUpdatingPasswordWithValidDataThenReturnsUpdatedUser()
         {
-            UpdatePasswordDto updateDto = new UpdatePasswordDto 
-            { 
+            UpdatePasswordDto updateDto = new UpdatePasswordDto
+            {
                 Username = "testuser",
                 OldPassword = "OldPass123!",
-                NewPassword = "NewPass123!" 
+                NewPassword = "NewPass123!"
             };
 
             User updatedUser = new User { Username = "testuser" };
@@ -126,10 +126,10 @@ namespace ServerTests
         [Fact]
         public async Task TestThatWhenLoginSucceedsThenReturnsUser()
         {
-            LoginDto loginDto = new LoginDto 
-            { 
+            LoginDto loginDto = new LoginDto
+            {
                 Username = "testuser",
-                Password = "Password123!" 
+                Password = "Password123!"
             };
 
             User user = new User { Username = "testuser" };
@@ -189,16 +189,16 @@ namespace ServerTests
         public async Task TestThatWhenGettingUserInvitesThenReturnsInvitesList()
         {
             string username = "testuser";
-            List<Invite> invites = new List<Invite> 
-            { 
+            List<Invite> invites = new List<Invite>
+            {
                 new Invite { Id = 1 },
-                new Invite { Id = 2 } 
+                new Invite { Id = 2 }
             };
 
             _mockUserService.Setup(s => s.GetUserInvitesAsync(username))
                           .ReturnsAsync(invites);
 
-            IActionResult result = await _controller.GetUserGroups(username);
+            IActionResult result = await _controller.GetUserInvites(username);
             OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(invites, okResult.Value);
         }
@@ -211,7 +211,7 @@ namespace ServerTests
             _mockUserService.Setup(s => s.GetUserInvitesAsync(username))
                           .ThrowsAsync(new Exception(errorMessage));
 
-            IActionResult result = await _controller.GetUserGroups(username);
+            IActionResult result = await _controller.GetUserInvites(username);
             BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
             var response = badRequest.Value as MessageResponse;
             Assert.NotNull(response);

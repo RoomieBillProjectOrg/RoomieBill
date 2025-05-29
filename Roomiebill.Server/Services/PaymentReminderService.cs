@@ -38,7 +38,7 @@ namespace Roomiebill.Server.Services
             }
         }
 
-        private async Task CheckAndSendReminders()
+        private async Task CheckAndSendReminders(DateTime? currentDate = null)
         {
             using var scope = _serviceProvider.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
@@ -47,10 +47,10 @@ namespace Roomiebill.Server.Services
 
             foreach (var reminder in activeReminders)
             {
-                if (reminder.ShouldSendReminder())
+                if (reminder.ShouldSendReminder(currentDate))
                 {
                     await SendReminder(reminder);
-                    reminder.UpdateLastReminderSent();
+                    reminder.UpdateLastReminderSent(currentDate);
                     await dbContext.UpdatePaymentReminderAsync(reminder);
                 }
             }

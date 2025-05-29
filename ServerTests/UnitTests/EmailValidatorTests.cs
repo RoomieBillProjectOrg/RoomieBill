@@ -1,6 +1,6 @@
 using Roomiebill.Server.Common.Validators;
 
-namespace ServerTests
+namespace ServerTests.UnitTests
 {
     public class EmailValidatorTests
     {

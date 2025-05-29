@@ -4,7 +4,7 @@ using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.Facades;
 using Roomiebill.Server.Models;
 
-namespace ServerTests
+namespace ServerTests.UnitTests
 {
     public class InviteFacadeTests
     {
@@ -46,7 +46,7 @@ namespace ServerTests
             string invitedUsername = "invited";
             int groupId = 1;
 
-            User inviter = new User("inviter", "Metar@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
+            User inviter = new User("inviter", "Metar@bgu.ac.il", "MetarPassword2@", "https://bit-demo-link.com");
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(inviterUsername))!.ReturnsAsync(inviter);
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(invitedUsername))!.ReturnsAsync((User?)null);
 
@@ -62,8 +62,8 @@ namespace ServerTests
             string invitedUsername = "invited";
             int groupId = 1;
 
-            User inviter = new User("inviter", "Metar@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
-            User invited = new User("invited", "Metar2@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
+            User inviter = new User("inviter", "Metar@bgu.ac.il", "MetarPassword2@", "https://bit-demo-link.com");
+            User invited = new User("invited", "Metar2@bgu.ac.il", "MetarPassword2@", "https://bit-demo-link.com");
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(inviterUsername))!.ReturnsAsync(inviter);
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(invitedUsername))!.ReturnsAsync(invited);
 
@@ -77,9 +77,9 @@ namespace ServerTests
             // Arrange
             string inviterUsername = "inviter";
             string invitedUsername = "invited";
-            
-            User inviter = new User(inviterUsername, "Metar@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
-            User invited = new User(invitedUsername, "Metar2@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
+
+            User inviter = new User(inviterUsername, "Metar@bgu.ac.il", "MetarPassword2@", "https://bit-demo-link.com");
+            User invited = new User(invitedUsername, "Metar2@bgu.ac.il", "MetarPassword2@", "https://bit-demo-link.com");
             Group group = new Group();
             group.AddMember(inviter);
             group.AddInvite(new Invite(inviter, invited, group));
@@ -97,9 +97,9 @@ namespace ServerTests
             // Arrange
             string inviterUsername = "inviter";
             string invitedUsername = "invited";
-            
-            User inviter = new User("inviter", "Metar@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
-            User invited = new User("invited", "Metar2@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
+
+            User inviter = new User("inviter", "Metar@bgu.ac.il", "MetarPassword2@", "https://bit-demo-link.com");
+            User invited = new User("invited", "Metar2@bgu.ac.il", "MetarPassword2@", "https://bit-demo-link.com");
             Group group = new Group();
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(inviterUsername))!.ReturnsAsync(inviter);
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync(invitedUsername))!.ReturnsAsync(invited);
@@ -115,9 +115,9 @@ namespace ServerTests
             // Arrange
             string inviterUsername = "inviter";
             string invitedUsername = "invited";
-            
-            User inviter = new User(inviterUsername, "Metar@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
-            User invited = new User(invitedUsername, "Metar2@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
+
+            User inviter = new User(inviterUsername, "Metar@bgu.ac.il", "MetarPassword2@", "https://bit-demo-link.com");
+            User invited = new User(invitedUsername, "Metar2@bgu.ac.il", "MetarPassword2@", "https://bit-demo-link.com");
             Group group = new Group();
             group.AddMember(inviter);
             group.AddMember(invited);
@@ -162,9 +162,9 @@ namespace ServerTests
             // Arrange
             string inviterUsername = "inviter";
             string invitedUsername = "invited";
-            
-            User inviter = new User(inviterUsername, "Metar@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
-            User invited = new User(invitedUsername, "Metar2@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
+
+            User inviter = new User(inviterUsername, "Metar@bgu.ac.il", "MetarPassword2@", "https://bit-demo-link.com");
+            User invited = new User(invitedUsername, "Metar2@bgu.ac.il", "MetarPassword2@", "https://bit-demo-link.com");
 
             Group group = new Group();
 
@@ -177,7 +177,7 @@ namespace ServerTests
                     grp.AddMember(user); // Simulate adding the member to the group
                 })
                 .Returns(Task.CompletedTask);
-        
+
             // Act
             await _inviteFacade.AnswerInviteByUser(invite.Id, true);
 
@@ -191,16 +191,16 @@ namespace ServerTests
             // Arrange
             string inviterUsername = "inviter";
             string invitedUsername = "invited";
-            
-            User inviter = new User(inviterUsername, "Metar@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
-            User invited = new User(invitedUsername, "Metar2@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
+
+            User inviter = new User(inviterUsername, "Metar@bgu.ac.il", "MetarPassword2@", "https://bit-demo-link.com");
+            User invited = new User(invitedUsername, "Metar2@bgu.ac.il", "MetarPassword2@", "https://bit-demo-link.com");
 
             Group group = new Group();
 
             Invite invite = new Invite(inviter, invited, group);
 
             _applicationDbs.Setup(x => x.GetInviteByIdAsync(invite.Id))!.ReturnsAsync(invite);
-        
+
             // Act
             await _inviteFacade.AnswerInviteByUser(invite.Id, false);
 
@@ -214,9 +214,9 @@ namespace ServerTests
             // Arrange
             string inviterUsername = "inviter";
             string invitedUsername = "invited";
-            
-            User inviter = new User(inviterUsername, "Metar@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
-            User invited = new User(invitedUsername, "Metar2@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
+
+            User inviter = new User(inviterUsername, "Metar@bgu.ac.il", "MetarPassword2@", "https://bit-demo-link.com");
+            User invited = new User(invitedUsername, "Metar2@bgu.ac.il", "MetarPassword2@", "https://bit-demo-link.com");
 
             Group group = new Group();
 
@@ -225,10 +225,10 @@ namespace ServerTests
             invite.AcceptInvite();
 
             _applicationDbs.Setup(x => x.GetInviteByIdAsync(invite.Id))!.ReturnsAsync(invite);
-        
+
             // Act
             await Assert.ThrowsAsync<Exception>(() => _inviteFacade.AnswerInviteByUser(invite.Id, false));
-            
+
             // Assert
             Assert.DoesNotContain(invited, group.GetMembers());
         }
@@ -239,9 +239,9 @@ namespace ServerTests
             // Arrange
             string inviterUsername = "inviter";
             string invitedUsername = "invited";
-            
-            User inviter = new User(inviterUsername, "Metar@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
-            User invited = new User(invitedUsername, "Metar2@bgu.ac.il",  "MetarPassword2@","https://bit-demo-link.com");
+
+            User inviter = new User(inviterUsername, "Metar@bgu.ac.il", "MetarPassword2@", "https://bit-demo-link.com");
+            User invited = new User(invitedUsername, "Metar2@bgu.ac.il", "MetarPassword2@", "https://bit-demo-link.com");
 
             Group group = new Group();
 
@@ -250,10 +250,10 @@ namespace ServerTests
             invite.RejectInvite();
 
             _applicationDbs.Setup(x => x.GetInviteByIdAsync(invite.Id))!.ReturnsAsync(invite);
-        
+
             // Act
             await Assert.ThrowsAsync<Exception>(() => _inviteFacade.AnswerInviteByUser(invite.Id, false));
-            
+
             // Assert
             Assert.DoesNotContain(invited, group.GetMembers());
         }

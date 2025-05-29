@@ -41,7 +41,7 @@ namespace Roomiebill.Server.Controllers
                 var result = await _paymentService.ProcessPaymentAsync(request);
                 if (!result)
                 {
-                    return BadRequest(new { Message = "Payment failed." });
+                    return BadRequest(new PaymentResponse("Payment failed."));
                 }
 
                 try
@@ -51,14 +51,14 @@ namespace Roomiebill.Server.Controllers
                 catch (Exception ex)
                 {
                     // If debt settlement fails after payment, we should return an error
-                    return BadRequest(new { Message = "Payment failed: Unable to settle debt." });
+                    return BadRequest(new PaymentResponse("Payment failed: Unable to settle debt."));
                 }
 
-                return Ok(new { Message = "Payment processed successfully." });
+                return Ok(new PaymentResponse("Payment processed successfully."));
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = "Payment failed." });
+                return BadRequest(new PaymentResponse("Payment failed."));
             }
         }
     }

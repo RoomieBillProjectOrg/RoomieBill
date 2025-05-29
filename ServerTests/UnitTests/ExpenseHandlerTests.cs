@@ -5,7 +5,7 @@ using Xunit;
 using System;
 using System.Collections.Generic;
 
-namespace ServerTests
+namespace ServerTests.UnitTests
 {
     public class ExpenseHandlerTests
     {
@@ -261,7 +261,7 @@ namespace ServerTests
             var totalDebt = expenseHandler.GetTotalDebtUserOwes(0, debtArray);
 
             // print the array for debugging
-            Console.WriteLine("debtArray: " + string.Join(", ", debtArray)); 
+            Console.WriteLine("debtArray: " + string.Join(", ", debtArray));
 
             // Assert
             Assert.Equal(0, totalDebt);
