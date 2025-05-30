@@ -166,7 +166,7 @@ namespace Roomiebill.Server.Controllers
             catch (Exception)
             {
                 var emptyList = new List<PaymentReminder>();
-                return BadRequest(emptyList);
+                return Ok(emptyList);
             }
         }
 
