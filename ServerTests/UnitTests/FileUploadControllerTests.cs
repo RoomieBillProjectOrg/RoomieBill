@@ -11,7 +11,7 @@ using System.Text.Json;
 using System.Collections.Generic;
 using Xunit;
 
-namespace ServerTests
+namespace ServerTests.UnitTests
 {
     /// <summary>
     /// Tests for the file upload and download functionality.
@@ -47,8 +47,8 @@ namespace ServerTests
             IActionResult result = await _controller.UploadReceipt(file);
 
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var resultDict = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(
-                System.Text.Json.JsonSerializer.Serialize(okResult.Value));
+            var resultDict = JsonSerializer.Deserialize<Dictionary<string, string>>(
+                JsonSerializer.Serialize(okResult.Value));
             Assert.Equal(expectedFileName, resultDict["FileName"]);
         }
 

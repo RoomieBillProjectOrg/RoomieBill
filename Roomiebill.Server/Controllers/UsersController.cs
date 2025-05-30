@@ -33,8 +33,20 @@ namespace Roomiebill.Server.Controllers
         {
             try
             {
-                await _userService.RegisterUserAsync(user);
+                if (user == null)
+                {
+                    return BadRequest(new MessageResponse { Message = "Invalid request: Input cannot be null" });
+                }
+
+                // First verify the user details
+                await _userService.VerifyRegisterUserDetailsAsync(user);
+                // If verification passes, proceed with registration
+                var registeredUser = await _userService.RegisterUserAsync(user);
                 return Ok(new MessageResponse { Message = "User registered successfully" });
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(new MessageResponse { Message = ex.Message });
             }
             catch (Exception ex)
             {
@@ -54,6 +66,11 @@ namespace Roomiebill.Server.Controllers
         {
             try
             {
+                if (user == null)
+                {
+                    return BadRequest(new MessageResponse { Message = "Invalid request: Input cannot be null" });
+                }
+
                 await _userService.VerifyRegisterUserDetailsAsync(user);
                 VerifiyCodeModel verifyCode = await RegisterVerify.SendVerificationEmail(user.Email);
                 return Ok(verifyCode);
@@ -76,6 +93,11 @@ namespace Roomiebill.Server.Controllers
         {
             try
             {
+                if (updatePasswordDto == null)
+                {
+                    return BadRequest(new MessageResponse { Message = "Invalid request: Input cannot be null" });
+                }
+
                 var user = await _userService.UpdatePasswordAsync(updatePasswordDto);
                 return Ok(user);
             }
@@ -97,6 +119,11 @@ namespace Roomiebill.Server.Controllers
         {
             try
             {
+                if (loginDto == null)
+                {
+                    return BadRequest(new MessageResponse { Message = "Invalid request: Input cannot be null" });
+                }
+
                 var user = await _userService.LoginAsync(loginDto);
                 return Ok(user);
             }
@@ -118,8 +145,17 @@ namespace Roomiebill.Server.Controllers
         {
             try
             {
+                if (string.IsNullOrEmpty(username))
+                {
+                    return BadRequest(new MessageResponse { Message = "Invalid request: Username is required" });
+                }
+
                 await _userService.LogoutAsync(username);
                 return Ok(new MessageResponse { Message = "User logged out successfully" });
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(new MessageResponse { Message = ex.Message });
             }
             catch (Exception ex)
             {
@@ -135,10 +171,15 @@ namespace Roomiebill.Server.Controllers
         /// <response code="200">Returns the list of invites.</response>
         /// <response code="400">If retrieval fails.</response>
         [HttpGet("getUserInvites")]
-        public async Task<IActionResult> GetUserGroups([FromQuery] string username)
+        public async Task<IActionResult> GetUserInvites([FromQuery] string username)
         {
             try
             {
+                if (string.IsNullOrEmpty(username))
+                {
+                    return BadRequest(new MessageResponse { Message = "Invalid request: Username cannot be null or empty" });
+                }
+
                 List<Invite> userInvites = await _userService.GetUserInvitesAsync(username);
                 return Ok(userInvites);
             }

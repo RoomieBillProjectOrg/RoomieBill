@@ -1,4 +1,4 @@
-﻿﻿﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Moq;
 using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.DataAccessLayer.Dtos;
@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System;
 using Roomiebill.Server.Common.Enums;
 
-namespace ServerTests
+namespace ServerTests.UnitTests
 {
     public class GroupFacadeTests
     {
@@ -34,7 +34,7 @@ namespace ServerTests
         public async Task TestCreateNewGroupAsync_WhenDuplicateGroupName_ThenThrowsException()
         {
             // Arrange
-            var admin = new User("admin", "admin@bgu.ac.il", "adminPassword!1","https://bit-demo-link.com") { Id = 1 };
+            var admin = new User("admin", "admin@bgu.ac.il", "adminPassword!1", "https://bit-demo-link.com") { Id = 1 };
             var existingGroups = new List<Group>
             {
                 new Group("Test Group", admin, new List<User>())
@@ -66,9 +66,9 @@ namespace ServerTests
                 GroupMembersEmailsList = new List<string> { "member1", "member2" }
             };
 
-            User admin = new User("admin", "admin@bgu.ac.il", "adminPassword!1","https://bit-demo-link.com") { Id = 1 };
-            User member1 = new User("member1", "user1@bgu.ac.il", "user1Password!1","https://bit-demo-link.com");
-            User member2 = new User("member2", "user2@bgu.ac.il", "user2Password!1","https://bit-demo-link.com");
+            User admin = new User("admin", "admin@bgu.ac.il", "adminPassword!1", "https://bit-demo-link.com") { Id = 1 };
+            User member1 = new User("member1", "user1@bgu.ac.il", "user1Password!1", "https://bit-demo-link.com");
+            User member2 = new User("member2", "user2@bgu.ac.il", "user2Password!1", "https://bit-demo-link.com");
 
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync("admin")).ReturnsAsync(admin);
             _groupDbMock.Setup(x => x.GetUserGroupsAsync(admin.Id)).ReturnsAsync(new List<Group>());
@@ -112,7 +112,7 @@ namespace ServerTests
                 GroupMembersEmailsList = new List<string>()
             };
 
-            User admin = new User("admin", "admin@bgu.ac.il", "adminPassword!1","https://bit-demo-link.com") { Id = 1 };
+            User admin = new User("admin", "admin@bgu.ac.il", "adminPassword!1", "https://bit-demo-link.com") { Id = 1 };
 
             _userFacadeMock.Setup(x => x.GetUserByUsernameAsync("admin"))!.ReturnsAsync(admin);
             _groupDbMock.Setup(x => x.GetUserGroupsAsync(admin.Id)).ReturnsAsync(new List<Group>());
@@ -153,9 +153,9 @@ namespace ServerTests
                 },
                 Category = Category.Other
             };
-            User payer = new User("payer", "payer@bgu.ac.il", "payerPassword!1","https://bit-demo-link.com");
-            User user1 = new User("user1", "user1@bgu.ac.il", "user1Password!1","https://bit-demo-link.com");
-            User user2 = new User("user2", "user2@bgu.ac.il", "user2Password!1","https://bit-demo-link.com");
+            User payer = new User("payer", "payer@bgu.ac.il", "payerPassword!1", "https://bit-demo-link.com");
+            User user1 = new User("user1", "user1@bgu.ac.il", "user1Password!1", "https://bit-demo-link.com");
+            User user2 = new User("user2", "user2@bgu.ac.il", "user2Password!1", "https://bit-demo-link.com");
             payer.Id = 1;
             user1.Id = 0;
             user2.Id = 2;
@@ -234,9 +234,9 @@ namespace ServerTests
                 }
             };
 
-            var payer = new User("payer", "payer@bgu.ac.il", "hashedPassword","https://bit-demo-link.com") { Id = payerId };
-            var user2 = new User("user2", "user2@bgu.ac.il", "hashedPassword","https://bit-demo-link.com") { Id = 2 };
-            var user3 = new User("user3", "user3@bgu.ac.il", "hashedPassword","https://bit-demo-link.com") { Id = 3 };
+            var payer = new User("payer", "payer@bgu.ac.il", "hashedPassword", "https://bit-demo-link.com") { Id = payerId };
+            var user2 = new User("user2", "user2@bgu.ac.il", "hashedPassword", "https://bit-demo-link.com") { Id = 2 };
+            var user3 = new User("user3", "user3@bgu.ac.il", "hashedPassword", "https://bit-demo-link.com") { Id = 3 };
             var group = new Group("Test Group", payer, new List<User> { user2, user3 })
             {
                 Expenses = new List<Expense>
@@ -285,7 +285,7 @@ namespace ServerTests
             var expenseId = 101;
             var originalExpenseDto = new ExpenseDto { Id = expenseId, GroupId = groupId };
             var updatedExpenseDto = new ExpenseDto { Id = expenseId, GroupId = groupId };
-            var payer = new User("payer", "payer@bgu.ac.il", "hashedPassword","https://bit-demo-link.com") { Id = payerId };
+            var payer = new User("payer", "payer@bgu.ac.il", "hashedPassword", "https://bit-demo-link.com") { Id = payerId };
             var group = new Group("Test Group", payer, new List<User> { })
             {
                 Expenses = new List<Expense> { }
@@ -307,7 +307,7 @@ namespace ServerTests
         {
             // Arrange
             var groupId = 1;
-            var userToAdd = new User("newMember", "newMember@bgu.ac.il", "hashedPassword","https://bit-demo-link.com") { Id = 2 };
+            var userToAdd = new User("newMember", "newMember@bgu.ac.il", "hashedPassword", "https://bit-demo-link.com") { Id = 2 };
 
             _groupDbMock.Setup(x => x.GetGroupByIdAsync(groupId)).ReturnsAsync((Group?)null);
 
@@ -328,10 +328,10 @@ namespace ServerTests
         {
             // Arrange
             var groupId = 1;
-            var admin = new User("admin", "admin@bgu.ac.il", "adminPassword!1","https://bit-demo-link.com") { Id = 1 };
-            var user2 = new User("user2", "user2@bgu.ac.il", "user2Password!1","https://bit-demo-link.com") { Id = 2 };
-            var user3 = new User("user3", "user3@bgu.ac.il", "user3Password!1","https://bit-demo-link.com") { Id = 3 };
-            var newMember = new User("newMember", "newMember@bgu.ac.il", "newMemberPassword!1","https://bit-demo-link.com") { Id = 4 };
+            var admin = new User("admin", "admin@bgu.ac.il", "adminPassword!1", "https://bit-demo-link.com") { Id = 1 };
+            var user2 = new User("user2", "user2@bgu.ac.il", "user2Password!1", "https://bit-demo-link.com") { Id = 2 };
+            var user3 = new User("user3", "user3@bgu.ac.il", "user3Password!1", "https://bit-demo-link.com") { Id = 3 };
+            var newMember = new User("newMember", "newMember@bgu.ac.il", "newMemberPassword!1", "https://bit-demo-link.com") { Id = 4 };
 
             var expensedto = new ExpenseDto
             {
@@ -385,15 +385,15 @@ namespace ServerTests
             var mockUserFacade = new Mock<IUserFacade>();
             var mockDbContext = new Mock<IApplicationDbContext>();
 
-            var admin = new User 
-            { 
-                Id = 1, 
+            var admin = new User
+            {
+                Id = 1,
                 Username = "admin",
-                FirebaseToken = "valid_firebase_token_1" 
+                FirebaseToken = "valid_firebase_token_1"
             };
-            var member = new User 
-            { 
-                Id = 2, 
+            var member = new User
+            {
+                Id = 2,
                 Username = "member",
                 FirebaseToken = "valid_firebase_token_2"
             };
@@ -420,9 +420,9 @@ namespace ServerTests
             var mockLogger = new Mock<ILogger<GroupFacade>>();
             var mockUserFacade = new Mock<IUserFacade>();
             var mockDbContext = new Mock<IApplicationDbContext>();
-            var admin = new User 
-            { 
-                Id = 1, 
+            var admin = new User
+            {
+                Id = 1,
                 Username = "admin",
                 FirebaseToken = "valid_firebase_token_1"
             };
@@ -444,9 +444,9 @@ namespace ServerTests
             var mockLogger = new Mock<ILogger<GroupFacade>>();
             var mockUserFacade = new Mock<IUserFacade>();
             var mockDbContext = new Mock<IApplicationDbContext>();
-            var admin = new User 
-            { 
-                Id = 1, 
+            var admin = new User
+            {
+                Id = 1,
                 Username = "admin",
                 FirebaseToken = "valid_firebase_token_1"
             };
@@ -464,15 +464,15 @@ namespace ServerTests
             var mockLogger = new Mock<ILogger<GroupFacade>>();
             var mockUserFacade = new Mock<IUserFacade>();
             var mockDbContext = new Mock<IApplicationDbContext>();
-            var admin = new User 
-            { 
-                Id = 1, 
-                Username = "admin", 
+            var admin = new User
+            {
+                Id = 1,
+                Username = "admin",
                 FirebaseToken = "valid_firebase_token_1"
             };
-            var user = new User 
-            { 
-                Id = 2, 
+            var user = new User
+            {
+                Id = 2,
                 Username = "user",
                 FirebaseToken = "valid_firebase_token_2"
             };

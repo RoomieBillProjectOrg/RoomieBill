@@ -4,7 +4,7 @@ using Roomiebill.Server.Common.Validators;
 using Roomiebill.Server.Models;
 using System;
 
-namespace ServerTests
+namespace ServerTests.UnitTests
 {
     public class ExpenseValidatorTests
     {
@@ -37,7 +37,7 @@ namespace ServerTests
             };
 
             // Act & Assert
-            var exception = Assert.Throws<InvalidOperationException>(() => 
+            var exception = Assert.Throws<InvalidOperationException>(() =>
                 ExpenseValidator.ValidateExpenseFields(expense));
             Assert.Equal("Description is required for 'Other' category expenses.", exception.Message);
         }
@@ -55,7 +55,7 @@ namespace ServerTests
             };
 
             // Act & Assert
-            var exception = Assert.Throws<InvalidOperationException>(() => 
+            var exception = Assert.Throws<InvalidOperationException>(() =>
                 ExpenseValidator.ValidateExpenseFields(expense));
             Assert.Equal("Description is required for 'Other' category expenses.", exception.Message);
         }
@@ -73,7 +73,7 @@ namespace ServerTests
             };
 
             // Act & Assert
-            var exception = Assert.Throws<InvalidOperationException>(() => 
+            var exception = Assert.Throws<InvalidOperationException>(() =>
                 ExpenseValidator.ValidateExpenseFields(expense));
             Assert.Equal("Start and end months must be null for 'Other' category expenses.", exception.Message);
         }
@@ -106,7 +106,7 @@ namespace ServerTests
             };
 
             // Act & Assert
-            var exception = Assert.Throws<InvalidOperationException>(() => 
+            var exception = Assert.Throws<InvalidOperationException>(() =>
                 ExpenseValidator.ValidateExpenseFields(expense));
             Assert.Equal($"Start and end months are required for {expense.Category} category expenses.", exception.Message);
         }
@@ -123,7 +123,7 @@ namespace ServerTests
             };
 
             // Act & Assert
-            var exception = Assert.Throws<InvalidOperationException>(() => 
+            var exception = Assert.Throws<InvalidOperationException>(() =>
                 ExpenseValidator.ValidateExpenseFields(expense));
             Assert.Equal($"Start and end months are required for {expense.Category} category expenses.", exception.Message);
         }
@@ -140,7 +140,7 @@ namespace ServerTests
             };
 
             // Act & Assert
-            var exception = Assert.Throws<InvalidOperationException>(() => 
+            var exception = Assert.Throws<InvalidOperationException>(() =>
                 ExpenseValidator.ValidateExpenseFields(expense));
             Assert.Equal("End month must be after start month.", exception.Message);
         }
@@ -157,7 +157,7 @@ namespace ServerTests
             };
 
             // Act & Assert
-            var exception = Assert.Throws<InvalidOperationException>(() => 
+            var exception = Assert.Throws<InvalidOperationException>(() =>
                 ExpenseValidator.ValidateExpenseFields(expense));
             Assert.Equal("Start and end months cannot be the same.", exception.Message);
         }
@@ -174,7 +174,7 @@ namespace ServerTests
             };
 
             // Act & Assert
-            var exception = Assert.Throws<InvalidOperationException>(() => 
+            var exception = Assert.Throws<InvalidOperationException>(() =>
                 ExpenseValidator.ValidateExpenseFields(expense));
             Assert.Equal("Dates must be set to the first day of the month.", exception.Message);
         }
@@ -207,7 +207,7 @@ namespace ServerTests
             };
 
             // Act & Assert
-            var exception = Assert.Throws<InvalidOperationException>(() => 
+            var exception = Assert.Throws<InvalidOperationException>(() =>
                 ExpenseValidator.ValidateExpenseFields(expense));
             Assert.Equal("Dates must be set to the first day of the month.", exception.Message);
         }
@@ -254,7 +254,7 @@ namespace ServerTests
             };
 
             // Act & Assert
-            var exception = Assert.Throws<InvalidOperationException>(() => 
+            var exception = Assert.Throws<InvalidOperationException>(() =>
                 ExpenseValidator.ValidateExpenseFields(expense));
             Assert.Equal("End month must be after start month.", exception.Message);
         }
@@ -263,7 +263,7 @@ namespace ServerTests
         public void ValidateExpenseFields_Null_ThrowsArgumentNullException()
         {
             // Act & Assert
-            var exception = Assert.Throws<ArgumentNullException>(() => 
+            var exception = Assert.Throws<ArgumentNullException>(() =>
                 ExpenseValidator.ValidateExpenseFields(null));
             Assert.Equal("Expense cannot be null. (Parameter 'expense')", exception.Message);
         }

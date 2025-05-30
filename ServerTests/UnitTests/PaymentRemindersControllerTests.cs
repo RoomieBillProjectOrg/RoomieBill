@@ -6,7 +6,7 @@ using Roomiebill.Server.DataAccessLayer;
 using Roomiebill.Server.Common.Enums;
 using Xunit;
 
-namespace ServerTests
+namespace ServerTests.UnitTests
 {
     public class PaymentRemindersControllerTests
     {

@@ -1,6 +1,6 @@
 using Roomiebill.Server.Common.Notificaiton;
 
-namespace ServerTests
+namespace ServerTests.UnitTests
 {
     public class NotificationsHandleTests
     {

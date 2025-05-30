@@ -31,6 +31,8 @@ namespace Roomiebill.Server.Controllers
         /// <returns>The generated unique filename for the uploaded file.</returns>
         /// <response code="200">Returns the generated filename.</response>
         /// <response code="400">If the file upload fails.</response>
+        private const int MaxFileSize = 10 * 1024 * 1024; // 10MB
+
         [HttpPost("upload")]
         public async Task<IActionResult> UploadReceipt(IFormFile file)
         {
@@ -41,13 +43,18 @@ namespace Roomiebill.Server.Controllers
                     return BadRequest("Upload failed: File is null");
                 }
 
+                if (file.Length > MaxFileSize)
+                {
+                    return BadRequest("File is too large. Maximum size allowed is 10MB.");
+                }
+
                 if (file.Length == 0)
                 {
                     return BadRequest("Upload failed: File is empty");
                 }
 
                 string fileNameWithGuid = await _fileStorageService.SaveFileAsync(file);
-                return Ok(new { FileName = fileNameWithGuid });
+                return Ok(new FileUploadResponse(fileNameWithGuid));
             }
             catch (Exception ex)
             {
@@ -94,7 +101,12 @@ namespace Roomiebill.Server.Controllers
         {
             try
             {
-                // Get the content type based on the file extension (optional)
+                if (string.IsNullOrEmpty(fileName))
+                {
+                    return BadRequest("Invalid request: Filename cannot be null or empty");
+                }
+
+                // Get the content type based on the file extension
                 string contentType = "application/octet-stream"; // Default
                 string extension = Path.GetExtension(fileName).ToLower();
                 if (extension == ".jpg" || extension == ".jpeg") contentType = "image/jpeg";

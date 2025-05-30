@@ -7,7 +7,7 @@ using Roomiebill.Server.Services;
 using Roomiebill.Server.Services.Interfaces;
 using Xunit;
 
-namespace ServerTests
+namespace ServerTests.UnitTests
 {
     public class GroupsControllerTests
     {
@@ -36,7 +36,7 @@ namespace ServerTests
                               .ReturnsAsync(newGroup);
 
             IActionResult result = await _controller.CreateGroup(groupDto);
-            
+
             OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(newGroup, okResult.Value);
         }
@@ -55,7 +55,7 @@ namespace ServerTests
                           .ReturnsAsync(groups);
 
             IActionResult result = await _controller.GetUserGroups(userId);
-            
+
             OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(groups, okResult.Value);
         }
@@ -70,7 +70,7 @@ namespace ServerTests
                           .ReturnsAsync(group);
 
             IActionResult result = await _controller.GetGroup(groupId);
-            
+
             OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(group, okResult.Value);
         }
@@ -92,7 +92,7 @@ namespace ServerTests
                           .ReturnsAsync(debts);
 
             IActionResult result = await _controller.GetDebtsForUser(groupId, userId);
-            
+
             OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(debts, okResult.Value);
         }
@@ -113,7 +113,7 @@ namespace ServerTests
                           .ReturnsAsync(debts);
 
             IActionResult result = await _controller.GetDebtsOwedByUser(groupId, userId);
-            
+
             OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(debts, okResult.Value);
         }
@@ -131,7 +131,7 @@ namespace ServerTests
                           .ReturnsAsync(newExpense);
 
             IActionResult result = await _controller.AddExpenseAsync(expenseDto);
-            
+
             OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(newExpense, okResult.Value);
         }
@@ -150,7 +150,7 @@ namespace ServerTests
                           .ReturnsAsync(expenses);
 
             IActionResult result = await _controller.GetExpensesForGroup(groupId);
-            
+
             OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(expenses, okResult.Value);
         }
@@ -168,7 +168,7 @@ namespace ServerTests
                           .Returns(Task.CompletedTask);
 
             IActionResult result = await _controller.SnoozeMemberToPay(snoozeInfo);
-            
+
             Assert.IsType<OkResult>(result);
         }
 
@@ -182,7 +182,7 @@ namespace ServerTests
                           .Returns(Task.CompletedTask);
 
             IActionResult result = await _controller.DeleteGroup(groupId, userId);
-            
+
             OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
             var response = okResult.Value as MessageResponse;
             Assert.NotNull(response);
@@ -199,7 +199,7 @@ namespace ServerTests
                           .Returns(Task.CompletedTask);
 
             IActionResult result = await _controller.ExitGroup(userId, groupId);
-            
+
             OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
             var response = okResult.Value as MessageResponse;
             Assert.NotNull(response);
@@ -223,7 +223,7 @@ namespace ServerTests
                           .ReturnsAsync(feedback);
 
             IActionResult result = await _controller.GetGeiminiResponseForExpenses(groupId);
-            
+
             OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(feedback, okResult.Value);
         }
@@ -233,12 +233,12 @@ namespace ServerTests
         {
             int groupId = 1;
             string errorMessage = "Error occurred";
-            
+
             _mockGroupService.Setup(s => s.GetExpensesForGroupAsync(groupId))
                           .ThrowsAsync(new Exception(errorMessage));
 
             IActionResult result = await _controller.GetExpensesForGroup(groupId);
-            
+
             BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
             var response = badRequest.Value as MessageResponse;
             Assert.NotNull(response);
