@@ -5,7 +5,7 @@ using Roomiebill.Server.Common.Validators;
 using MimeKit;
 using Moq;
 
-namespace ServerTests
+namespace ServerTests.UnitTests
 {
     public class RegisterVerifyTests : IDisposable
     {
@@ -71,7 +71,7 @@ namespace ServerTests
             Assert.NotNull(result);
             Assert.NotNull(result.VerifyCode);
             Assert.True(RegisterVerify.ValidateVerificationCode(result.VerifyCode));
-            _mockEmailService.Verify(x => x.SendEmailAsync(It.Is<MimeMessage>(m => 
+            _mockEmailService.Verify(x => x.SendEmailAsync(It.Is<MimeMessage>(m =>
                 m.To.Mailboxes.First().Address == TEST_EMAIL)), Times.Once);
         }
 

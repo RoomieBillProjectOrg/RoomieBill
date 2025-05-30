@@ -8,7 +8,7 @@ using Roomiebill.Server.Models;
 using Roomiebill.Server.Common.Enums;
 using System.Reflection;
 
-namespace ServerTests
+namespace ServerTests.UnitTests
 {
     public class PaymentReminderServiceTests
     {
@@ -38,16 +38,23 @@ namespace ServerTests
         public async Task CheckAndSendReminders_WithActiveReminders_SendsEmailsForDueReminders()
         {
             // Arrange
-            var today = DateTime.UtcNow;
+            // Use a fixed date for testing
+            const int validDay = 15;
+            var testDate = new DateTime(2025, 6, validDay);
             var user = new User { Id = 1, Username = "testUser", Email = "test@example.com" };
             var group = new Group("TestGroup", user, new List<User> { user });
-            
-            var activeReminder = new PaymentReminder(1, 1, Category.Gas, RecurrencePattern.Monthly, today.Day);
+
+            var activeReminder = new PaymentReminder(1, 1, Category.Gas, RecurrencePattern.Monthly, validDay);
             activeReminder.User = user;
             activeReminder.Group = group;
-            activeReminder.LastReminderSent = today.AddMonths(-1);
+            activeReminder.LastReminderSent = testDate.AddMonths(-1);
 
-            var inactiveReminder = new PaymentReminder(1, 1, Category.Water, RecurrencePattern.Monthly, today.Day);
+            var mockScopeServiceProvider = new Mock<IServiceProvider>();
+            mockScopeServiceProvider.Setup(x => x.GetService(typeof(IApplicationDbContext)))
+                .Returns(_mockDbContext.Object);
+            _mockScope.Setup(s => s.ServiceProvider).Returns(mockScopeServiceProvider.Object);
+
+            var inactiveReminder = new PaymentReminder(1, 1, Category.Water, RecurrencePattern.Monthly, validDay);
             inactiveReminder.IsActive = false;
             inactiveReminder.User = user;
             inactiveReminder.Group = group;
@@ -59,17 +66,18 @@ namespace ServerTests
             var service = new PaymentReminderService(_mockLogger.Object, _mockServiceProvider.Object);
 
             // Use reflection to access and invoke the private CheckAndSendReminders method
-            var method = typeof(PaymentReminderService).GetMethod("CheckAndSendReminders", 
+            var method = typeof(PaymentReminderService).GetMethod("CheckAndSendReminders",
                 BindingFlags.NonPublic | BindingFlags.Instance);
 
             // Act
-            await (Task)method.Invoke(service, null);
+            // Pass test date as parameter array for the private method
+            await (Task)method.Invoke(service, new object[] { testDate });
 
             // Assert
             _mockDbContext.Verify(db => db.UpdatePaymentReminderAsync(
-                It.Is<PaymentReminder>(r => 
-                    r.UserId == activeReminder.UserId && 
-                    r.LastReminderSent.Date == today.Date)), 
+                It.Is<PaymentReminder>(r =>
+                    r.UserId == activeReminder.UserId &&
+                    r.LastReminderSent.Date == testDate.Date)),
                 Times.Once);
         }
 
@@ -83,11 +91,11 @@ namespace ServerTests
             var service = new PaymentReminderService(_mockLogger.Object, _mockServiceProvider.Object);
 
             // Use reflection to access and invoke the private CheckAndSendReminders method
-            var method = typeof(PaymentReminderService).GetMethod("CheckAndSendReminders", 
+            var method = typeof(PaymentReminderService).GetMethod("CheckAndSendReminders",
                 BindingFlags.NonPublic | BindingFlags.Instance);
 
-            // Act
-            await (Task)method.Invoke(service, null);
+            // Act - pass null as DateTime? parameter
+            await (Task)method.Invoke(service, new object[] { null });
 
             // Assert
             _mockDbContext.Verify(db => db.UpdatePaymentReminderAsync(It.IsAny<PaymentReminder>()), Times.Never);
@@ -97,14 +105,15 @@ namespace ServerTests
         public async Task CheckAndSendReminders_WrongDayForReminder_DoesNotSendEmails()
         {
             // Arrange
-            var today = DateTime.UtcNow;
+            var testDate = new DateTime(2025, 6, 15);
             var user = new User { Id = 1, Username = "testUser", Email = "test@example.com" };
             var group = new Group("TestGroup", user, new List<User> { user });
-            
-            var reminder = new PaymentReminder(1, 1, Category.Gas, RecurrencePattern.Monthly, today.Day == 1 ? 2 : 1);
+
+            // Create reminder for day 16 but test with day 15
+            var reminder = new PaymentReminder(1, 1, Category.Gas, RecurrencePattern.Monthly, 16);
             reminder.User = user;
             reminder.Group = group;
-            reminder.LastReminderSent = today.AddMonths(-1);
+            reminder.LastReminderSent = testDate.AddMonths(-1);
 
             var reminders = new List<PaymentReminder> { reminder };
             _mockDbContext.Setup(db => db.GetActiveRemindersAsync())
@@ -113,11 +122,11 @@ namespace ServerTests
             var service = new PaymentReminderService(_mockLogger.Object, _mockServiceProvider.Object);
 
             // Use reflection to access and invoke the private CheckAndSendReminders method
-            var method = typeof(PaymentReminderService).GetMethod("CheckAndSendReminders", 
+            var method = typeof(PaymentReminderService).GetMethod("CheckAndSendReminders",
                 BindingFlags.NonPublic | BindingFlags.Instance);
 
-            // Act
-            await (Task)method.Invoke(service, null);
+            // Act - use testDate (day 15) to check against reminder set for day 16
+            await (Task)method.Invoke(service, new object[] { testDate });
 
             // Assert
             _mockDbContext.Verify(db => db.UpdatePaymentReminderAsync(It.IsAny<PaymentReminder>()), Times.Never);

@@ -6,7 +6,7 @@ using Roomiebill.Server.Services;
 using Roomiebill.Server.Services.Interfaces;
 using Xunit;
 
-namespace ServerTests
+namespace ServerTests.UnitTests
 {
     public class PaymentControllerTests
     {

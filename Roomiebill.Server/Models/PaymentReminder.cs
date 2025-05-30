@@ -52,9 +52,9 @@ namespace Roomiebill.Server.Models
             LastReminderSent = DateTime.UtcNow.AddMonths(-1); // Set to last month to allow immediate check
         }
 
-        public bool ShouldSendReminder()
+        public bool ShouldSendReminder(DateTime? currentDate = null)
         {
-            var today = DateTime.UtcNow.Date;
+            var today = (currentDate ?? DateTime.UtcNow).Date;
             var lastSent = LastReminderSent.Date;
             
             // Check if it's the right day of the month
@@ -75,10 +75,11 @@ namespace Roomiebill.Server.Models
             return false;
         }
 
-        public void UpdateLastReminderSent()
+        public void UpdateLastReminderSent(DateTime? currentDate = null)
         {
-            LastReminderSent = DateTime.UtcNow;
-            ModifiedAt = DateTime.UtcNow;
+            var now = currentDate ?? DateTime.UtcNow;
+            LastReminderSent = now;
+            ModifiedAt = now;
         }
     }
 }

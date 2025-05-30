@@ -2,7 +2,7 @@ using Roomiebill.Server.Common.Enums;
 using Roomiebill.Server.Models;
 using Xunit;
 
-namespace ServerTests
+namespace ServerTests.UnitTests
 {
     public class GroupTests
     {

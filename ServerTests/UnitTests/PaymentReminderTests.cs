@@ -6,7 +6,7 @@ using Roomiebill.Server.Models;
 using Roomiebill.Server.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ServerTests
+namespace ServerTests.UnitTests
 {
     public class PaymentReminderTests
     {
@@ -46,7 +46,7 @@ namespace ServerTests
             var recurrencePattern = RecurrencePattern.Monthly;
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => 
+            Assert.Throws<ArgumentException>(() =>
                 new PaymentReminder(userId, groupId, category, recurrencePattern, invalidDay));
         }
 
@@ -57,12 +57,14 @@ namespace ServerTests
         public void ShouldSendReminder_Monthly_ChecksExactMonth(int monthsToAdd, bool expectedResult)
         {
             // Arrange
-            var today = DateTime.UtcNow;
-            var reminder = new PaymentReminder(1, 1, Category.Gas, RecurrencePattern.Monthly, today.Day);
-            reminder.LastReminderSent = today.AddMonths(monthsToAdd);
+            // Use a fixed date for testing
+            const int validDay = 15;
+            var testDate = new DateTime(2025, 6, validDay); // Use June 15, 2025 as the test date
+            var reminder = new PaymentReminder(1, 1, Category.Gas, RecurrencePattern.Monthly, validDay);
+            reminder.LastReminderSent = testDate.AddMonths(monthsToAdd);
 
             // Act
-            var shouldSend = reminder.ShouldSendReminder();
+            var shouldSend = reminder.ShouldSendReminder(testDate);
 
             // Assert
             Assert.Equal(expectedResult, shouldSend);
@@ -76,12 +78,14 @@ namespace ServerTests
         public void ShouldSendReminder_BiMonthly_ChecksExactTwoMonths(int monthsToAdd, bool expectedResult)
         {
             // Arrange
-            var today = DateTime.UtcNow;
-            var reminder = new PaymentReminder(1, 1, Category.Gas, RecurrencePattern.BiMonthly, today.Day);
-            reminder.LastReminderSent = today.AddMonths(monthsToAdd);
+            // Use a fixed date for testing
+            const int validDay = 15;
+            var testDate = new DateTime(2025, 6, validDay); // Use June 15, 2025 as the test date
+            var reminder = new PaymentReminder(1, 1, Category.Gas, RecurrencePattern.BiMonthly, validDay);
+            reminder.LastReminderSent = testDate.AddMonths(monthsToAdd);
 
             // Act
-            var shouldSend = reminder.ShouldSendReminder();
+            var shouldSend = reminder.ShouldSendReminder(testDate);
 
             // Assert
             Assert.Equal(expectedResult, shouldSend);
@@ -93,7 +97,7 @@ namespace ServerTests
             // Arrange
             var mockDbContext = new Mock<IApplicationDbContext>();
             var controller = new PaymentRemindersController(mockDbContext.Object);
-            
+
             var user = new User { Id = 1, Username = "testUser" };
             var group = new Group("TestGroup", user, new List<User> { user });
             group.Id = 1;
@@ -149,7 +153,7 @@ namespace ServerTests
             // Arrange
             var mockDbContext = new Mock<IApplicationDbContext>();
             var controller = new PaymentRemindersController(mockDbContext.Object);
-            
+
             var reminder = new PaymentReminder(1, 1, Category.Gas, RecurrencePattern.Monthly, 15);
             reminder.Id = 1;
 

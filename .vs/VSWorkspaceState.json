@@ -1,7 +1,16 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\FrontendApplication",
+    "\\FrontendApplication\\Pages",
+    "\\Roomiebill.Server",
+    "\\Roomiebill.Server\\Controllers",
+    "\\Roomiebill.Server\\Models",
+    "\\Roomiebill.Server\\Services",
+    "\\ServerTests",
+    "\\ServerTests\\AcceptanceTests",
+    "\\ServerTests\\UnitTests"
   ],
-  "SelectedNode": "\\RoomieBill.sln",
+  "SelectedNode": "\\Roomiebill.Server\\Controllers\\GroupsController.cs",
   "PreviewInSolutionExplorer": false
 }

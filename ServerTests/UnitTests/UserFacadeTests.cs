@@ -6,7 +6,7 @@ using Roomiebill.Server.DataAccessLayer.Dtos;
 using Roomiebill.Server.Facades;
 using Roomiebill.Server.Models;
 
-namespace ServerTests;
+namespace ServerTests.UnitTests;
 
 public class UserFacadeTests
 {
