@@ -33,6 +33,11 @@ namespace Roomiebill.Server.Controllers
         {
             try
             {
+                if (user == null)
+                {
+                    return BadRequest(new MessageResponse { Message = "Invalid request: Input cannot be null" });
+                }
+
                 // First verify the user details
                 await _userService.VerifyRegisterUserDetailsAsync(user);
                 // If verification passes, proceed with registration
@@ -61,6 +66,11 @@ namespace Roomiebill.Server.Controllers
         {
             try
             {
+                if (user == null)
+                {
+                    return BadRequest(new MessageResponse { Message = "Invalid request: Input cannot be null" });
+                }
+
                 await _userService.VerifyRegisterUserDetailsAsync(user);
                 VerifiyCodeModel verifyCode = await RegisterVerify.SendVerificationEmail(user.Email);
                 return Ok(verifyCode);
@@ -83,6 +93,11 @@ namespace Roomiebill.Server.Controllers
         {
             try
             {
+                if (updatePasswordDto == null)
+                {
+                    return BadRequest(new MessageResponse { Message = "Invalid request: Input cannot be null" });
+                }
+
                 var user = await _userService.UpdatePasswordAsync(updatePasswordDto);
                 return Ok(user);
             }
@@ -104,6 +119,11 @@ namespace Roomiebill.Server.Controllers
         {
             try
             {
+                if (loginDto == null)
+                {
+                    return BadRequest(new MessageResponse { Message = "Invalid request: Input cannot be null" });
+                }
+
                 var user = await _userService.LoginAsync(loginDto);
                 return Ok(user);
             }
@@ -127,7 +147,7 @@ namespace Roomiebill.Server.Controllers
             {
                 if (string.IsNullOrEmpty(username))
                 {
-                    return BadRequest(new MessageResponse { Message = "Username is required" });
+                    return BadRequest(new MessageResponse { Message = "Invalid request: Username is required" });
                 }
 
                 await _userService.LogoutAsync(username);
@@ -155,6 +175,11 @@ namespace Roomiebill.Server.Controllers
         {
             try
             {
+                if (string.IsNullOrEmpty(username))
+                {
+                    return BadRequest(new MessageResponse { Message = "Invalid request: Username cannot be null or empty" });
+                }
+
                 List<Invite> userInvites = await _userService.GetUserInvitesAsync(username);
                 return Ok(userInvites);
             }

@@ -82,7 +82,7 @@ namespace ServerTests.UnitTests
         public async Task TestThatWhenInvitingByEmailFailsThenReturnsBadRequest()
         {
             InviteToGroupByEmailDto inviteDetails = new InviteToGroupByEmailDto();
-            string errorMessage = "Failed to send invite";
+            string errorMessage = "Failed to send invite: Invalid username";
 
             _mockInviteService.Setup(s => s.InviteToGroupByEmail(inviteDetails))
                             .ThrowsAsync(new Exception(errorMessage));

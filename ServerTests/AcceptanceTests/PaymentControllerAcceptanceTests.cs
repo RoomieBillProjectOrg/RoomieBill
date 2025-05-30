@@ -166,6 +166,167 @@ namespace ServerTests.AcceptanceTests
             Assert.Equal("Payment failed.", response.Message);
         }
 
+        [Fact]
+        public async Task ProcessPayment_WithNullRequest_ShouldReturnBadRequest()
+        {
+            // Arrange
+            PaymentRequest request = null;
+            var controller = CreateController(paymentSuccess: false, debtSettlementSuccess: true);
+
+            // Act
+            var result = await controller.ProcessPayment(request);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            var response = Assert.IsType<PaymentResponse>(badRequestResult.Value);
+            Assert.Contains("failed", response.Message.ToLower());
+        }
+
+        [Fact]
+        public async Task ProcessPayment_WhenPaymentServiceThrows_ShouldReturnBadRequest()
+        {
+            // Arrange
+            var paymentService = new Mock<IPaymentService>();
+            var groupService = new Mock<IGroupService>();
+            paymentService.Setup(s => s.ProcessPaymentAsync(It.IsAny<PaymentRequest>()))
+                .ThrowsAsync(new Exception("Payment service error"));
+            var controller = new PaymentController(paymentService.Object, groupService.Object);
+
+            var request = new PaymentRequest
+            {
+                Amount = 100.00m,
+                Currency = "USD",
+                PayerInfo = testPayer,
+                PayeeInfo = testPayee,
+                PaymentMethod = "BitPay",
+                GroupId = 1
+            };
+
+            // Act
+            var result = await controller.ProcessPayment(request);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            var response = Assert.IsType<PaymentResponse>(badRequestResult.Value);
+            Assert.Equal("Payment failed.", response.Message);
+        }
+
+        [Fact]
+        public async Task ProcessPayment_WhenSettleDebtThrows_ShouldReturnBadRequest()
+        {
+            // Arrange
+            var paymentService = new Mock<IPaymentService>();
+            var groupService = new Mock<IGroupService>();
+            paymentService.Setup(s => s.ProcessPaymentAsync(It.IsAny<PaymentRequest>()))
+                .ReturnsAsync(true);
+            groupService.Setup(s => s.SettleDebtAsync(
+                    It.IsAny<decimal>(),
+                    It.IsAny<User>(),
+                    It.IsAny<User>(),
+                    It.IsAny<int>()))
+                .ThrowsAsync(new Exception("Settle debt error"));
+            var controller = new PaymentController(paymentService.Object, groupService.Object);
+
+            var request = new PaymentRequest
+            {
+                Amount = 100.00m,
+                Currency = "USD",
+                PayerInfo = testPayer,
+                PayeeInfo = testPayee,
+                PaymentMethod = "BitPay",
+                GroupId = 1
+            };
+
+            // Act
+            var result = await controller.ProcessPayment(request);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            var response = Assert.IsType<PaymentResponse>(badRequestResult.Value);
+            Assert.Equal("Payment failed: Unable to settle debt.", response.Message);
+        }
+
+        [Fact]
+        public async Task ProcessPayment_WithNullPayeeInfo_ShouldReturnBadRequest()
+        {
+            // Arrange
+            var request = new PaymentRequest
+            {
+                Amount = 100.00m,
+                Currency = "USD",
+                PayerInfo = testPayer,
+                PayeeInfo = null,
+                PaymentMethod = "BitPay",
+                GroupId = 1
+            };
+
+            var controller = CreateController(
+                paymentSuccess: false,
+                debtSettlementSuccess: true);
+
+            // Act
+            var result = await controller.ProcessPayment(request);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            var response = Assert.IsType<PaymentResponse>(badRequestResult.Value);
+            Assert.Equal("Payment failed.", response.Message);
+        }
+
+        [Fact]
+        public async Task ProcessPayment_WithNullCurrency_ShouldReturnBadRequest()
+        {
+            // Arrange
+            var request = new PaymentRequest
+            {
+                Amount = 100.00m,
+                Currency = null,
+                PayerInfo = testPayer,
+                PayeeInfo = testPayee,
+                PaymentMethod = "BitPay",
+                GroupId = 1
+            };
+
+            var controller = CreateController(
+                paymentSuccess: false,
+                debtSettlementSuccess: true);
+
+            // Act
+            var result = await controller.ProcessPayment(request);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            var response = Assert.IsType<PaymentResponse>(badRequestResult.Value);
+            Assert.Equal("Payment failed.", response.Message);
+        }
+
+        [Fact]
+        public async Task ProcessPayment_WithNullPaymentMethod_ShouldReturnBadRequest()
+        {
+            // Arrange
+            var request = new PaymentRequest
+            {
+                Amount = 100.00m,
+                Currency = "USD",
+                PayerInfo = testPayer,
+                PayeeInfo = testPayee,
+                PaymentMethod = null,
+                GroupId = 1
+            };
+
+            var controller = CreateController(
+                paymentSuccess: false,
+                debtSettlementSuccess: true);
+
+            // Act
+            var result = await controller.ProcessPayment(request);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            var response = Assert.IsType<PaymentResponse>(badRequestResult.Value);
+            Assert.Equal("Payment failed.", response.Message);
+        }
+
         private PaymentController CreateController(bool paymentSuccess, bool debtSettlementSuccess)
         {
             var paymentService = new Mock<IPaymentService>();
