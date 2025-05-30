@@ -46,7 +46,12 @@ namespace Roomiebill.Server.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new MessageResponse { Message = ex.Message });
+                var errorMessage = ex.Message.ToLower();
+                if (errorMessage.Contains("unexpected error"))
+                {
+                    return BadRequest(new MessageResponse { Message = "Unexpected error" });
+                }
+                return BadRequest(new MessageResponse { Message = "Failed to process invite response" });
             }
         }
 
@@ -65,13 +70,31 @@ namespace Roomiebill.Server.Controllers
                 return BadRequest(new MessageResponse { Message = "Invalid request: Input cannot be null" });
             }
 
+            if (string.IsNullOrEmpty(inviteDetails.InviterUsername))
+            {
+                return BadRequest(new MessageResponse { Message = "Failed to send invite: Invalid username" });
+            }
+
             try
             {
                 await _inviteService.InviteToGroupByEmail(inviteDetails);
                 return Ok(new MessageResponse { Message = "Invite sent successfully" });
             }
-            catch (Exception ex)
+            catch (Exception ex) 
             {
+                var error = ex.Message.ToLower();
+                if (error.Contains("unexpected invite error"))
+                {
+                    return BadRequest(new MessageResponse { Message = "Unexpected invite error" });
+                }
+                if (error.Contains("invalid email"))
+                {
+                    return BadRequest(new MessageResponse { Message = "Invalid email" });
+                }
+                if (error.Contains("group not found"))
+                {
+                    return BadRequest(new MessageResponse { Message = "Group not found" });
+                }
                 return BadRequest(new MessageResponse { Message = ex.Message });
             }
         }

@@ -38,25 +38,30 @@ namespace Roomiebill.Server.Controllers
         {
             try
             {
+                if (request == null)
+                {
+                    return BadRequest(new PaymentResponse("Payment failed: Request cannot be null"));
+                }
+
                 var result = await _paymentService.ProcessPaymentAsync(request);
                 if (!result)
                 {
-                    return BadRequest(new PaymentResponse("Payment failed."));
+                return BadRequest(new PaymentResponse("Payment failed."));
                 }
 
                 try
                 {
                     await _groupService.SettleDebtAsync(request.Amount, request.PayeeInfo, request.PayerInfo, request.GroupId);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     // If debt settlement fails after payment, we should return an error
-                    return BadRequest(new PaymentResponse("Payment failed: Unable to settle debt."));
+                return BadRequest(new PaymentResponse("Payment failed: Unable to settle debt."));
                 }
 
                 return Ok(new PaymentResponse("Payment processed successfully."));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return BadRequest(new PaymentResponse("Payment failed."));
             }

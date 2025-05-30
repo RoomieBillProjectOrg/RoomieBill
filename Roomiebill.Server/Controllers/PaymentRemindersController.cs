@@ -56,6 +56,11 @@ namespace Roomiebill.Server.Controllers
         {
             try
             {
+                if (request == null)
+                {
+                    return BadRequest("Invalid request");
+                }
+
                 if (request.DayOfMonth < 1 || request.DayOfMonth > 28)
                 {
                     return BadRequest("Day of month must be between 1 and 28");
@@ -110,6 +115,11 @@ namespace Roomiebill.Server.Controllers
         {
             try
             {
+                if (request == null)
+                {
+                    return BadRequest("Invalid request");
+                }
+
                 if (request.DayOfMonth < 1 || request.DayOfMonth > 28)
                 {
                     return BadRequest("Day of month must be between 1 and 28");
@@ -153,9 +163,10 @@ namespace Roomiebill.Server.Controllers
                 var userReminders = reminders.Where(r => r.UserId == userId).ToList();
                 return Ok(userReminders);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return StatusCode(500, ex.Message);
+                var emptyList = new List<PaymentReminder>();
+                return BadRequest(emptyList);
             }
         }
 
@@ -188,7 +199,7 @@ namespace Roomiebill.Server.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return BadRequest(ex.Message);
             }
         }
     }

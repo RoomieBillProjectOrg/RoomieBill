@@ -93,6 +93,67 @@ namespace ServerTests.AcceptanceTests
         }
 
         [Fact]
+        public async Task CreateReminder_WithNullRequest_ShouldReturnBadRequest()
+        {
+            // Arrange
+            CreateReminderRequest request = null;
+            var controller = CreateController();
+
+            // Act
+            var result = await controller.CreateReminder(request);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Invalid request", badRequestResult.Value);
+        }
+
+        [Fact]
+        public async Task CreateReminder_WithNonexistentGroup_ShouldReturnNotFound()
+        {
+            // Arrange
+            var request = new CreateReminderRequest
+            {
+                UserId = 1,
+                GroupId = 999,
+                Category = Category.Electricity,
+                RecurrencePattern = RecurrencePattern.Monthly,
+                DayOfMonth = 15
+            };
+
+            var controller = CreateController(userExists: true, groupExists: false);
+
+            // Act
+            var result = await controller.CreateReminder(request);
+
+            // Assert
+            var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Equal("Group not found", notFoundResult.Value);
+        }
+
+        [Fact]
+        public async Task CreateReminder_WhenUserNotInGroup_ShouldReturnBadRequest()
+        {
+            // Arrange
+            var request = new CreateReminderRequest
+            {
+                UserId = 1,
+                GroupId = 1,
+                Category = Category.Electricity,
+                RecurrencePattern = RecurrencePattern.Monthly,
+                DayOfMonth = 15
+            };
+
+            var controller = CreateController(userExists: true, groupExists: true, isUserInGroup: false);
+
+            // Act
+            var result = await controller.CreateReminder(request);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("User is not a member of the specified group", badRequestResult.Value);
+        }
+
+        [Fact]
         public async Task UpdateReminder_WithValidData_ShouldSucceed()
         {
             // Arrange
@@ -118,6 +179,44 @@ namespace ServerTests.AcceptanceTests
         }
 
         [Fact]
+        public async Task UpdateReminder_WithNonexistentReminder_ShouldReturnNotFound()
+        {
+            // Arrange
+            var request = new UpdateReminderRequest
+            {
+                Id = 999,
+                Category = Category.Water,
+                RecurrencePattern = RecurrencePattern.Monthly,
+                DayOfMonth = 20,
+                IsActive = true
+            };
+
+            var controller = CreateController(reminderExists: false);
+
+            // Act
+            var result = await controller.UpdateReminder(request);
+
+            // Assert
+            var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Equal("Reminder not found", notFoundResult.Value);
+        }
+
+        [Fact]
+        public async Task UpdateReminder_WithNullRequest_ShouldReturnBadRequest()
+        {
+            // Arrange
+            UpdateReminderRequest request = null;
+            var controller = CreateController();
+
+            // Act
+            var result = await controller.UpdateReminder(request);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Invalid request", badRequestResult.Value);
+        }
+
+        [Fact]
         public async Task GetUserReminders_ShouldReturnActiveReminders()
         {
             // Arrange
@@ -135,6 +234,22 @@ namespace ServerTests.AcceptanceTests
         }
 
         [Fact]
+        public async Task GetUserReminders_WithNoReminders_ShouldReturnEmptyList()
+        {
+            // Arrange
+            int userId = 999;
+            var controller = CreateController(hasActiveReminders: false);
+
+            // Act
+            var result = await controller.GetUserReminders(userId);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var reminders = Assert.IsType<List<PaymentReminder>>(okResult.Value);
+            Assert.Empty(reminders);
+        }
+
+        [Fact]
         public async Task DeleteReminder_ShouldSoftDelete()
         {
             // Arrange
@@ -146,6 +261,42 @@ namespace ServerTests.AcceptanceTests
 
             // Assert
             Assert.IsType<OkResult>(result);
+        }
+
+        [Fact]
+        public async Task DeleteReminder_WithNonexistentReminder_ShouldReturnNotFound()
+        {
+            // Arrange
+            int reminderId = 999;
+            var controller = CreateController(reminderExists: false);
+
+            // Act
+            var result = await controller.DeleteReminder(reminderId);
+
+            // Assert
+            var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Equal("Reminder not found", notFoundResult.Value);
+        }
+
+        [Fact]
+        public async Task DeleteReminder_WhenExceptionThrown_ShouldReturnBadRequest()
+        {
+            // Arrange
+            int reminderId = 1;
+            var mockDbContext = new Mock<IApplicationDbContext>();
+            mockDbContext.Setup(db => db.GetPaymentReminderByIdAsync(reminderId))
+                .ReturnsAsync(new PaymentReminder(1, 1, Category.Electricity, RecurrencePattern.Monthly, 15));
+            mockDbContext.Setup(db => db.UpdatePaymentReminderAsync(It.IsAny<PaymentReminder>()))
+                .ThrowsAsync(new Exception("DB error"));
+
+            var controller = new PaymentRemindersController(mockDbContext.Object);
+
+            // Act
+            var result = await controller.DeleteReminder(reminderId);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Contains("db error", badRequestResult.Value.ToString().ToLower());
         }
 
         private PaymentRemindersController CreateController(

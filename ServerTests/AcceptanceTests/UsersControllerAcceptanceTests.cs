@@ -58,6 +58,49 @@ namespace ServerTests.AcceptanceTests
         }
 
         [Fact]
+        public async Task RegisterUser_WithNullRequest_ShouldReturnBadRequest()
+        {
+            // Arrange
+            RegisterUserDto user = null;
+            var controller = CreateController();
+
+            // Act
+            var result = await controller.RegisterUser(user);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            var response = Assert.IsType<MessageResponse>(badRequestResult.Value);
+            Assert.Contains("invalid", response.Message.ToLower());
+        }
+
+        [Fact]
+        public async Task RegisterUser_WhenServiceThrows_ShouldReturnBadRequest()
+        {
+            // Arrange
+            var userService = new Mock<IUserService>();
+            userService.Setup(s => s.RegisterUserAsync(It.IsAny<RegisterUserDto>()))
+                .ThrowsAsync(new Exception("Unexpected error"));
+            var controller = new UsersController(userService.Object);
+
+            var user = new RegisterUserDto
+            {
+                Username = "failuser",
+                Email = "fail@example.com",
+                Password = "Password123!",
+                BitLink = "bitlink",
+                FirebaseToken = "token"
+            };
+
+            // Act
+            var result = await controller.RegisterUser(user);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            var response = Assert.IsType<MessageResponse>(badRequestResult.Value);
+            Assert.Contains("unexpected error", response.Message.ToLower());
+        }
+
+        [Fact]
         public async Task Login_WithValidCredentials_ShouldReturnUserData()
         {
             // Arrange
@@ -89,6 +132,22 @@ namespace ServerTests.AcceptanceTests
             // Act
             var controller = CreateController();
             var result = await controller.Login(loginDto);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            var response = Assert.IsType<MessageResponse>(badRequestResult.Value);
+            Assert.Contains("invalid", response.Message.ToLower());
+        }
+
+        [Fact]
+        public async Task Login_WithNullRequest_ShouldReturnBadRequest()
+        {
+            // Arrange
+            LoginDto login = null;
+            var controller = CreateController();
+
+            // Act
+            var result = await controller.Login(login);
 
             // Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
@@ -138,6 +197,22 @@ namespace ServerTests.AcceptanceTests
         }
 
         [Fact]
+        public async Task UpdatePassword_WithNullRequest_ShouldReturnBadRequest()
+        {
+            // Arrange
+            UpdatePasswordDto updatePassword = null;
+            var controller = CreateController();
+
+            // Act
+            var result = await controller.UpdatePassword(updatePassword);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            var response = Assert.IsType<MessageResponse>(badRequestResult.Value);
+            Assert.Contains("invalid", response.Message.ToLower());
+        }
+
+        [Fact]
         public async Task Logout_WithValidUsername_ShouldSucceed()
         {
             // Arrange
@@ -154,6 +229,22 @@ namespace ServerTests.AcceptanceTests
         }
 
         [Fact]
+        public async Task Logout_WithNullUsername_ShouldReturnBadRequest()
+        {
+            // Arrange
+            string username = null;
+            var controller = CreateController();
+
+            // Act
+            var result = await controller.Logout(username);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            var response = Assert.IsType<MessageResponse>(badRequestResult.Value);
+            Assert.Contains("invalid", response.Message.ToLower());
+        }
+
+        [Fact]
         public async Task GetUserInvites_WithValidUsername_ShouldReturnInvitesList()
         {
             // Arrange
@@ -167,6 +258,22 @@ namespace ServerTests.AcceptanceTests
             var okResult = Assert.IsType<OkObjectResult>(result);
             var invites = Assert.IsType<List<Invite>>(okResult.Value);
             Assert.NotNull(invites);
+        }
+
+        [Fact]
+        public async Task GetUserInvites_WithNullUsername_ShouldReturnBadRequest()
+        {
+            // Arrange
+            string username = null;
+            var controller = CreateController();
+
+            // Act
+            var result = await controller.GetUserInvites(username);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            var response = Assert.IsType<MessageResponse>(badRequestResult.Value);
+            Assert.Contains("invalid", response.Message.ToLower());
         }
 
         [Fact]
@@ -190,6 +297,49 @@ namespace ServerTests.AcceptanceTests
             var okResult = Assert.IsType<OkObjectResult>(result);
             var verifyCode = Assert.IsType<VerifiyCodeModel>(okResult.Value);
             Assert.NotNull(verifyCode.VerifyCode);
+        }
+
+        [Fact]
+        public async Task VerifyUserRegisterDetails_WithNullRequest_ShouldReturnBadRequest()
+        {
+            // Arrange
+            RegisterUserDto user = null;
+            var controller = CreateController();
+
+            // Act
+            var result = await controller.VerifyUserRegisterDetails(user);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            var response = Assert.IsType<MessageResponse>(badRequestResult.Value);
+            Assert.Contains("invalid", response.Message.ToLower());
+        }
+
+        [Fact]
+        public async Task VerifyUserRegisterDetails_WhenServiceThrows_ShouldReturnBadRequest()
+        {
+            // Arrange
+            var userService = new Mock<IUserService>();
+            userService.Setup(s => s.VerifyRegisterUserDetailsAsync(It.IsAny<RegisterUserDto>()))
+                .ThrowsAsync(new Exception("Verification error"));
+            var controller = new UsersController(userService.Object);
+
+            var user = new RegisterUserDto
+            {
+                Username = "failuser",
+                Email = "fail@example.com",
+                Password = "Password123!",
+                BitLink = "bitlink",
+                FirebaseToken = "token"
+            };
+
+            // Act
+            var result = await controller.VerifyUserRegisterDetails(user);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            var response = Assert.IsType<MessageResponse>(badRequestResult.Value);
+            Assert.Contains("verification error", response.Message.ToLower());
         }
 
         private UsersController CreateController()
