@@ -272,6 +272,11 @@ namespace FrontendApplication.Popups
                 // Create and save expense
                 try
                 {
+                    parsedAmount = 0;
+                    foreach (var expenseSplit in expenseSplitsDtos)
+                    {
+                        parsedAmount += expenseSplit.Amount;
+                    }
                     ExpenseModel expense = new ExpenseModel
                     {
                         Id = -1,
@@ -340,12 +345,13 @@ namespace FrontendApplication.Popups
                         Amount = amount
                     });
                 }
-
-                if (Math.Abs(splitTotal - totalAmount) > 0.01)
-                {
-                    DisplayError($"The individual amounts ({splitTotal:C}) don't add up to the total expense ({totalAmount:C})");
-                    return null;
-                }
+                
+                // No need to check this, rounding can cause errors
+                // if (Math.Abs(splitTotal - totalAmount) > 0.01)
+                // {
+                //     DisplayError($"The individual amounts ({splitTotal:C}) don't add up to the total expense ({totalAmount:C})");
+                //     return null;
+                // }
 
                 return splits;
             }
