@@ -552,16 +552,17 @@ public partial class GroupViewPage : ContentPage
                 throw new Exception("No insights available at this time. Try again when you have more expenses.");
             }
 
-            await DisplayAlert("Gemini Insight 💡", feedback, "OK");
+            //await DisplayAlert("Gemini Insight 💡", feedback, "OK");
+            GeminiPopup.Show(feedback);
         }
         catch (HttpRequestException)
         {
-            await DisplayAlert("Connection Error", 
+            await DisplayAlert("Connection Error",
                 "Unable to get expense analysis. Please check your internet connection.", "OK");
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", 
+            await DisplayAlert("Error",
                 $"Failed to get expense analysis: {ex.Message}", "OK");
         }
         finally
