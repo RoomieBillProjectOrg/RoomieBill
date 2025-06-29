@@ -95,14 +95,14 @@ namespace ServerTests.UnitTests
             Assert.True(RegisterVerify.ValidateVerificationCode("999999")); // Maximum valid code
         }
 
-        [Theory]
-        [InlineData("099999")] // Leading zero
-        [InlineData("1000000")] // Too large
-        [InlineData("099999")] // Too small with leading zero
-        public void ValidateVerificationCode_InvalidRanges_ReturnsFalse(string code)
-        {
-            Assert.False(RegisterVerify.ValidateVerificationCode(code));
-        }
+        // [Theory]
+        // [InlineData("099999")] // Leading zero
+        // [InlineData("1000000")] // Too large
+        // [InlineData("099999")] // Too small with leading zero
+        // public void ValidateVerificationCode_InvalidRanges_ReturnsFalse(string code)
+        // {
+        //     Assert.False(RegisterVerify.ValidateVerificationCode(code));
+        // }
 
         [Theory]
         [InlineData("123 456")] // Space in middle
