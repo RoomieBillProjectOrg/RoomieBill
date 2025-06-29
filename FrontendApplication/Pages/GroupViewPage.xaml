@@ -294,8 +294,6 @@
                    IsVisible="False"/>
         </VerticalStackLayout>
     </Grid>
-
-    <local:GeminiFeedbackPopup x:Name="GeminiPopup" />
 </Grid>
 
 </ContentPage>
