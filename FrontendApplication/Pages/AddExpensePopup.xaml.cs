@@ -100,49 +100,57 @@ namespace FrontendApplication.Popups
 
                     // Extract Info from file
                     var selectedCategory = (Category)Enum.Parse(typeof(Category), CategoryPicker.SelectedItem.ToString());
-                    if (selectedCategory != Category.Other){
+                    if (selectedCategory != Category.Other)
+                    {
                         // Try to extract the data using uploadService
-                        ShowLoading();
-                        BillData data = await _uploadService.ExtractData(receiptUrl);
-                        HideLoading();
-                        if (data != null)
+                        try
                         {
-                            string message = $"📅 Start Date: {data.StartDate:yyyy-MM-dd}\n" +
-                                            $"📅 End Date: {data.EndDate:yyyy-MM-dd}\n" +
-                                            $"📝 Description: {data.Description}\n" +
-                                            $"💰 Total Price: {data.TotalPrice:F2} ILS\n\n" +
-                                            $"Do you want to apply this data?";
-
-                            bool apply = await Application.Current.MainPage.DisplayAlert("Data Extracted", message, "Yes", "No");
-
-                            if (apply)
+                            ShowLoading();
+                            BillData data = await _uploadService.ExtractData(receiptUrl);
+                            HideLoading();
+                            if (data != null)
                             {
-                                // Apply the extracted data to your UI or model
-                                StartMonthPicker.Date = new DateTime(data.StartDate.Year, data.StartDate.Month, data.StartDate.Day);
-                                EndMonthPicker.Date = new DateTime(data.EndDate.Year, data.EndDate.Month, data.EndDate.Day);
-                                AmountEntry.Text = data.TotalPrice.ToString("F2");
-                                DescriptionEntry.Text = data.Description;
+                                string message = $"📅 Start Date: {data.StartDate:yyyy-MM-dd}\n" +
+                                                $"📅 End Date: {data.EndDate:yyyy-MM-dd}\n" +
+                                                $"📝 Description: {data.Description}\n" +
+                                                $"💰 Total Price: {data.TotalPrice:F2} ILS\n\n" +
+                                                $"Do you want to apply this data?";
+
+                                bool apply = await Application.Current.MainPage.DisplayAlert("Data Extracted", message, "Yes", "No");
+
+                                if (apply)
+                                {
+                                    // Apply the extracted data to your UI or model
+                                    StartMonthPicker.Date = new DateTime(data.StartDate.Year, data.StartDate.Month, data.StartDate.Day);
+                                    EndMonthPicker.Date = new DateTime(data.EndDate.Year, data.EndDate.Month, data.EndDate.Day);
+                                    AmountEntry.Text = data.TotalPrice.ToString("F2");
+                                    DescriptionEntry.Text = data.Description;
+                                }
                             }
+                            else
+                            {
+                                await Application.Current.MainPage.DisplayAlert("Note", $"Couldn't extract your data. You can try again if you want :)", "OK");
+                            }
+
+                            // ✅ Update button UI to indicate success
+                            UploadedReceiptLabel.Text = "[Click to select another file]";
+                            UploadedReceiptLabel.IsVisible = true;
+                            // UploadedReceiptLabel.BackgroundColor = Colors.Green;
+                            UploadedReceiptLabel.TextColor = Colors.White;
+
+                            // Optional: show the uploaded filename
+                            UploadReceiptButton.Text = "Receipt Chosen ✔";
+                            UploadReceiptButton.BackgroundColor = Colors.BlueViolet;
                         }
-                        else
+                        catch (Exception ex)
                         {
                             await Application.Current.MainPage.DisplayAlert("Note", $"Couldn't extract your data. You can try again if you want :)", "OK");
+                            HideLoading();
                         }
                     }
-
-                    // ✅ Update button UI to indicate success
-                    UploadedReceiptLabel.Text = "[Click to select another file]";
-                    UploadedReceiptLabel.IsVisible = true;
-                    // UploadedReceiptLabel.BackgroundColor = Colors.Green;
-                    UploadedReceiptLabel.TextColor = Colors.White;
-
-                    // Optional: show the uploaded filename
-                    UploadReceiptButton.Text = "Receipt Chosen ✔";
-                    UploadReceiptButton.BackgroundColor = Colors.BlueViolet;
-                    
-
-                    //await Application.Current.MainPage.DisplayAlert("Success", "Receipt uploaded successfully!", "OK");
                 }
+                
+                //await Application.Current.MainPage.DisplayAlert("Success", "Receipt uploaded successfully!", "OK");
             }
             catch (Exception ex)
             {
