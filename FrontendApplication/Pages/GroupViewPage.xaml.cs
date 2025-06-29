@@ -552,7 +552,7 @@ public partial class GroupViewPage : ContentPage
                 throw new Exception("No insights available at this time. Try again when you have more expenses.");
             }
 
-            await DisplayAlert("Gemini Insight 💡", feedback, "OK");
+            GeminiPopup.Show(feedback);
         }
         catch (HttpRequestException)
         {
